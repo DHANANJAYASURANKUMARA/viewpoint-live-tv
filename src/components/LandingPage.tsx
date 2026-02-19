@@ -6,7 +6,7 @@ import {
     Tv, Zap, Globe, ShieldCheck, Play, ArrowRight,
     Activity, Layers, Users, Radio, Info, FileText,
     Mail, ExternalLink, Menu, X, ArrowUpRight,
-    Sparkles, Shield, Cpu, Volume2
+    Sparkles, Shield, Cpu, Volume2, MessageSquare, Send
 } from "lucide-react";
 
 interface LandingPageProps {
@@ -42,7 +42,8 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
         { name: "Features", href: "#features" },
         { name: "What's New", href: "#whats-new" },
         { name: "FAQ", href: "#faq" },
-        { name: "About", href: "#about" }
+        { name: "About", href: "#about" },
+        { name: "Contact", href: "#contact" }
     ];
 
     return (
@@ -298,6 +299,61 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                                 <div className="text-[10px] font-black uppercase tracking-widest text-white/40">{stat.label}</div>
                             </div>
                         ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Contact Us */}
+            <section id="contact" className="min-h-screen flex items-center justify-center py-32 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-neon-cyan/5 to-transparent opacity-20" />
+                <div className="container mx-auto px-6 max-w-6xl relative z-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                        <div className="space-y-12">
+                            <div className="space-y-6">
+                                <span className="text-[10px] font-bold text-neon-cyan uppercase tracking-[0.4em]">Signal Connection</span>
+                                <h2 className="text-5xl md:text-7xl font-bold text-white uppercase tracking-tighter leading-none">Get in<br />Touch</h2>
+                                <p className="max-w-md text-xs font-semibold uppercase tracking-widest text-white/30 leading-loose">
+                                    Initiate a neural handshake with our support collective. We're active across all digital frequencies.
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {[
+                                    { icon: <Mail size={20} />, label: "Email", value: "ops@viewpoint.tv" },
+                                    { icon: <MessageSquare size={20} />, label: "Support", value: "Active 24/7 HUD" },
+                                    { icon: <Globe size={20} />, label: "Social", value: "@viewpoint_tv" },
+                                    { icon: <Activity size={20} />, label: "Pulse", value: "Discord Active" }
+                                ].map((item, i) => (
+                                    <div key={i} className="p-6 glass border border-white/10 rounded-2xl space-y-4 hover:border-white/20 transition-all bg-white/5">
+                                        <div className="text-neon-cyan">{item.icon}</div>
+                                        <div className="space-y-1">
+                                            <div className="text-[10px] font-black uppercase tracking-widest text-white/40">{item.label}</div>
+                                            <div className="text-xs font-bold text-white uppercase tracking-tight">{item.value}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="p-10 glass border border-white/10 rounded-[3rem] bg-white/5 space-y-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-4">Neural ID</label>
+                                    <input type="text" placeholder="Full Name" className="w-full bg-vpoint-dark/50 border border-white/5 rounded-full px-6 py-4 text-xs font-bold text-white uppercase tracking-widest focus:outline-none focus:border-neon-cyan/30" />
+                                </div>
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-4">Frequency</label>
+                                    <input type="email" placeholder="Email Address" className="w-full bg-vpoint-dark/50 border border-white/5 rounded-full px-6 py-4 text-xs font-bold text-white uppercase tracking-widest focus:outline-none focus:border-neon-cyan/30" />
+                                </div>
+                            </div>
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-4">Transmission</label>
+                                <textarea rows={4} placeholder="Your Message..." className="w-full bg-vpoint-dark/50 border border-white/5 rounded-[2rem] px-6 py-5 text-xs font-bold text-white uppercase tracking-widest focus:outline-none focus:border-neon-cyan/30 resize-none"></textarea>
+                            </div>
+                            <button className="w-full py-5 bg-white text-vpoint-dark rounded-full text-xs font-bold uppercase tracking-widest hover:bg-neon-cyan transition-all flex items-center justify-center gap-3">
+                                <Send size={16} /> Send Signal
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
