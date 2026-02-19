@@ -92,6 +92,7 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
         window.addEventListener("vpoint-open-settings", handleOpenSettings as EventListener);
         window.addEventListener("vpoint-sidebar-toggle", handleSidebarToggle as EventListener);
         window.addEventListener("vpoint-channel-select", handleChannelSelectSync as EventListener);
+        window.addEventListener("vpoint-launch", () => setHasLaunched(true));
 
         return () => {
             window.removeEventListener("vpoint-cinema-toggle", handleCinemaToggle as EventListener);
@@ -99,6 +100,7 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
             window.removeEventListener("vpoint-open-settings", handleOpenSettings as EventListener);
             window.removeEventListener("vpoint-sidebar-toggle", handleSidebarToggle as EventListener);
             window.removeEventListener("vpoint-channel-select", handleChannelSelectSync as EventListener);
+            window.removeEventListener("vpoint-launch", () => setHasLaunched(true));
         };
     }, [isMounted, handleCinemaToggle, handleSettingsChange, handleOpenSettings, handleSidebarToggle, handleChannelSelectSync]);
 

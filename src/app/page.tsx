@@ -26,7 +26,10 @@ export default function Home() {
   }, []);
 
   if (!hasLaunched && !currentUrl) {
-    return <LandingPage onLaunch={() => setHasLaunched(true)} />;
+    return <LandingPage onLaunch={() => {
+      setHasLaunched(true);
+      window.dispatchEvent(new CustomEvent("vpoint-launch"));
+    }} />;
   }
 
   return (
