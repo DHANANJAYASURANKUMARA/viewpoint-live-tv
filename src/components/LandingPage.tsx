@@ -208,35 +208,34 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
             </section>
 
             {/* What's New Section (Premium Look) */}
-            <section id="whats-new" className="py-32 bg-white/5 relative">
+            <section id="whats-new" className="min-h-screen flex items-center justify-center py-32 bg-white/5 relative">
                 <div className="container mx-auto px-6">
-                    <div className="flex flex-col lg:flex-row items-end justify-between mb-24 gap-8">
-                        <div className="space-y-6 text-left w-full lg:w-auto">
+                    <div className="flex flex-col lg:flex-row items-end justify-between mb-24 gap-8 text-center lg:text-left">
+                        <div className="space-y-6 w-full lg:w-auto">
                             <span className="text-xs font-bold text-neon-purple uppercase tracking-[0.4em]">Signal Refinement v2.5.8</span>
                             <h2 className="text-5xl md:text-8xl font-bold text-white uppercase tracking-tighter leading-none">Intelligence</h2>
                         </div>
-                        <p className="max-w-md text-xs font-semibold uppercase tracking-widest text-white/30 leading-loose">
-                            We've upgraded our global signal backbone to support true 10-bit HDR transmissions with deep atmospheric enhancement.
+                        <p className="max-w-md mx-auto lg:mx-0 text-xs font-semibold uppercase tracking-widest text-white/30 leading-loose">
+                            We've upgraded our global signal backbone to support true 10-bit HDR transmissions with deep atmospheric enhancement and predictive buffering.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                        <div className="relative group overflow-hidden rounded-[2.5rem] aspect-video glass border border-white/10 flex items-center justify-center bg-white/5">
-                            <div className="absolute inset-0 bg-gradient-to-t from-vpoint-dark via-transparent to-transparent z-10" />
-                            <div className="text-center z-20 space-y-6 p-10">
-                                <Sparkles className="mx-auto text-neon-magenta opacity-80" size={48} />
-                                <h3 className="text-3xl font-bold text-white uppercase tracking-tighter transition-all group-hover:scale-105">Atmospheric 4K</h3>
-                                <p className="text-xs font-semibold tracking-widest uppercase text-white/40">250+ Nodes Upgraded to HDR10</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {[
+                            { icon: <Sparkles className="mx-auto text-neon-magenta opacity-80" size={48} />, title: "Atmospheric 4K", desc: "250+ Nodes Upgraded to HDR10+" },
+                            { icon: <Radio className="mx-auto text-neon-cyan opacity-80" size={48} />, title: "Neural Pulse", desc: "Predictive Buffer Engine Active" },
+                            { icon: <Volume2 className="mx-auto text-neon-purple opacity-80" size={48} />, title: "Spatial Shield", desc: "3D Atmospheric Audio Engine" },
+                            { icon: <Globe className="mx-auto text-emerald-400 opacity-80" size={48} />, title: "Global Grid", desc: "Ultra-Edge Node Synchronization" }
+                        ].map((item, i) => (
+                            <div key={i} className="relative group overflow-hidden rounded-[2.5rem] aspect-video glass border border-white/10 flex items-center justify-center bg-white/5">
+                                <div className="absolute inset-0 bg-gradient-to-t from-vpoint-dark via-transparent to-transparent z-10" />
+                                <div className="text-center z-20 space-y-6 p-10">
+                                    {item.icon}
+                                    <h3 className="text-3xl font-bold text-white uppercase tracking-tighter transition-all group-hover:scale-105">{item.title}</h3>
+                                    <p className="text-xs font-semibold tracking-widest uppercase text-white/40">{item.desc}</p>
+                                </div>
                             </div>
-                        </div>
-                        <div className="relative group overflow-hidden rounded-[2.5rem] aspect-video glass border border-white/10 flex items-center justify-center bg-white/5">
-                            <div className="absolute inset-0 bg-gradient-to-t from-vpoint-dark via-transparent to-transparent z-10" />
-                            <div className="text-center z-20 space-y-6 p-10">
-                                <Radio className="mx-auto text-neon-cyan opacity-80" size={48} />
-                                <h3 className="text-3xl font-bold text-white uppercase tracking-tighter transition-all group-hover:scale-105">Neural Pulse</h3>
-                                <p className="text-xs font-semibold tracking-widest uppercase text-white/40">Predictive Buffer Engine Active</p>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </section>
