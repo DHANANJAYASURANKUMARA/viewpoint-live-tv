@@ -8,6 +8,7 @@ import {
     Mail, ExternalLink, Menu, X, ArrowUpRight,
     Sparkles, Shield, Cpu, Volume2, MessageSquare, Send
 } from "lucide-react";
+import Link from "next/link";
 
 interface LandingPageProps {
     onLaunch: () => void;
@@ -386,10 +387,10 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                         <div className="space-y-8">
                             <h4 className="text-xs font-bold text-white uppercase tracking-[0.4em]">Protocol</h4>
                             <ul className="space-y-5">
-                                <li><a href="#" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Entry Terms</a></li>
-                                <li><a href="#" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Privacy Shield</a></li>
-                                <li><a href="#" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">DMCA Request</a></li>
-                                <li><a href="#" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Legal Disclaimer</a></li>
+                                <li><Link href="/terms" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Entry Terms</Link></li>
+                                <li><Link href="/privacy" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Privacy Shield</Link></li>
+                                <li><Link href="/dmca" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">DMCA Request</Link></li>
+                                <li><Link href="/disclaimer" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Legal Disclaimer</Link></li>
                             </ul>
                         </div>
 
@@ -410,9 +411,9 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                     <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 opacity-30">
                         <span className="text-[8px] font-black uppercase tracking-[0.5em]">© 2026 Viewpoint Neural Systems • All Handshakes Encrypted</span>
                         <div className="flex items-center gap-6">
-                            <span className="text-[8px] font-black cursor-help">TOS</span>
-                            <span className="text-[8px] font-black cursor-help">PRIVACY</span>
-                            <span className="text-[8px] font-black cursor-help">DISCLAIMER</span>
+                            <Link href="/terms" className="text-[8px] font-black cursor-help hover:text-neon-cyan transition-colors">TOS</Link>
+                            <Link href="/privacy" className="text-[8px] font-black cursor-help hover:text-neon-cyan transition-colors">PRIVACY</Link>
+                            <Link href="/disclaimer" className="text-[8px] font-black cursor-help hover:text-neon-cyan transition-colors">DISCLAIMER</Link>
                         </div>
                     </div>
                 </div>
