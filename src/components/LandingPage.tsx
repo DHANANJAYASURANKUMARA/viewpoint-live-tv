@@ -210,29 +210,29 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
             {/* What's New Section (Premium Look) */}
             <section id="whats-new" className="min-h-screen flex items-center justify-center py-32 bg-white/5 relative">
                 <div className="container mx-auto px-6">
-                    <div className="flex flex-col lg:flex-row items-end justify-between mb-24 gap-8 text-center lg:text-left">
-                        <div className="space-y-4 w-full lg:w-auto">
-                            <span className="text-[10px] font-bold text-neon-purple uppercase tracking-[0.4em]">Signal Refinement v2.5.8</span>
-                            <h2 className="text-3xl md:text-5xl font-bold text-white uppercase tracking-tighter leading-none">Intelligence</h2>
+                    <div className="flex flex-col lg:flex-row items-end justify-between mb-12 gap-6 text-center lg:text-left max-w-4xl mx-auto">
+                        <div className="space-y-2 w-full lg:w-auto">
+                            <span className="text-[9px] font-bold text-neon-purple uppercase tracking-[0.4em]">Signal Refinement v2.5.8</span>
+                            <h2 className="text-lg md:text-2xl font-bold text-white uppercase tracking-tighter leading-none">Intelligence</h2>
                         </div>
-                        <p className="max-w-md mx-auto lg:mx-0 text-[10px] font-semibold uppercase tracking-widest text-white/30 leading-loose">
-                            We've upgraded our global signal backbone to support true 10-bit HDR transmissions with deep atmospheric enhancement and predictive buffering.
+                        <p className="max-w-xs mx-auto lg:mx-0 text-[9px] font-semibold uppercase tracking-widest text-white/30 leading-loose">
+                            We've upgraded our global signal backbone to support true 10-bit HDR transmissions with deep atmospheric enhancement.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
                         {[
-                            { icon: <Sparkles className="mx-auto text-neon-magenta opacity-80" size={32} />, title: "Atmospheric 4K", desc: "250+ Nodes Upgraded to HDR10+" },
-                            { icon: <Radio className="mx-auto text-neon-cyan opacity-80" size={32} />, title: "Neural Pulse", desc: "Predictive Buffer Engine Active" },
-                            { icon: <Volume2 className="mx-auto text-neon-purple opacity-80" size={32} />, title: "Spatial Shield", desc: "3D Atmospheric Audio Engine" },
-                            { icon: <Globe className="mx-auto text-emerald-400 opacity-80" size={32} />, title: "Global Grid", desc: "Ultra-Edge Node Synchronization" }
+                            { icon: <Sparkles className="mx-auto text-neon-magenta opacity-80" size={24} />, title: "Atmospheric 4K", desc: "250+ Nodes Upgraded to HDR10+" },
+                            { icon: <Radio className="mx-auto text-neon-cyan opacity-80" size={24} />, title: "Neural Pulse", desc: "Predictive Buffer Engine Active" },
+                            { icon: <Volume2 className="mx-auto text-neon-purple opacity-80" size={24} />, title: "Spatial Shield", desc: "3D Atmospheric Audio Engine" },
+                            { icon: <Globe className="mx-auto text-emerald-400 opacity-80" size={24} />, title: "Global Grid", desc: "Ultra-Edge Node Synchronization" }
                         ].map((item, i) => (
-                            <div key={i} className="relative group overflow-hidden rounded-[2rem] aspect-video glass border border-white/10 flex items-center justify-center bg-white/5 transition-all hover:border-white/20">
+                            <div key={i} className="relative group overflow-hidden rounded-2xl aspect-video glass border border-white/10 flex items-center justify-center bg-white/5 transition-all hover:border-white/20">
                                 <div className="absolute inset-0 bg-gradient-to-t from-vpoint-dark via-transparent to-transparent z-10" />
-                                <div className="text-center z-20 space-y-4 p-6">
+                                <div className="text-center z-20 space-y-3 p-4">
                                     {item.icon}
-                                    <h3 className="text-xl font-bold text-white uppercase tracking-tighter transition-all group-hover:scale-105">{item.title}</h3>
-                                    <p className="text-[10px] font-semibold tracking-widest uppercase text-white/40">{item.desc}</p>
+                                    <h3 className="text-sm font-bold text-white uppercase tracking-tighter transition-all group-hover:scale-105">{item.title}</h3>
+                                    <p className="text-[9px] font-semibold tracking-widest uppercase text-white/40">{item.desc}</p>
                                 </div>
                             </div>
                         ))}
