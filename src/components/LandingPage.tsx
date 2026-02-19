@@ -271,25 +271,40 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
             </section>
 
             {/* About & Mission */}
-            <section id="about" className="py-32 bg-white/5">
-                <div className="container mx-auto px-6 text-center max-w-4xl">
+            <section id="about" className="min-h-screen flex items-center justify-center py-32 bg-white/5">
+                <div className="container mx-auto px-6 text-center max-w-5xl">
                     <Info className="mx-auto text-neon-purple mb-10" size={32} />
                     <h2 className="text-3xl font-black text-white uppercase tracking-widest mb-10">The Mission</h2>
-                    <p className="text-sm md:text-md font-bold leading-relaxed text-slate-400 uppercase tracking-[0.2em] mb-12">
-                        Viewpoint was founded to bridge the gap between traditional broadcasting and the future of digital density. We believe that live television should be as fluid and expressive as the neural networks we use to access them. Our team of interface designers and signal engineers work tirelessly to ensure that every frame transmitted via our platform is of military-grade excellence.
-                    </p>
-                    <div className="flex flex-wrap items-center justify-center gap-10 opacity-30">
-                        <div className="flex flex-col gap-2">
-                            <div className="text-2xl font-mono text-white">2026.02</div>
+
+                    <div className="space-y-12 mb-20 text-center">
+                        <p className="text-sm md:text-md font-bold leading-relaxed text-slate-400 uppercase tracking-[0.2em]">
+                            Viewpoint was founded to bridge the gap between traditional broadcasting and the future of digital density. We believe that live television should be as fluid and expressive as the neural networks we use to access them. Our team of interface designers and signal engineers work tirelessly to ensure that every frame transmitted via our platform is of military-grade excellence.
+                        </p>
+                        <p className="text-sm md:text-md font-bold leading-relaxed text-slate-500 uppercase tracking-[0.2em] max-w-3xl mx-auto italic">
+                            By leveraging proprietary neural mesh architecture, we've decentralized the global transmission backbone, bringing ultra-low latency signals to every corner of the digital frontier.
+                        </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-center gap-16 opacity-40">
+                        <div className="flex flex-col gap-3">
+                            <div className="text-3xl font-mono text-white">2026.02</div>
                             <div className="text-[10px] font-black uppercase tracking-widest">Initial Boot</div>
                         </div>
-                        <div className="flex flex-col gap-2">
-                            <div className="text-2xl font-mono text-white">150+</div>
+                        <div className="flex flex-col gap-3">
+                            <div className="text-3xl font-mono text-white">150+</div>
                             <div className="text-[10px] font-black uppercase tracking-widest">Countries</div>
                         </div>
-                        <div className="flex flex-col gap-2">
-                            <div className="text-2xl font-mono text-white">1M+</div>
+                        <div className="flex flex-col gap-3">
+                            <div className="text-3xl font-mono text-white">1M+</div>
                             <div className="text-[10px] font-black uppercase tracking-widest">Handshakes</div>
+                        </div>
+                        <div className="flex flex-col gap-3">
+                            <div className="text-3xl font-mono text-white">2.5K</div>
+                            <div className="text-[10px] font-black uppercase tracking-widest">Signal Nodes</div>
+                        </div>
+                        <div className="flex flex-col gap-3">
+                            <div className="text-3xl font-mono text-white">99.9%</div>
+                            <div className="text-[10px] font-black uppercase tracking-widest">Uptime Integrity</div>
                         </div>
                     </div>
                 </div>
