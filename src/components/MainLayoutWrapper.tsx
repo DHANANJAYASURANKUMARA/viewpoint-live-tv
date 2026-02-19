@@ -2,14 +2,19 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Sidebar from "./Sidebar";
+import AdminSidebar from "./AdminSidebar";
 import TopBar from "./TopBar";
 import SettingsModal from "./SettingsModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { Shield } from "lucide-react";
 
 export default function MainLayoutWrapper({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const isWatchPage = pathname === "/watch";
+    const isAdminSector = pathname.startsWith("/admin");
+    const isAdminLogin = pathname === "/admin/login";
+
     const [activeChannelUrl, setActiveChannelUrl] = useState("");
     const [isCinemaMode, setIsCinemaMode] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -120,6 +125,14 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
             </AnimatePresence>
 
             <AnimatePresence>
+                {isAdminSector && !isAdminLogin && (
+                    <div className="hidden lg:block h-full">
+                        <AdminSidebar />
+                    </div>
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
                 {(!isCinemaMode && isWatchPage) && (
                     <motion.div
                         initial={{ x: "-100%", opacity: 0 }}
@@ -150,6 +163,14 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
                         >
                             <TopBar />
                         </motion.div>
+                    )}
+                    {isAdminSector && !isAdminLogin && (
+                        <div className="p-8 border-b border-white/5 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <Shield size={20} className="text-neon-cyan" />
+                                <span className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Institutional Access Level: Alpha</span>
+                            </div>
+                        </div>
                     )}
                 </AnimatePresence>
 

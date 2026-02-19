@@ -381,6 +381,7 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                                 <li><a href="#" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Signal HUD</a></li>
                                 <li><a href="#" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Edge Nodes</a></li>
                                 <li><a href="#" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Latency Stats</a></li>
+                                <li><Link href="/admin/login" className="text-[10px] font-black text-neon-cyan/40 hover:text-neon-cyan uppercase tracking-[0.3em] transition-colors pt-4 block">Admin Access</Link></li>
                             </ul>
                         </div>
 
