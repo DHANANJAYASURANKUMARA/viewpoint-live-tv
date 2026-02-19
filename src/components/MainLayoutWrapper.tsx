@@ -47,11 +47,21 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
     // Effect for window resize and initial mount
     useEffect(() => {
         setIsMounted(true);
+        let prevWidth = window.innerWidth;
+
         const handleResize = () => {
-            const mobile = window.innerWidth < 1024;
+            const currentWidth = window.innerWidth;
+            const mobile = currentWidth < 1024;
+            const wasDesktop = prevWidth >= 1024;
+
             setIsMobile(mobile);
-            // Auto-close sidebar on mobile/tablet during resize if it was open
-            if (mobile) setIsSidebarOpen(false);
+
+            // Only auto-close sidebar if we just transitioned FROM desktop TO mobile
+            if (mobile && wasDesktop) {
+                setIsSidebarOpen(false);
+            }
+
+            prevWidth = currentWidth;
         };
         handleResize();
         window.addEventListener("resize", handleResize);
