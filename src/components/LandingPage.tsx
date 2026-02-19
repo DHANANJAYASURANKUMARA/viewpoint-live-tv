@@ -241,23 +241,29 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
             </section>
 
             {/* FAQ / Support / Legal (Content Rich for AdSense) */}
-            <section id="faq" className="py-32 container mx-auto px-6">
-                <div className="max-w-4xl mx-auto space-y-20">
-                    <div className="space-y-8">
-                        <h2 className="text-4xl font-bold text-white uppercase tracking-[0.3em]">Telemetry Support</h2>
-                        <div className="w-24 h-1 bg-neon-cyan mx-auto rounded-full opacity-50" />
+            <section id="faq" className="min-h-screen flex items-center justify-center py-32 container mx-auto px-6">
+                <div className="max-w-6xl mx-auto space-y-24">
+                    <div className="text-center space-y-6">
+                        <span className="text-[10px] font-bold text-neon-cyan uppercase tracking-[0.4em]">Protocol Documentation</span>
+                        <h2 className="text-4xl md:text-5xl font-bold text-white uppercase tracking-tighter">Telemetry Support</h2>
+                        <div className="w-16 h-1 bg-neon-cyan mx-auto rounded-full opacity-30" />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
                         {[
                             { q: "Transmission Integrity", a: "Viewpoint leverages a global CDN edge mesh to ensure 99.9% uptime for all major network protocols." },
                             { q: "Interface Fluidity", a: "Our dashboard is engineered to be atmospheric and fully responsive from handheld optics to theater screens." },
-                            { q: "Custom Signals", a: "Paste any HLS, DASH or M3U8 source into our HUD to experience it with VIEWPOINT's proprietary post-processing." },
-                            { q: "Secure Handshake", a: "We operate on a zero-knowledge architecture. Your transmission history stays local to your neural handshake." }
+                            { q: "Custom Signals", a: "Paste any HLS, DASH or M3U8 source into our HUD to experience it with proprietary post-processing." },
+                            { q: "Secure Handshake", a: "We operate on a zero-knowledge architecture. Your transmission history stays local to your neural handshake." },
+                            { q: "Ad-Serving Layer", a: "We integrate Google Neural AdSense to provide non-intrusive, atmospheric monetization while maintaining signal speed." },
+                            { q: "Sync Synchronization", a: "Your channel preferences are cached on the edge, ensuring a seamless handshake across all verified devices." },
+                            { q: "Encrypted Optics", a: "All data transmissions use military-grade AES-256 encryption within our atmospheric tunnel protocol." },
+                            { q: "Neural Pre-fetching", a: "Our AI engine predicts your next signal switch to pre-cache frames for instantaneous, zero-lag channel changes." },
+                            { q: "Atmospheric Audio", a: "Spatial resonance filters are applied to all live streams, delivering deep spatial clarity on any hardware." }
                         ].map((item, i) => (
-                            <div key={i} className="space-y-5 p-10 glass border-l-4 border-neon-cyan/20 rounded-r-[2rem] bg-white/5">
-                                <h4 className="text-sm font-bold text-white uppercase tracking-[0.15em]">{item.q}</h4>
-                                <p className="text-xs font-medium leading-relaxed text-white/40 uppercase tracking-widest italic">{item.a}</p>
+                            <div key={i} className="space-y-4 p-8 glass border border-white/5 rounded-[2rem] bg-white/5 hover:border-white/10 transition-all">
+                                <h4 className="text-[13px] font-bold text-white uppercase tracking-[0.1em]">{item.q}</h4>
+                                <p className="text-[10px] font-medium leading-relaxed text-white/30 uppercase tracking-widest italic">{item.a}</p>
                             </div>
                         ))}
                     </div>
