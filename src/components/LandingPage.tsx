@@ -74,7 +74,7 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                         <div className="flex items-center gap-4">
                             <button
                                 onClick={onLaunch}
-                                className="hidden sm:flex items-center gap-2 px-6 py-2.5 bg-white text-vpoint-dark rounded-full font-bold text-[11px] uppercase tracking-widest hover:bg-neon-cyan transition-all"
+                                className="hidden sm:flex items-center gap-2 px-6 py-2.5 glass border border-white/20 text-white rounded-full font-bold text-[11px] uppercase tracking-widest hover:bg-white/10 hover:border-white/40 transition-all"
                             >
                                 WATCH NOW <ArrowRight size={14} />
                             </button>
@@ -162,7 +162,7 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
                             <button
                                 onClick={onLaunch}
-                                className="group relative w-full sm:w-auto px-8 py-4 bg-white text-vpoint-dark rounded-full font-bold uppercase tracking-[0.2em] transition-all hover:bg-neon-cyan hover:shadow-[0_0_50px_rgba(34,211,238,0.3)] overflow-hidden"
+                                className="group relative w-full sm:w-auto px-10 py-5 glass border border-white/20 text-white rounded-full font-bold uppercase tracking-[0.2em] transition-all hover:bg-white/10 hover:border-white/40 hover:shadow-[0_0_50px_rgba(255,255,255,0.05)] overflow-hidden"
                             >
                                 <span className="relative z-10 flex items-center justify-center gap-2">
                                     WATCH NOW <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
