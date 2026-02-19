@@ -249,14 +249,11 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
             {/* Sidebar Branding */}
             <div className="flex items-center justify-between mb-8 lg:mb-10">
                 <Link href="/#hero" className="flex items-center gap-3 group">
-                    <div className="flex items-center gap-3">
-                        <Tv size={24} className="text-neon-cyan group-hover:scale-110 transition-transform" />
-                        <div className="flex flex-col">
-                            <h2 className="text-sm lg:text-xl font-black text-white tracking-tighter uppercase leading-none">
-                                VIEW<span className="text-neon-purple">POINT</span>
-                            </h2>
-                            <p className="text-[7px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1">Premium Streaming</p>
-                        </div>
+                    <div className="flex flex-col">
+                        <h2 className="text-sm lg:text-xl font-black text-white tracking-tighter uppercase leading-none">
+                            VIEW<span className="text-neon-purple">POINT</span>
+                        </h2>
+                        <p className="text-[7px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1">Premium Streaming</p>
                     </div>
                 </Link>
                 <button
