@@ -150,22 +150,21 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                             </div>
                         </div>
 
-                        <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold text-white tracking-tighter uppercase leading-[0.9] [text-wrap:balance]">
-                            Ultra <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan via-white to-neon-purple animate-pulse">Low Latency</span><br />
-                            Engine v2.5
+                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-tighter uppercase leading-[1.1] [text-wrap:balance]">
+                            The Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan via-white to-neon-purple animate-pulse">Live Transmission</span>
                         </h1>
 
-                        <p className="max-w-2xl mx-auto text-sm md:text-lg text-white/50 font-medium uppercase tracking-[0.25em] leading-relaxed">
-                            Experience the future of live transmission. Optimized for editorial density and visual clarity.
+                        <p className="max-w-xl mx-auto text-xs md:text-sm text-white/40 font-medium uppercase tracking-[0.2em] leading-relaxed">
+                            Atmospheric live television. Optimized for digital density and visual clarity.
                         </p>
 
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-10">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
                             <button
                                 onClick={onLaunch}
-                                className="group relative w-full sm:w-auto px-12 py-6 bg-white text-vpoint-dark rounded-full font-black uppercase tracking-[0.3em] transition-all hover:bg-neon-cyan hover:shadow-[0_0_80px_rgba(34,211,238,0.5)] overflow-hidden scale-110"
+                                className="group relative w-full sm:w-auto px-8 py-4 bg-white text-vpoint-dark rounded-full font-bold uppercase tracking-[0.2em] transition-all hover:bg-neon-cyan hover:shadow-[0_0_50px_rgba(34,211,238,0.3)] overflow-hidden"
                             >
-                                <span className="relative z-10 flex items-center justify-center gap-3">
-                                    WATCH NOW <ArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                <span className="relative z-10 flex items-center justify-center gap-2">
+                                    WATCH NOW <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                 </span>
                             </button>
                         </div>
