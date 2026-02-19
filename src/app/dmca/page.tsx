@@ -67,6 +67,14 @@ export default function DMCAPage() {
                     </section>
                 </div>
 
+                {/* Institutional Links */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-10 border-t border-white/5">
+                    <Link href="/terms" className="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-neon-cyan transition-colors py-2">Entry Terms</Link>
+                    <Link href="/privacy" className="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-neon-purple transition-colors py-2">Privacy Shield</Link>
+                    <Link href="/dmca" className="text-[10px] font-black uppercase tracking-widest text-neon-magenta py-2">DMCA Request</Link>
+                    <Link href="/disclaimer" className="text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-emerald-500 transition-colors py-2">Legal Disclaimer</Link>
+                </div>
+
                 {/* Footer Seal */}
                 <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 opacity-30">
                     <span className="text-[8px] font-black uppercase tracking-[0.5em]">© 2026 Viewpoint Neural Systems • All Reports Synchronized</span>
