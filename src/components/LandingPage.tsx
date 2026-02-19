@@ -173,12 +173,20 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
             </div>
 
             {/* Features HUD */}
-            <section id="features" className="min-h-screen flex items-center justify-center py-32 container mx-auto px-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <section id="features" className="min-h-screen py-32 container mx-auto px-6 flex flex-col justify-center">
+                <div className="text-center mb-24 space-y-4">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white uppercase tracking-tighter">Core Technologies</h2>
+                    <p className="text-xs font-medium text-white/30 uppercase tracking-[0.3em]">The Architecture of the Future</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {[
                         { icon: <Zap />, title: "300ms Pulse", desc: "Instantaneous signal lock for a lag-free experience across all global channels." },
                         { icon: <Shield />, title: "Neural Shield", desc: "Military-grade encryption for all custom transmission signals and user preferences." },
-                        { icon: <Cpu />, title: "4K Engine", desc: "Proprietary upscaling technology ensuring atmospheric clarity on low-bandwidth signals." }
+                        { icon: <Cpu />, title: "4K Engine", desc: "Proprietary upscaling technology ensuring atmospheric clarity on low-bandwidth signals." },
+                        { icon: <Globe />, title: "Adaptive ABR", desc: "Global content delivery network with dynamic bitrate switching for zero buffering." },
+                        { icon: <Activity />, title: "Neural HUD", desc: "Real-time telemetry and signal diagnostics integrated directly into the player." },
+                        { icon: <Layers />, title: "Zero-Lint Core", desc: "Enterprise-grade stability with a clean-code architecture for maximum performance." }
                     ].map((f, i) => (
                         <motion.div
                             key={i}
