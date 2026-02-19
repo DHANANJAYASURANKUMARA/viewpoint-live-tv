@@ -52,7 +52,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7818560020455484"
-          crossorigin="anonymous"></script>
+          crossOrigin="anonymous"></script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-neon-cyan/30`}
