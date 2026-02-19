@@ -75,7 +75,7 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                                 onClick={onLaunch}
                                 className="hidden sm:flex items-center gap-2 px-6 py-2.5 bg-white text-vpoint-dark rounded-full font-bold text-[11px] uppercase tracking-widest hover:bg-neon-cyan transition-all"
                             >
-                                Dashboard <ArrowRight size={14} />
+                                WATCH NOW <ArrowRight size={14} />
                             </button>
                             <button
                                 className="lg:hidden text-white"
@@ -165,7 +165,7 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                                 className="group relative w-full sm:w-auto px-12 py-6 bg-white text-vpoint-dark rounded-full font-black uppercase tracking-[0.3em] transition-all hover:bg-neon-cyan hover:shadow-[0_0_80px_rgba(34,211,238,0.5)] overflow-hidden scale-110"
                             >
                                 <span className="relative z-10 flex items-center justify-center gap-3">
-                                    Enter Dashboard <ArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                    WATCH NOW <ArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                 </span>
                             </button>
                         </div>
