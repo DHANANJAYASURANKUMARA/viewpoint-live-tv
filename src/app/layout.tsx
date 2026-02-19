@@ -42,6 +42,7 @@ export const metadata: Metadata = {
 };
 
 import MainLayoutWrapper from "@/components/MainLayoutWrapper";
+import { ConfigProvider } from "@/components/ConfigContext";
 
 export default function RootLayout({
   children,
@@ -57,11 +58,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-neon-cyan/30`}
       >
-        <MainLayoutWrapper>
-          {children}
-        </MainLayoutWrapper>
-        <SpeedInsights />
-        <Analytics />
+        <ConfigProvider>
+          <MainLayoutWrapper>
+            {children}
+          </MainLayoutWrapper>
+          <SpeedInsights />
+          <Analytics />
+        </ConfigProvider>
       </body>
     </html>
   );

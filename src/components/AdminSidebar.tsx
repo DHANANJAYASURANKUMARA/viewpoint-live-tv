@@ -87,20 +87,20 @@ export default function AdminSidebar() {
                 <div className="space-y-4">
                     <h3 className="text-[8px] font-black text-slate-500 uppercase tracking-[0.3em] px-2 mb-6">System Control</h3>
                     <div className="space-y-2">
-                        <button
-                            onClick={() => { }}
+                        <Link
+                            href="/admin/appearance"
                             className="w-full flex items-center gap-4 p-4 rounded-2xl text-slate-500 hover:text-white hover:bg-white/[0.03] transition-all group"
                         >
                             <Settings size={18} className="group-hover:rotate-45 transition-transform" />
                             <span className="text-[10px] font-black uppercase tracking-widest">Global Config</span>
-                        </button>
-                        <button
-                            onClick={() => { }}
+                        </Link>
+                        <Link
+                            href="/admin/system"
                             className="w-full flex items-center gap-4 p-4 rounded-2xl text-slate-500 hover:text-white hover:bg-white/[0.03] transition-all group"
                         >
                             <Terminal size={18} />
                             <span className="text-[10px] font-black uppercase tracking-widest">Master Logs</span>
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

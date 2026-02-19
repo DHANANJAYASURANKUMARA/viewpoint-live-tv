@@ -59,8 +59,9 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
             localStorage.setItem("vpoint-platform-config", JSON.stringify(config));
 
             // Apply CSS Variables for dynamic colors
-            document.documentElement.style.setProperty("--accent-color", config.accentColor);
-            document.documentElement.style.setProperty("--accent-secondary", config.secondaryColor);
+            document.documentElement.style.setProperty("--neon-cyan", config.accentColor);
+            document.documentElement.style.setProperty("--neon-purple", config.secondaryColor);
+            document.documentElement.style.setProperty("--vpoint-accent", config.accentColor);
         }
     }, [config, isInitialized]);
 

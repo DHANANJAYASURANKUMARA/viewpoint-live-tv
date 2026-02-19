@@ -9,7 +9,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { Shield } from "lucide-react";
 
+import { useConfig } from "./ConfigContext";
+
 export default function MainLayoutWrapper({ children }: { children: React.ReactNode }) {
+    const { config } = useConfig();
     const pathname = usePathname();
     const isWatchPage = pathname === "/watch";
     const isAdminSector = pathname.startsWith("/admin");
