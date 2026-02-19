@@ -5,8 +5,11 @@ import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import SettingsModal from "./SettingsModal";
 import { AnimatePresence, motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 export default function MainLayoutWrapper({ children }: { children: React.ReactNode }) {
+    const pathname = usePathname();
+    const isWatchPage = pathname === "/watch";
     const [activeChannelUrl, setActiveChannelUrl] = useState("");
     const [isCinemaMode, setIsCinemaMode] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -14,7 +17,6 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
     const [theme, setTheme] = useState('cyan');
     const [isMobile, setIsMobile] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
-    const [hasLaunched, setHasLaunched] = useState(false);
 
     // Handlers for custom events
     const handleCinemaToggle = useCallback((e: any) => {
@@ -42,7 +44,6 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
         const detail = (e as CustomEvent).detail;
         if (detail?.url) {
             setActiveChannelUrl(detail.url);
-            setHasLaunched(true); // Auto-launch if a channel is selected via other means
         }
     }, []);
 
@@ -92,7 +93,6 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
         window.addEventListener("vpoint-open-settings", handleOpenSettings as EventListener);
         window.addEventListener("vpoint-sidebar-toggle", handleSidebarToggle as EventListener);
         window.addEventListener("vpoint-channel-select", handleChannelSelectSync as EventListener);
-        window.addEventListener("vpoint-launch", () => setHasLaunched(true));
 
         return () => {
             window.removeEventListener("vpoint-cinema-toggle", handleCinemaToggle as EventListener);
@@ -100,7 +100,6 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
             window.removeEventListener("vpoint-open-settings", handleOpenSettings as EventListener);
             window.removeEventListener("vpoint-sidebar-toggle", handleSidebarToggle as EventListener);
             window.removeEventListener("vpoint-channel-select", handleChannelSelectSync as EventListener);
-            window.removeEventListener("vpoint-launch", () => setHasLaunched(true));
         };
     }, [isMounted, handleCinemaToggle, handleSettingsChange, handleOpenSettings, handleSidebarToggle, handleChannelSelectSync]);
 
@@ -109,7 +108,7 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
     return (
         <div className={`flex w-full h-screen overflow-hidden vpoint-bg transition-colors duration-300 ${theme === 'magenta' ? 'theme-magenta' : ''}`}>
             <AnimatePresence>
-                {isSidebarOpen && isMobile && (
+                {isSidebarOpen && isMobile && isWatchPage && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -121,7 +120,7 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
             </AnimatePresence>
 
             <AnimatePresence>
-                {(!isCinemaMode && hasLaunched) && (
+                {(!isCinemaMode && isWatchPage) && (
                     <motion.div
                         initial={{ x: "-100%", opacity: 0 }}
                         animate={{
@@ -142,7 +141,7 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
 
             <main className={`flex-1 h-full flex flex-col transition-all duration-300 ${isCinemaMode ? "p-0" : ""}`}>
                 <AnimatePresence>
-                    {!isCinemaMode && hasLaunched && (
+                    {!isCinemaMode && isWatchPage && (
                         <motion.div
                             initial={{ y: -100, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}

@@ -106,12 +106,42 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                         ))}
                     </div>
 
+                    {/* About Section (Content Density for AdSense) */}
+                    <section className="max-w-4xl mx-auto mb-32 space-y-12 text-center">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            viewport={{ once: true }}
+                            className="space-y-6"
+                        >
+                            <h2 className="text-3xl font-black text-white uppercase tracking-widest">The Transmission Standard</h2>
+                            <p className="text-slate-400 text-[11px] font-bold leading-relaxed uppercase tracking-widest max-w-3xl mx-auto opacity-70">
+                                Viewpoint is a high-performance streaming architecture designed for the modern audience. We bypass traditional bottlenecks by utilizing a neural-buffer engine that adapts to your network in real-time. Whether you're watching global sports or local news, our infrastructure ensures you're always receiving the highest possible bit-rate with zero interrupts.
+                            </p>
+                        </motion.div>
+                    </section>
+
+                    {/* FAQ Section (SEO/AdSense content) */}
+                    <section className="max-w-5xl mx-auto mb-32 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {[
+                            { q: "What is neural buffering?", a: "Our proprietary algorithm that predicts network drops before they happen, ensuring a constant 4K flow." },
+                            { q: "Is it really zero-lag?", a: "We maintain a technical latency of under 300ms, making it faster than standard cable or satellite." },
+                            { q: "Can I use custom streams?", a: "Yes. Our dashboard supports M3U8, MPD, and high-bitrate HLS signals natively." },
+                            { q: "Does it work globally?", a: "Viewpoint leverages a global CDN network to provide stable signals in over 150 countries." }
+                        ].map((item, i) => (
+                            <div key={i} className="p-8 glass rounded-3xl border border-white/5 space-y-3">
+                                <h4 className="text-neon-cyan font-black text-[10px] uppercase tracking-widest">{item.q}</h4>
+                                <p className="text-slate-500 text-[10px] font-bold leading-relaxed uppercase tracking-widest opacity-80">{item.a}</p>
+                            </div>
+                        ))}
+                    </section>
+
                     {/* Stats Layer */}
                     <motion.div
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 0.5 }}
-                        transition={{ delay: 1 }}
-                        className="pt-12 border-t border-white/5 flex flex-wrap items-center justify-around gap-12"
+                        whileInView={{ opacity: 0.5 }}
+                        viewport={{ once: true }}
+                        className="pt-12 border-t border-white/5 flex flex-wrap items-center justify-around gap-12 mb-24"
                     >
                         <div className="text-center">
                             <div className="text-2xl font-black text-white leading-none">250+</div>
@@ -130,11 +160,34 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                             <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest mt-2 font-mono">Coverage</div>
                         </div>
                     </motion.div>
+
+                    {/* Footer / AdSense Legal links */}
+                    <footer className="relative pt-20 border-t border-white/5 space-y-12">
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-8 opacity-50">
+                            <div className="flex flex-col">
+                                <h2 className="text-xl font-black text-white tracking-tighter uppercase leading-none mb-2">VIEWPOINT</h2>
+                                <p className="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em]">© 2026 Neural Transmission Systems.</p>
+                            </div>
+                            <div className="flex flex-wrap items-center justify-center gap-8">
+                                <a href="#" className="text-[9px] font-black text-slate-400 hover:text-white uppercase tracking-widest transition-colors">Privacy Policy</a>
+                                <a href="#" className="text-[9px] font-black text-slate-400 hover:text-white uppercase tracking-widest transition-colors">Terms of Service</a>
+                                <a href="#" className="text-[9px] font-black text-slate-400 hover:text-white uppercase tracking-widest transition-colors">Contact Signal</a>
+                                <a href="#" className="text-[9px] font-black text-slate-400 hover:text-white uppercase tracking-widest transition-colors">DMCA</a>
+                            </div>
+                        </div>
+
+                        {/* Final Tagline */}
+                        <div className="text-center pt-8 opacity-20">
+                            <p className="text-[7px] font-black text-slate-600 uppercase tracking-[1em] leading-loose">
+                                Designed for peak human experience • ultra-low latency enabled • global CDN verified • neural buffer active
+                            </p>
+                        </div>
+                    </footer>
                 </div>
             </main>
 
             {/* Floating neural elements */}
-            <div className="absolute bottom-8 left-8 hidden md:flex items-center gap-4 text-slate-600 opacity-30 select-none">
+            <div className="fixed bottom-8 left-8 hidden md:flex items-center gap-4 text-slate-600 opacity-30 select-none pointer-events-none">
                 <Activity size={14} className="animate-pulse" />
                 <span className="text-[8px] font-black uppercase tracking-[0.5em] font-mono">Secure Transmission Established</span>
             </div>

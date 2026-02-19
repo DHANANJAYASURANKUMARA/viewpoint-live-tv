@@ -13,8 +13,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Viewpoint | Premium Streaming",
-  description: "Experience premium quality streaming with Viewpoint.",
+  title: "VIEWPOINT | Premium Ultra-Low Latency Live Streaming",
+  description: "Experience the next evolution of live television with VIEWPOINT. Ultra-low latency, global signal coverage, and a hyper-fluid neural interface for 250+ premium channels.",
+  keywords: ["live tv", "streaming service", "4k hdr streaming", "global television", "ultra low latency", "online player"],
+  authors: [{ name: "VIEWPOINT Team" }],
+  openGraph: {
+    title: "VIEWPOINT | Beyond Streaming",
+    description: "The next evolution of live television. Ultra-low latency, global signal coverage.",
+    type: "website",
+    url: "https://viewpoint-premium.vercel.app",
+    siteName: "VIEWPOINT",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "VIEWPOINT | Beyond Streaming",
+    description: "Ultra-low latency global streaming interface.",
+  },
+  alternates: {
+    canonical: "https://viewpoint-premium.vercel.app",
+  },
 };
 
 import MainLayoutWrapper from "@/components/MainLayoutWrapper";

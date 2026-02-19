@@ -1,0 +1,75 @@
+"use client";
+
+import React, { useState } from "react";
+import VideoPlayer from "@/components/VideoPlayer";
+import { Tv, MousePointer2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+export default function WatchPage() {
+    const [currentUrl, setCurrentUrl] = useState("");
+    const [currentTitle, setCurrentTitle] = useState("");
+
+    React.useEffect(() => {
+        const handleChannelSelect = (e: any) => {
+            const detail = (e as CustomEvent).detail;
+            if (detail?.url) {
+                setCurrentUrl(detail.url);
+                setCurrentTitle(detail.name || "Custom Stream");
+            }
+        };
+
+        window.addEventListener("vpoint-channel-select", handleChannelSelect);
+        return () => window.removeEventListener("vpoint-channel-select", handleChannelSelect);
+    }, []);
+
+    return (
+        <div className="h-full flex items-center justify-center p-6 md:p-10">
+            <div className="w-full max-w-5xl mx-auto">
+                <AnimatePresence mode="wait">
+                    {currentUrl ? (
+                        <motion.div
+                            key="player"
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 1.02 }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                        >
+                            <VideoPlayer url={currentUrl} title={currentTitle} />
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key="empty"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="flex flex-col items-center justify-center text-center space-y-8 p-12 glass rounded-[3rem] border border-white/10"
+                        >
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-neon-cyan/20 blur-[60px] rounded-full animate-pulse" />
+                                <div className="relative w-24 h-24 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center shadow-2xl backdrop-blur-2xl">
+                                    <Tv size={48} className="text-neon-cyan animate-pulse" />
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <h2 className="text-3xl font-black text-white tracking-[0.1em] uppercase">
+                                    Ready for Transmission
+                                </h2>
+                                <p className="text-slate-500 text-[10px] max-w-xs mx-auto font-black leading-relaxed uppercase tracking-widest">
+                                    Select a channel from the sidebar or paste a custom link below to start your premium viewing experience.
+                                </p>
+                            </div>
+
+                            <div className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/5 rounded-full">
+                                <MousePointer2 size={14} className="text-neon-magenta animate-bounce" />
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                    Awaiting Input Signal
+                                </span>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        </div>
+    );
+}
