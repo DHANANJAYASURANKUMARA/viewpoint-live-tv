@@ -62,7 +62,7 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                                 <a
                                     key={link.name}
                                     href={link.href}
-                                    className="text-[10px] font-black uppercase tracking-[0.2em] hover:text-white transition-colors"
+                                    className="text-xs font-semibold uppercase tracking-[0.2em] text-white/60 hover:text-white transition-colors"
                                 >
                                     {link.name}
                                 </a>
@@ -73,9 +73,9 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                         <div className="flex items-center gap-4">
                             <button
                                 onClick={onLaunch}
-                                className="hidden sm:flex items-center gap-2 px-6 py-2.5 bg-white text-vpoint-dark rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-neon-cyan transition-all"
+                                className="hidden sm:flex items-center gap-2 px-6 py-2.5 bg-white text-vpoint-dark rounded-full font-bold text-[11px] uppercase tracking-widest hover:bg-neon-cyan transition-all"
                             >
-                                Launch <ArrowRight size={14} />
+                                Dashboard <ArrowRight size={14} />
                             </button>
                             <button
                                 className="lg:hidden text-white"
@@ -133,30 +133,30 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                     >
                         {/* Live HUD Placeholder */}
                         <div className="flex flex-wrap items-center justify-center gap-6 mb-12">
-                            <div className="flex items-center gap-3 px-4 py-2 glass border border-white/10 rounded-full">
+                            <div className="flex items-center gap-3 px-5 py-2.5 glass border border-white/10 rounded-full bg-white/5">
                                 <span className="relative flex h-2 w-2">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                                 </span>
-                                <span className="text-[9px] font-black text-white/70 uppercase tracking-widest">Live: {viewerCount.toLocaleString()} Viewing</span>
+                                <span className="text-[11px] font-semibold text-white/90 uppercase tracking-[0.1em]">Signal Online: {viewerCount.toLocaleString()} Viewing</span>
                             </div>
-                            <div className="flex items-center gap-3 px-4 py-2 glass border border-white/10 rounded-full">
+                            <div className="flex items-center gap-3 px-5 py-2.5 glass border border-white/10 rounded-full bg-white/5">
                                 <Activity size={12} className="text-neon-cyan" />
-                                <span className="text-[9px] font-black text-white/70 uppercase tracking-widest">Signals: {activeSignals} Active</span>
+                                <span className="text-[11px] font-semibold text-white/90 uppercase tracking-[0.1em]">Data Nodes: {activeSignals}</span>
                             </div>
-                            <div className="flex items-center gap-3 px-4 py-2 glass border border-white/5 rounded-full">
+                            <div className="flex items-center gap-3 px-5 py-2.5 glass border border-white/5 rounded-full bg-white/5">
                                 <ShieldCheck size={12} className="text-emerald-500" />
-                                <span className="text-[9px] font-black text-white/70 uppercase tracking-widest">Secure Handshake</span>
+                                <span className="text-[11px] font-semibold text-white/90 uppercase tracking-[0.1em]">Atmospheric Encrypted</span>
                             </div>
                         </div>
 
-                        <h1 className="text-6xl md:text-9xl font-black text-white tracking-tighter uppercase leading-[0.85] [text-wrap:balance]">
+                        <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold text-white tracking-tighter uppercase leading-[0.9] [text-wrap:balance]">
                             Ultra <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan via-white to-neon-purple animate-pulse">Low Latency</span><br />
-                            Experience
+                            Engine v2.5
                         </h1>
 
-                        <p className="max-w-2xl mx-auto text-sm md:text-lg text-slate-400 font-medium uppercase tracking-[0.3em] leading-relaxed opacity-80">
-                            The future of live transmission. Optimized for data-density and atmospheric visual clarity.
+                        <p className="max-w-2xl mx-auto text-sm md:text-lg text-white/50 font-medium uppercase tracking-[0.25em] leading-relaxed">
+                            Experience the future of live transmission. Optimized for editorial density and visual clarity.
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-10">
@@ -183,16 +183,18 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                     ].map((f, i) => (
                         <motion.div
                             key={i}
-                            whileHover={{ y: -10 }}
-                            className="p-10 glass border border-white/10 rounded-[3rem] space-y-6 hover:border-white/20 transition-all bg-gradient-to-br from-white/5 to-transparent"
+                            whileHover={{ y: -8 }}
+                            className="p-10 glass border border-white/10 rounded-[2.5rem] space-y-8 hover:border-white/20 transition-all bg-gradient-to-br from-white/5 to-transparent"
                         >
-                            <div className="p-4 bg-white/5 rounded-2xl w-fit text-neon-cyan ring-1 ring-white/10 shadow-xl">
+                            <div className="p-4 bg-white/5 rounded-2xl w-fit text-neon-cyan ring-1 ring-white/10">
                                 {f.icon}
                             </div>
-                            <h3 className="text-2xl font-black text-white uppercase tracking-tighter">{f.title}</h3>
-                            <p className="text-[11px] font-bold leading-loose uppercase tracking-[0.2em] text-slate-500 italic opacity-80">
-                                {f.desc}
-                            </p>
+                            <div className="space-y-4">
+                                <h3 className="text-2xl font-bold text-white uppercase tracking-tight">{f.title}</h3>
+                                <p className="text-xs font-medium leading-relaxed uppercase tracking-widest text-white/40 italic">
+                                    {f.desc}
+                                </p>
+                            </div>
                         </motion.div>
                     ))}
                 </div>
@@ -201,31 +203,31 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
             {/* What's New Section (Premium Look) */}
             <section id="whats-new" className="py-32 bg-white/5 relative">
                 <div className="container mx-auto px-6">
-                    <div className="flex flex-col lg:flex-row items-end justify-between mb-20 gap-8">
-                        <div className="space-y-4">
-                            <span className="text-[10px] font-black text-neon-purple uppercase tracking-[0.5em]">Transmission Update v2.5</span>
-                            <h2 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter leading-none">What's New</h2>
+                    <div className="flex flex-col lg:flex-row items-end justify-between mb-24 gap-8">
+                        <div className="space-y-6 text-left w-full lg:w-auto">
+                            <span className="text-xs font-bold text-neon-purple uppercase tracking-[0.4em]">Signal Refinement v2.5.8</span>
+                            <h2 className="text-5xl md:text-8xl font-bold text-white uppercase tracking-tighter leading-none">Intelligence</h2>
                         </div>
-                        <p className="max-w-md text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 leading-loose">
-                            We've upgraded our global signal backbone to support true 4K HDR transmissions with atmospheric depth enhancement.
+                        <p className="max-w-md text-xs font-semibold uppercase tracking-widest text-white/30 leading-loose">
+                            We've upgraded our global signal backbone to support true 10-bit HDR transmissions with deep atmospheric enhancement.
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                        <div className="relative group overflow-hidden rounded-[3rem] aspect-video glass border border-white/10 flex items-center justify-center">
+                        <div className="relative group overflow-hidden rounded-[2.5rem] aspect-video glass border border-white/10 flex items-center justify-center bg-white/5">
                             <div className="absolute inset-0 bg-gradient-to-t from-vpoint-dark via-transparent to-transparent z-10" />
-                            <div className="text-center z-20 space-y-4 p-10">
-                                <Sparkles className="mx-auto text-neon-magenta" size={48} />
-                                <h3 className="text-3xl font-black text-white uppercase tracking-tighter transition-all group-hover:scale-105">4K Global Refresh</h3>
-                                <p className="text-[9px] font-black tracking-widest uppercase text-white/50">250+ Signals Upgraded to Ultra-HD</p>
+                            <div className="text-center z-20 space-y-6 p-10">
+                                <Sparkles className="mx-auto text-neon-magenta opacity-80" size={48} />
+                                <h3 className="text-3xl font-bold text-white uppercase tracking-tighter transition-all group-hover:scale-105">Atmospheric 4K</h3>
+                                <p className="text-xs font-semibold tracking-widest uppercase text-white/40">250+ Nodes Upgraded to HDR10</p>
                             </div>
                         </div>
-                        <div className="relative group overflow-hidden rounded-[3rem] aspect-video glass border border-white/10 flex items-center justify-center">
+                        <div className="relative group overflow-hidden rounded-[2.5rem] aspect-video glass border border-white/10 flex items-center justify-center bg-white/5">
                             <div className="absolute inset-0 bg-gradient-to-t from-vpoint-dark via-transparent to-transparent z-10" />
-                            <div className="text-center z-20 space-y-4 p-10">
-                                <Radio className="mx-auto text-neon-cyan" size={48} />
-                                <h3 className="text-3xl font-black text-white uppercase tracking-tighter transition-all group-hover:scale-105">Neural Buffering v3</h3>
-                                <p className="text-[9px] font-black tracking-widest uppercase text-white/50">Predictive Signal Correction Active</p>
+                            <div className="text-center z-20 space-y-6 p-10">
+                                <Radio className="mx-auto text-neon-cyan opacity-80" size={48} />
+                                <h3 className="text-3xl font-bold text-white uppercase tracking-tighter transition-all group-hover:scale-105">Neural Pulse</h3>
+                                <p className="text-xs font-semibold tracking-widest uppercase text-white/40">Predictive Buffer Engine Active</p>
                             </div>
                         </div>
                     </div>
@@ -235,21 +237,21 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
             {/* FAQ / Support / Legal (Content Rich for AdSense) */}
             <section id="faq" className="py-32 container mx-auto px-6">
                 <div className="max-w-4xl mx-auto space-y-20">
-                    <div className="text-center space-y-6">
-                        <h2 className="text-4xl font-black text-white uppercase tracking-widest">Interface Telemetry</h2>
-                        <div className="w-20 h-1 bg-neon-cyan mx-auto rounded-full" />
+                    <div className="space-y-8">
+                        <h2 className="text-4xl font-bold text-white uppercase tracking-[0.3em]">Telemetry Support</h2>
+                        <div className="w-24 h-1 bg-neon-cyan mx-auto rounded-full opacity-50" />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
                         {[
-                            { q: "Signal Stability", a: "Viewpoint uses a global CDN mesh to ensure 99.9% uptime for all major network transmissions." },
-                            { q: "Device Support", a: "Our dashboard is engineered to be atmospheric and fully responsive from 4-inch handhelds to 8K theater screens." },
-                            { q: "Custom Streams", a: "Simply paste any HLS, DASH or M3U8 signal into our HUD to experience it with Viewpoint's post-processing." },
-                            { q: "Privacy Standards", a: "We operate on a zero-knowledge architecture. Your signal history stays local to your neural handshake." }
+                            { q: "Transmission Integrity", a: "Viewpoint leverages a global CDN edge mesh to ensure 99.9% uptime for all major network protocols." },
+                            { q: "Interface Fluidity", a: "Our dashboard is engineered to be atmospheric and fully responsive from handheld optics to theater screens." },
+                            { q: "Custom Signals", a: "Paste any HLS, DASH or M3U8 source into our HUD to experience it with VIEWPOINT's proprietary post-processing." },
+                            { q: "Secure Handshake", a: "We operate on a zero-knowledge architecture. Your transmission history stays local to your neural handshake." }
                         ].map((item, i) => (
-                            <div key={i} className="space-y-4 p-8 glass-dark border-l-2 border-neon-cyan/30 rounded-r-3xl">
-                                <h4 className="text-xs font-black text-white uppercase tracking-[0.2em]">{item.q}</h4>
-                                <p className="text-[10px] font-bold leading-loose text-slate-500 uppercase tracking-widest italic">{item.a}</p>
+                            <div key={i} className="space-y-5 p-10 glass border-l-4 border-neon-cyan/20 rounded-r-[2rem] bg-white/5">
+                                <h4 className="text-sm font-bold text-white uppercase tracking-[0.15em]">{item.q}</h4>
+                                <p className="text-xs font-medium leading-relaxed text-white/40 uppercase tracking-widest italic">{item.a}</p>
                             </div>
                         ))}
                     </div>
