@@ -8,7 +8,22 @@ import bcrypt from "bcryptjs";
 
 export async function getChannels() {
     try {
-        return await db.select().from(channels);
+        const allChannels = await db.select().from(channels);
+        const now = new Date();
+
+        // Auto-activation logic: If a channel is "Scheduled" and its scheduledAt time has passed,
+        // we update it to "Live" in the database and return the updated state.
+        const processedChannels = await Promise.all(allChannels.map(async (channel) => {
+            if (channel.status === 'Scheduled' && channel.scheduledAt && new Date(channel.scheduledAt) <= now) {
+                await db.update(channels)
+                    .set({ status: 'Live' })
+                    .where(eq(channels.id, channel.id));
+                return { ...channel, status: 'Live' };
+            }
+            return channel;
+        }));
+
+        return processedChannels;
     } catch (error) {
         console.error("Failed to fetch channels:", error);
         return [];

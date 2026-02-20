@@ -255,7 +255,8 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
     const filteredChannels = channels.filter(c => {
         const matchesCategory = activeCategory === "All" || c.category === activeCategory;
         const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
+        const isActuallyLive = c.isLive; // isLive is mapped from status === "Live" in loadChannels
+        return matchesCategory && matchesSearch && isActuallyLive;
     });
 
     const categoryIcons: Record<string, any> = {

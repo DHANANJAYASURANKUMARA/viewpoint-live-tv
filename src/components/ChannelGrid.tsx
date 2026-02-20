@@ -49,9 +49,11 @@ export default function ChannelGrid({ onChannelSelect }: ChannelGridProps) {
         loadChannels();
     }, []);
 
-    const filteredChannels = activeCategory === "All"
-        ? channels
-        : channels.filter(c => c.category === activeCategory);
+    const filteredChannels = channels.filter(c => {
+        const matchesCategory = activeCategory === "All" || c.category === activeCategory;
+        const isLive = c.status === "Live";
+        return matchesCategory && isLive;
+    });
 
     return (
         <div className="space-y-6">
