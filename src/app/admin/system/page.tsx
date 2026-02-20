@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getDbStats } from "@/lib/actions";
+import { useConfig } from "@/components/ConfigContext";
 
 export default function SystemControlPage() {
     const [logs, setLogs] = useState([
@@ -25,6 +26,7 @@ export default function SystemControlPage() {
     ]);
 
     const [dbStatus, setDbStatus] = useState<any>(null);
+    const { config, updateConfig } = useConfig();
 
     React.useEffect(() => {
         getDbStats().then(res => setDbStatus(res));
@@ -150,18 +152,24 @@ export default function SystemControlPage() {
                         <div className="pt-10 border-t border-white/5 space-y-6">
                             <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Platform Toggles</h4>
                             <div className="space-y-4">
-                                <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5">
+                                <button
+                                    onClick={() => updateConfig({ maintenanceMode: !config.maintenanceMode })}
+                                    className="w-full flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5"
+                                >
                                     <span className="text-[9px] font-black text-white uppercase tracking-widest">Maintenance Mode</span>
-                                    <div className="w-10 h-5 bg-white/10 rounded-full relative">
-                                        <div className="absolute left-1 top-1 w-3 h-3 bg-slate-700 rounded-full" />
+                                    <div className={`w-10 h-5 rounded-full relative transition-colors ${config.maintenanceMode ? "bg-neon-magenta/80" : "bg-white/10"}`}>
+                                        <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${config.maintenanceMode ? "right-1" : "left-1 bg-slate-700"}`} />
                                     </div>
-                                </div>
-                                <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5">
-                                    <span className="text-[9px] font-black text-white uppercase tracking-widest">Public Registration</span>
-                                    <div className="w-10 h-5 bg-emerald-500/80 rounded-full relative">
-                                        <div className="absolute right-1 top-1 w-3 h-3 bg-white rounded-full" />
+                                </button>
+                                <button
+                                    onClick={() => updateConfig({ adSenseActive: !config.adSenseActive })}
+                                    className="w-full flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5"
+                                >
+                                    <span className="text-[9px] font-black text-white uppercase tracking-widest">Neural AdSense</span>
+                                    <div className={`w-10 h-5 rounded-full relative transition-colors ${config.adSenseActive ? "bg-emerald-500/80" : "bg-white/10"}`}>
+                                        <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${config.adSenseActive ? "right-1" : "left-1 bg-slate-700"}`} />
                                     </div>
-                                </div>
+                                </button>
                             </div>
                         </div>
 

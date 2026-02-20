@@ -15,10 +15,16 @@ import {
     Shield
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { getDbStats, getChannels } from "@/lib/actions";
+import { useConfig } from "@/components/ConfigContext";
 
 export default function AdminDashboard() {
     const router = useRouter();
     const [isMounted, setIsMounted] = useState(false);
+
+    const [dbStats, setDbStats] = useState<any>(null);
+    const [channels, setChannels] = useState<any[]>([]);
+    const { config, updateConfig } = useConfig();
 
     useEffect(() => {
         setIsMounted(true);
@@ -26,15 +32,23 @@ export default function AdminDashboard() {
         if (!auth) {
             router.push("/admin/login");
         }
+
+        getDbStats().then(res => {
+            if (res.success) setDbStats(res.stats);
+        });
+
+        getChannels().then(data => {
+            setChannels(data);
+        });
     }, [router]);
 
     if (!isMounted) return null;
 
     const stats = [
-        { label: "Active Handshakes", value: "1,284", icon: Globe, color: "text-neon-cyan" },
-        { label: "Neural Traffic", value: "48.2 GB/s", icon: Zap, color: "text-neon-purple" },
+        { label: "Active Channels", value: dbStats?.channels?.toString() || "...", icon: Globe, color: "text-neon-cyan" },
+        { label: "Active Operators", value: dbStats?.operators?.toString() || "...", icon: Zap, color: "text-neon-purple" },
         { label: "Signal Uptime", value: "99.998%", icon: Shield, color: "text-emerald-500" },
-        { label: "Buffer Health", value: "Stable", icon: Activity, color: "text-amber-500" },
+        { label: "Config Nodes", value: dbStats?.settings?.toString() || "...", icon: Activity, color: "text-amber-500" },
     ];
 
     return (
@@ -95,32 +109,38 @@ export default function AdminDashboard() {
                                 <tr>
                                     <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-widest">Signal Name</th>
                                     <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-widest">Sector</th>
-                                    <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-widest">Latency</th>
+                                    <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-widest">Status</th>
                                     <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-widest text-right">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
-                                {[
-                                    { name: "ASIA TV", sector: "Entertainment", latency: "12ms", status: "Active" },
-                                    { name: "SKY SPORTS", sector: "Sports", latency: "8ms", status: "Active" },
-                                    { name: "NEWS LIVE", sector: "News", latency: "15ms", status: "Pending" },
-                                ].map((row, idx) => (
+                                {channels.slice(0, 5).map((row, idx) => (
                                     <tr key={idx} className="hover:bg-white/[0.02] transition-colors group">
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-2 h-2 rounded-full bg-neon-cyan shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
+                                                <div className={`w-2 h-2 rounded-full shadow-[0_0_8px_rgba(34,211,238,0.5)] ${row.status === 'Live' ? 'bg-emerald-500' : 'bg-red-500'}`} />
                                                 <span className="text-[11px] font-bold text-white uppercase tracking-tight group-hover:text-neon-cyan transition-colors">{row.name}</span>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">{row.sector}</td>
-                                        <td className="px-8 py-6 text-[10px] font-mono font-bold text-blue-500">{row.latency}</td>
+                                        <td className="px-8 py-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">{row.category}</td>
+                                        <td className="px-8 py-6 text-[10px] font-mono font-bold text-blue-500">{row.status}</td>
                                         <td className="px-8 py-6 text-right">
-                                            <button className="text-slate-700 hover:text-white transition-colors">
+                                            <button
+                                                onClick={() => router.push('/admin/signals')}
+                                                className="text-slate-700 hover:text-white transition-colors"
+                                            >
                                                 <MoreVertical size={16} />
                                             </button>
                                         </td>
                                     </tr>
                                 ))}
+                                {channels.length === 0 && (
+                                    <tr>
+                                        <td colSpan={4} className="px-8 py-10 text-center opacity-30 text-[10px] uppercase font-black tracking-widest">
+                                            No signals detected in matrix
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -150,18 +170,24 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="pt-8 border-t border-white/5 space-y-6">
-                            <div className="flex items-center justify-between">
+                            <button
+                                onClick={() => updateConfig({ neuralHudEnabled: !config.neuralHudEnabled })}
+                                className="w-full flex items-center justify-between"
+                            >
                                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Global Neural HUD</span>
-                                <div className="w-10 h-5 bg-neon-cyan/80 rounded-full relative">
-                                    <div className="absolute right-1 top-1 w-3 h-3 bg-white rounded-full" />
+                                <div className={`w-10 h-5 rounded-full relative transition-colors ${config.neuralHudEnabled ? "bg-neon-cyan/80" : "bg-white/5"}`}>
+                                    <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${config.neuralHudEnabled ? "right-1" : "left-1 bg-slate-700"}`} />
                                 </div>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Auto-Purge Cache</span>
-                                <div className="w-10 h-5 bg-white/5 rounded-full relative">
-                                    <div className="absolute left-1 top-1 w-3 h-3 bg-slate-700 rounded-full" />
+                            </button>
+                            <button
+                                onClick={() => updateConfig({ maintenanceMode: !config.maintenanceMode })}
+                                className="w-full flex items-center justify-between"
+                            >
+                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Maintenance Mode</span>
+                                <div className={`w-10 h-5 rounded-full relative transition-colors ${config.maintenanceMode ? "bg-neon-magenta/80" : "bg-white/5"}`}>
+                                    <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${config.maintenanceMode ? "right-1" : "left-1 bg-slate-700"}`} />
                                 </div>
-                            </div>
+                            </button>
                         </div>
                     </div>
                 </div>

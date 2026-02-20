@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getChannels, addChannel, updateChannel, deleteChannel, seedChannels } from "@/lib/actions";
+import { initialChannels } from "@/lib/constants";
 
 interface Signal {
     id: string;
@@ -65,12 +66,14 @@ export default function SignalControlPage() {
 
     const handleBulkSync = async () => {
         setSyncing(true);
-        // This is a simulation of pulling hardcoded channels from Sidebar.tsx logic
-        // In a real app, you'd pass the actual Sidebar channels array here.
-        const res = await seedChannels([]); // Placeholder call to trigger revalidation
+        const res = await seedChannels(initialChannels);
         await loadSignals();
         setSyncing(false);
-        alert("Institutional Signal Sync Complete.");
+        if (res.success) {
+            alert(`Institutional Signal Sync Complete. ${res.count} new nodes established.`);
+        } else {
+            alert("Signal Sync Failed. Check matrix connectivity.");
+        }
     };
 
     const handleAddSignal = async () => {
