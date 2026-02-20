@@ -145,7 +145,21 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
             return false;
         };
 
-        // Method 3: Console Trap (Custom Getter)
+        // Method 3: Browser Cache Detection
+        const checkCache = () => {
+            try {
+                const navEntry = window.performance.getEntriesByType("navigation")[0] as any;
+                // If transferSize is 0, it typically indicates the resource was served from cache
+                // DeliveryType 'cache' is a more direct indicator in modern browsers
+                if (navEntry && (navEntry.transferSize === 0 || navEntry.deliveryType === 'cache')) {
+                    router.push("/warning"); // Redirect to ensure structural integrity
+                }
+            } catch (e) {
+                console.error("Matrix Integrity Check Failed", e);
+            }
+        };
+
+        // Method 4: Console Trap (Custom Getter)
         const element = new Image();
         Object.defineProperty(element, 'id', {
             get: () => {
@@ -166,6 +180,7 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
         const detectionInterval = setInterval(() => {
             detectDevTools();
             checkConsole();
+            checkCache();
         }, 500); // 500ms for even faster detection
 
         return () => {
