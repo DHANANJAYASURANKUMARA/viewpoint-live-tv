@@ -87,7 +87,8 @@ export default function LoginPage() {
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Email</label>
                             <input
                                 type="email"
-                                placeholder="operator@viewpoint.tv"
+                                placeholder="Type your email"
+
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 px-6 text-xs font-bold text-white focus:outline-none focus:border-neon-cyan/50 transition-all placeholder:text-slate-600"

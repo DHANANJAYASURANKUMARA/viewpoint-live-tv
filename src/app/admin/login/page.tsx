@@ -110,14 +110,8 @@ export default function AdminLoginPage() {
                             {isLoading ? "VERIFYING..." : (<>Initiate Login <ArrowRight size={16} /></>)}
                         </button>
                     </form>
-
-                    {/* Default credentials hint */}
-                    <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-2xl space-y-1">
-                        <p className="text-[9px] font-black text-amber-500 uppercase tracking-widest">Default Super Admin Credentials</p>
-                        <p className="text-[9px] font-mono text-slate-500">ID: <span className="text-white">SADMIN</span> &nbsp; KEY: <span className="text-white">superadmin2026</span></p>
-                        <p className="text-[8px] text-slate-600 uppercase tracking-widest">Change these immediately in Operators page</p>
-                    </div>
                 </div>
+
 
                 <div className="mt-10 text-center opacity-20">
                     <p className="text-[8px] font-black uppercase tracking-[0.5em] text-white">© 2026 VIEWPOINT Neural Systems • System v2.0.4</p>
