@@ -3,22 +3,30 @@
     "short_name": "VIEWPOINT",
     "description": "Ultra-Premium Live Streaming Platform. Experience the pulse of global broadcasting with zero-lag technology.",
     "start_url": "/",
+    "scope": "/",
     "display": "standalone",
     "background_color": "#0a0a0f",
     "theme_color": "#0a0a0f",
     "orientation": "portrait-primary",
+    "lang": "en",
     "icons": [
         {
             "src": "/icons/icon-192.svg",
             "sizes": "192x192",
             "type": "image/svg+xml",
-            "purpose": "any maskable"
+            "purpose": "any"
         },
         {
             "src": "/icons/icon-512.svg",
             "sizes": "512x512",
             "type": "image/svg+xml",
-            "purpose": "any maskable"
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-512.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "maskable"
         }
     ],
     "categories": [
