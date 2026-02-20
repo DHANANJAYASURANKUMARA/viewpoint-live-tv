@@ -70,6 +70,8 @@ export default function AdminDashboard() {
             setIsEditModalOpen(false);
             setEditingSignal(null);
             loadData();
+        } else {
+            alert(`Update Failed: ${(res as any).error || 'Unknown error'}`);
         }
     };
 
@@ -87,13 +89,19 @@ export default function AdminDashboard() {
             setIsAddModalOpen(false);
             setNewSignal({ name: "", url: "", category: "Entertainment", status: "Live", scheduledAt: "" });
             loadData();
+        } else {
+            alert(`Injection Failed: ${(res as any).error || 'Unknown error'}`);
         }
     };
 
     const handleDeleteSignal = async (id: string) => {
         if (confirm("TERMINATE SIGNAL NODE?")) {
             const res = await deleteChannel(id);
-            if (res.success) loadData();
+            if (res.success) {
+                loadData();
+            } else {
+                alert(`Deletion Failed: ${(res as any).error || 'Unknown error'}`);
+            }
         }
     };
 

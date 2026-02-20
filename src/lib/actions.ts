@@ -166,9 +166,9 @@ export async function updateChannel(id: string, data: any) {
         revalidatePath("/admin/dashboard");
         revalidatePath("/");
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to update channel:", error);
-        return { success: false };
+        return { success: false, error: error?.message || "Unknown error" };
     }
 }
 
@@ -176,11 +176,12 @@ export async function deleteChannel(id: string) {
     try {
         await db.delete(channels).where(eq(channels.id, id));
         revalidatePath("/admin/signals");
+        revalidatePath("/admin/dashboard");
         revalidatePath("/");
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to delete channel:", error);
-        return { success: false };
+        return { success: false, error: error?.message || "Unknown error" };
     }
 }
 
@@ -188,11 +189,12 @@ export async function addChannel(data: any) {
     try {
         await db.insert(channels).values(data);
         revalidatePath("/admin/signals");
+        revalidatePath("/admin/dashboard");
         revalidatePath("/");
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to add channel:", error);
-        return { success: false };
+        return { success: false, error: error?.message || "Unknown error" };
     }
 }
 
@@ -216,11 +218,12 @@ export async function seedChannels(initialChannels: any[]) {
             }
         }
         revalidatePath("/admin/signals");
+        revalidatePath("/admin/dashboard");
         revalidatePath("/");
         return { success: true, count };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to seed channels:", error);
-        return { success: false, count: 0 };
+        return { success: false, count: 0, error: error?.message || "Unknown error" };
     }
 }
 

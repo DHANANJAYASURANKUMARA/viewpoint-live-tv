@@ -77,7 +77,7 @@ export default function SignalControlPage() {
         if (res.success) {
             alert(`Institutional Signal Sync Complete. ${res.count} new nodes established.`);
         } else {
-            alert("Signal Sync Failed. Check matrix connectivity.");
+            alert(`Signal Sync Failed: ${(res as any).error || 'Unknown error'}`);
         }
     };
 
@@ -97,6 +97,8 @@ export default function SignalControlPage() {
             setIsAddModalOpen(false);
             setNewSignal({ name: "", url: "", category: "Entertainment", sniMask: "", proxyActive: false, status: "Live", scheduledAt: "" });
             loadSignals();
+        } else {
+            alert(`Injection Failed: ${(res as any).error || 'Unknown error'}`);
         }
     };
 
@@ -111,13 +113,19 @@ export default function SignalControlPage() {
             setIsEditModalOpen(false);
             setEditingSignal(null);
             loadSignals();
+        } else {
+            alert(`Update Failed: ${(res as any).error || 'Unknown error'}`);
         }
     };
 
     const handleDeleteSignal = async (id: string) => {
         if (confirm("TERMINATE SIGNAL NODE?")) {
             const res = await deleteChannel(id);
-            if (res.success) loadSignals();
+            if (res.success) {
+                loadSignals();
+            } else {
+                alert(`Deletion Failed: ${(res as any).error || 'Unknown error'}`);
+            }
         }
     };
 
