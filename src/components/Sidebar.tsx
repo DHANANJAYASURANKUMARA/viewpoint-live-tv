@@ -27,10 +27,12 @@ import {
     Heart,
     Settings,
     Activity,
-    Tv
+    Tv,
+    LogOut
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useConfig } from "./ConfigContext";
 
 interface Channel {
@@ -51,11 +53,28 @@ interface SidebarProps {
 
 export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
     const { config } = useConfig();
+    const router = useRouter();
     const [channels, setChannels] = useState<Channel[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [activeCategory, setActiveCategory] = useState("All");
     const [favorites, setFavorites] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currentUser, setCurrentUser] = useState<string | null>(null);
+
+    useEffect(() => {
+        const session = localStorage.getItem("vpoint-user");
+        if (session) {
+            try {
+                const user = JSON.parse(session);
+                setCurrentUser(user.name || "User");
+            } catch { }
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem("vpoint-user");
+        router.push("/login");
+    };
 
     useEffect(() => {
         const loadChannels = async () => {
@@ -336,6 +355,21 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
                     <Settings size={14} />
                     Advanced Settings
                 </button>
+
+                {currentUser && (
+                    <div className="space-y-3">
+                        <div className="px-4 py-3 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">{currentUser}</span>
+                            <button
+                                onClick={handleLogout}
+                                className="text-slate-600 hover:text-red-400 transition-colors"
+                                title="Logout"
+                            >
+                                <LogOut size={14} />
+                            </button>
+                        </div>
+                    </div>
+                )}
 
                 <div className="px-2 flex items-center justify-between text-slate-800">
                     <span className="text-[7px] font-black uppercase tracking-widest">{config.brandingText} MODULE v{config.version}</span>

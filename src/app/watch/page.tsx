@@ -2,14 +2,34 @@
 
 import React, { useState } from "react";
 import VideoPlayer from "@/components/VideoPlayer";
-import { Tv, MousePointer2 } from "lucide-react";
+import { Tv, MousePointer2, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function WatchPage() {
+    const router = useRouter();
     const [currentUrl, setCurrentUrl] = useState("");
     const [currentTitle, setCurrentTitle] = useState("");
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userName, setUserName] = useState("");
 
     React.useEffect(() => {
+        // Auth guard: check for user session
+        const session = localStorage.getItem("vpoint-user");
+        if (!session) {
+            router.push("/login");
+            return;
+        }
+        try {
+            const user = JSON.parse(session);
+            setIsAuthenticated(true);
+            setUserName(user.name || "User");
+        } catch {
+            localStorage.removeItem("vpoint-user");
+            router.push("/login");
+            return;
+        }
+
         const handleChannelSelect = (e: any) => {
             const detail = (e as CustomEvent).detail;
             if (detail?.url) {
@@ -20,7 +40,15 @@ export default function WatchPage() {
 
         window.addEventListener("vpoint-channel-select", handleChannelSelect);
         return () => window.removeEventListener("vpoint-channel-select", handleChannelSelect);
-    }, []);
+    }, [router]);
+
+    if (!isAuthenticated) {
+        return (
+            <div className="h-full flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-neon-cyan/30 border-t-neon-cyan rounded-full animate-spin" />
+            </div>
+        );
+    }
 
     return (
         <div className="h-full flex items-center justify-center p-6 md:p-10">

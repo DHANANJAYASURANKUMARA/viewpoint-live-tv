@@ -39,3 +39,11 @@ export const settings = pgTable("settings", {
     value: text("value").notNull(),
     updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+export const users = pgTable("users", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull().unique(),
+    password: text("password").notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+});
