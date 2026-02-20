@@ -49,16 +49,14 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const initializeConfig = async () => {
-            // First try to load from DB
+            // Always load from DB first — authoritative source
             const dbSettings = await getSettings();
 
             if (Object.keys(dbSettings).length > 0) {
-                // Merge DB settings with default config to handle schema changes
                 const newConfig = { ...defaultConfig };
                 Object.keys(dbSettings).forEach(key => {
                     if (key in newConfig) {
                         const val = dbSettings[key];
-                        // Handle boolean conversion if necessary
                         if (typeof (newConfig as any)[key] === "boolean") {
                             (newConfig as any)[key] = val === "true";
                         } else {
@@ -67,14 +65,21 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
                     }
                 });
                 setConfig(newConfig);
+                // Sync localStorage from DB so they stay consistent
+                localStorage.setItem("vpoint-platform-config", JSON.stringify(newConfig));
             } else {
-                // Fallback to localStorage if no DB settings
+                // DB is empty — try seeding from localStorage if available
                 const saved = localStorage.getItem("vpoint-platform-config");
                 if (saved) {
                     try {
-                        setConfig(JSON.parse(saved));
+                        const parsed = JSON.parse(saved);
+                        setConfig(parsed);
+                        // Persist localStorage values into the DB for future loads
+                        Object.keys(parsed).forEach((key: string) => {
+                            updateSetting(key, String(parsed[key]));
+                        });
                     } catch (e) {
-                        console.error("Failed to parse config", e);
+                        console.error("Failed to parse config from localStorage", e);
                     }
                 }
             }
