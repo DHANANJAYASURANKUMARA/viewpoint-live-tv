@@ -12,7 +12,8 @@ import {
     Shield,
     Terminal,
     Zap,
-    Users
+    Users,
+    Database
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -26,6 +27,7 @@ export default function AdminSidebar() {
         { icon: Activity, label: "Analytics", path: "/admin/analytics", color: "text-emerald-500" },
         { icon: Zap, label: "Appearance", path: "/admin/appearance", color: "text-neon-magenta" },
         { icon: Users, label: "Operators", path: "/admin/operators", color: "text-amber-500" },
+        { icon: Database, label: "Database", path: "/admin/database", color: "text-emerald-500" },
     ];
 
     const handleLogout = () => {

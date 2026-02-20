@@ -185,3 +185,43 @@ export async function seedChannels(initialChannels: any[]) {
         return { success: false, count: 0 };
     }
 }
+
+export async function getDbStats() {
+    try {
+        const channelCount = await db.select().from(channels);
+        const operatorCount = await db.select().from(operators);
+        const favoriteCount = await db.select().from(favorites);
+        const settingCount = await db.select().from(settings);
+
+        return {
+            success: true,
+            stats: {
+                channels: channelCount.length,
+                operators: operatorCount.length,
+                favorites: favoriteCount.length,
+                settings: settingCount.length,
+            }
+        };
+    } catch (error) {
+        console.error("Failed to fetch DB stats:", error);
+        return { success: false, stats: null };
+    }
+}
+
+export async function clearTable(tableName: "channels" | "operators" | "favorites" | "settings") {
+    try {
+        if (tableName === "channels") await db.delete(channels);
+        else if (tableName === "operators") await db.delete(operators);
+        else if (tableName === "favorites") await db.delete(favorites);
+        else if (tableName === "settings") await db.delete(settings);
+
+        revalidatePath("/admin/database");
+        revalidatePath("/admin/signals");
+        revalidatePath("/admin/operators");
+        revalidatePath("/");
+        return { success: true };
+    } catch (error) {
+        console.error(`Failed to clear table ${tableName}:`, error);
+        return { success: false };
+    }
+}

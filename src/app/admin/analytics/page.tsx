@@ -13,13 +13,22 @@ import {
     Layout
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { getDbStats } from "@/lib/actions";
 
 export default function AnalyticsPage() {
+    const [dbStats, setDbStats] = React.useState<any>(null);
+
+    React.useEffect(() => {
+        getDbStats().then(res => {
+            if (res.success) setDbStats(res.stats);
+        });
+    }, []);
+
     const stats = [
-        { label: "Total Handshakes", value: "48,294", delta: "+12%", icon: Users, color: "text-neon-cyan" },
-        { label: "Concurrent Ops", value: "2,418", delta: "+5.4%", icon: Zap, color: "text-neon-purple" },
-        { label: "Signal Density", value: "High", delta: "Optimal", icon: Globe, color: "text-emerald-500" },
-        { label: "Sync Latency", value: "14ms", delta: "-2ms", icon: Activity, color: "text-amber-500" },
+        { label: "Total Signal Nodes", value: dbStats?.channels?.toString() || "...", delta: "+12%", icon: Globe, color: "text-neon-cyan" },
+        { label: "Active Operators", value: dbStats?.operators?.toString() || "...", delta: "+5.4%", icon: Users, color: "text-neon-purple" },
+        { label: "Saved Favorites", value: dbStats?.favorites?.toString() || "...", delta: "Stable", icon: Activity, color: "text-emerald-500" },
+        { label: "Config Nodes", value: dbStats?.settings?.toString() || "...", delta: "-2ms", icon: Zap, color: "text-amber-500" },
     ];
 
     return (

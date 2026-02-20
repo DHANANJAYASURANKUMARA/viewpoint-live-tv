@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { getSettings, updateSetting } from "@/lib/actions";
 
 interface PlatformConfig {
     accentColor: string;
@@ -47,15 +48,40 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     const [isInitialized, setIsInitialized] = useState(false);
 
     useEffect(() => {
-        const saved = localStorage.getItem("vpoint-platform-config");
-        if (saved) {
-            try {
-                setConfig(JSON.parse(saved));
-            } catch (e) {
-                console.error("Failed to parse config", e);
+        const initializeConfig = async () => {
+            // First try to load from DB
+            const dbSettings = await getSettings();
+
+            if (Object.keys(dbSettings).length > 0) {
+                // Merge DB settings with default config to handle schema changes
+                const newConfig = { ...defaultConfig };
+                Object.keys(dbSettings).forEach(key => {
+                    if (key in newConfig) {
+                        const val = dbSettings[key];
+                        // Handle boolean conversion if necessary
+                        if (typeof (newConfig as any)[key] === "boolean") {
+                            (newConfig as any)[key] = val === "true";
+                        } else {
+                            (newConfig as any)[key] = val;
+                        }
+                    }
+                });
+                setConfig(newConfig);
+            } else {
+                // Fallback to localStorage if no DB settings
+                const saved = localStorage.getItem("vpoint-platform-config");
+                if (saved) {
+                    try {
+                        setConfig(JSON.parse(saved));
+                    } catch (e) {
+                        console.error("Failed to parse config", e);
+                    }
+                }
             }
-        }
-        setIsInitialized(true);
+            setIsInitialized(true);
+        };
+
+        initializeConfig();
     }, []);
 
     useEffect(() => {
@@ -70,10 +96,19 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     }, [config, isInitialized]);
 
     const updateConfig = (newConfig: Partial<PlatformConfig>) => {
+        const keys = Object.keys(newConfig);
+        keys.forEach(key => {
+            const val = (newConfig as any)[key];
+            updateSetting(key, val.toString());
+        });
         setConfig(prev => ({ ...prev, ...newConfig }));
     };
 
-    const resetConfig = () => {
+    const resetConfig = async () => {
+        // Reset in DB as well
+        Object.keys(defaultConfig).forEach(key => {
+            updateSetting(key, (defaultConfig as any)[key].toString());
+        });
         setConfig(defaultConfig);
     };
 

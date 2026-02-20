@@ -13,6 +13,7 @@ import {
     Download
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getDbStats } from "@/lib/actions";
 
 export default function SystemControlPage() {
     const [logs, setLogs] = useState([
@@ -22,6 +23,12 @@ export default function SystemControlPage() {
         { id: 4, type: "SYSTEM", message: "Vercel Analytics handshake established", time: "12:00:00", status: "Success" },
         { id: 5, type: "AUTH", message: "Failed handshake attempt from IP 192.168.1.1", time: "11:50:22", status: "Violation" },
     ]);
+
+    const [dbStatus, setDbStatus] = useState<any>(null);
+
+    React.useEffect(() => {
+        getDbStats().then(res => setDbStatus(res));
+    }, []);
 
     return (
         <div className="flex-1 h-full p-10 space-y-12 overflow-y-auto custom-scrollbar">
@@ -72,8 +79,8 @@ export default function SystemControlPage() {
                                 <div key={log.id} className="p-6 flex items-center gap-4 hover:bg-white/[0.01] transition-colors group">
                                     <div className="w-20">
                                         <span className={`px-2 py-1 rounded-md text-[8px] font-black border ${log.type === "AUTH" ? "border-amber-500/30 text-amber-500 bg-amber-500/5" :
-                                                log.type === "SIGNAL" ? "border-neon-purple/30 text-neon-purple bg-neon-purple/5" :
-                                                    "border-neon-cyan/30 text-neon-cyan bg-neon-cyan/5"
+                                            log.type === "SIGNAL" ? "border-neon-purple/30 text-neon-purple bg-neon-purple/5" :
+                                                "border-neon-cyan/30 text-neon-cyan bg-neon-cyan/5"
                                             }`}>
                                             {log.type}
                                         </span>
@@ -88,8 +95,8 @@ export default function SystemControlPage() {
                                     </div>
                                     <div className="w-20 text-right">
                                         <span className={`text-[8px] font-black uppercase tracking-widest ${log.status === "Success" ? "text-emerald-500" :
-                                                log.status === "Syncing" ? "text-neon-cyan" :
-                                                    "text-red-500"
+                                            log.status === "Syncing" ? "text-neon-cyan" :
+                                                "text-red-500"
                                             }`}>
                                             {log.status}
                                         </span>
@@ -119,10 +126,12 @@ export default function SystemControlPage() {
                                     </div>
                                     <div>
                                         <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Neon DB</h4>
-                                        <p className="text-[9px] font-bold text-emerald-500 uppercase">Synchronized</p>
+                                        <p className={`text-[9px] font-bold uppercase ${dbStatus?.success ? "text-emerald-500" : "text-amber-500"}`}>
+                                            {dbStatus?.success ? "Synchronized" : "Establishing..."}
+                                        </p>
                                     </div>
                                 </div>
-                                <Zap size={14} className="text-emerald-500" />
+                                <Zap size={14} className={dbStatus?.success ? "text-emerald-500" : "text-amber-500"} />
                             </div>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4">
