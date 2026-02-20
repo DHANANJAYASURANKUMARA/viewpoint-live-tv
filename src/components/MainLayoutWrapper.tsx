@@ -119,20 +119,33 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
             }
         };
 
-        // DevTools Detection using window size
+        // Ultra-Robust DevTools Detection
         const detectDevTools = () => {
+            // Method 1: Window Size Comparison
             const threshold = 160;
-            // Detect vertical or horizontal DevTools opening by comparing outer and inner dimensions
-            const isDevToolsOpen =
+            const isDevToolsOpenBySize =
                 window.outerWidth - window.innerWidth > threshold ||
                 window.outerHeight - window.innerHeight > threshold;
 
-            if (isDevToolsOpen) {
+            if (isDevToolsOpenBySize) {
                 router.push("/warning");
+                return true;
             }
+
+            // Method 2: Performance Timing (Debugger Trap)
+            const startTime = performance.now();
+            (function () {
+                return false;
+            })["constructor"]("debugger")["call"]();
+            if (performance.now() - startTime > 100) {
+                router.push("/warning");
+                return true;
+            }
+
+            return false;
         };
 
-        // Console-based detection (Custom getter)
+        // Method 3: Console Trap (Custom Getter)
         const element = new Image();
         Object.defineProperty(element, 'id', {
             get: () => {
@@ -141,36 +154,25 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
         });
 
         const checkConsole = () => {
+            // Trigger the getter if the console is open and trying to render the object
             console.log('%c', element);
-        };
+        }
 
         window.addEventListener("contextmenu", handleContextMenu);
         window.addEventListener("keydown", handleKeyDown);
         window.addEventListener("resize", detectDevTools);
 
-        // Polling for DevTools state
+        // High-frequency polling for detection
         const detectionInterval = setInterval(() => {
             detectDevTools();
             checkConsole();
-        }, 1000);
-
-        // Debugger loop (Triggers when DevTools is opened)
-        const debugInterval = setInterval(() => {
-            const startTime = performance.now();
-            (function () {
-                return false;
-            })["constructor"]("debugger")["call"]();
-            if (performance.now() - startTime > 100) {
-                router.push("/warning");
-            }
-        }, 1000);
+        }, 500); // 500ms for even faster detection
 
         return () => {
             window.removeEventListener("contextmenu", handleContextMenu);
             window.removeEventListener("keydown", handleKeyDown);
             window.removeEventListener("resize", detectDevTools);
             clearInterval(detectionInterval);
-            clearInterval(debugInterval);
         };
     }, [isMounted, pathname, router]);
 
