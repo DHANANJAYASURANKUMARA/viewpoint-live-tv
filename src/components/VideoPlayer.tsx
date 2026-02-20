@@ -451,7 +451,13 @@ export default function VideoPlayer({ url, title = "Live Stream" }: VideoPlayerP
                                                 title="QUALITY"
                                             >
                                                 <Layers size={18} className="lg:w-5 lg:h-5" />
-                                                <span className="text-[7px] lg:text-[8px] font-black uppercase whitespace-nowrap">{currentQuality === -1 ? 'Auto' : `${qualityLevels[currentQuality]?.height || 'HD'}P`}</span>
+                                                <span className="text-[7px] lg:text-[8px] font-black uppercase whitespace-nowrap">
+                                                    {currentQuality === -1
+                                                        ? 'Auto'
+                                                        : qualityLevels[currentQuality]
+                                                            ? `${qualityLevels[currentQuality].height || qualityLevels[currentQuality].width || 'HD'}p`
+                                                            : 'Auto'}
+                                                </span>
                                             </button>
 
                                             <AnimatePresence>
@@ -464,33 +470,40 @@ export default function VideoPlayer({ url, title = "Live Stream" }: VideoPlayerP
                                                     >
                                                         <button
                                                             onClick={() => {
-                                                                const internal = playerRef.current?.getInternalPlayer?.();
-                                                                if (internal) {
-                                                                    if (internal.hls) internal.hls.currentLevel = -1;
-                                                                    if (internal.dash) internal.dash.setQualityFor('video', -1);
+                                                                // ShakaPlayer reacts to currentQuality prop via its own useEffect
+                                                                // ReactPlayer: also apply directly via HLS/DASH API
+                                                                if (!isDirectStream) {
+                                                                    const internal = playerRef.current?.getInternalPlayer?.();
+                                                                    if (internal?.hls) internal.hls.currentLevel = -1;
+                                                                    if (internal?.dash) internal.dash.setAutoSwitchQualityFor('video', true);
                                                                 }
                                                                 setCurrentQuality(-1);
                                                                 setShowQualityMenu(false);
                                                             }}
                                                             className={`w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 ${currentQuality === -1 ? 'text-neon-cyan' : 'text-slate-400'}`}
                                                         >
-                                                            Auto
+                                                            ✓ Auto (ABR)
                                                         </button>
                                                         {qualityLevels.map((lvl, idx) => (
                                                             <button
                                                                 key={idx}
                                                                 onClick={() => {
-                                                                    const internal = playerRef.current?.getInternalPlayer?.();
-                                                                    if (internal) {
-                                                                        if (internal.hls) internal.hls.currentLevel = idx;
-                                                                        if (internal.dash) internal.dash.setQualityFor('video', idx);
+                                                                    // ShakaPlayer: just set state — Shaka useEffect handles selectVariantTrack
+                                                                    // ReactPlayer: also set via HLS/DASH directly
+                                                                    if (!isDirectStream) {
+                                                                        const internal = playerRef.current?.getInternalPlayer?.();
+                                                                        if (internal?.hls) internal.hls.currentLevel = idx;
+                                                                        if (internal?.dash) {
+                                                                            internal.dash.setAutoSwitchQualityFor('video', false);
+                                                                            internal.dash.setQualityFor('video', idx);
+                                                                        }
                                                                     }
                                                                     setCurrentQuality(idx);
                                                                     setShowQualityMenu(false);
                                                                 }}
                                                                 className={`w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 ${currentQuality === idx ? 'text-neon-cyan' : 'text-slate-400'}`}
                                                             >
-                                                                {lvl.height}p
+                                                                {lvl.height ? `${lvl.height}p` : `${Math.round((lvl.bandwidth || 0) / 1000)}kbps`}
                                                             </button>
                                                         ))}
                                                     </motion.div>
