@@ -45,5 +45,9 @@ export const users = pgTable("users", {
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
+    country: text("country").default("Unknown"),
+    device: text("device").default("Unknown"),
+    lastLogin: timestamp("last_login"),
+    isBanned: boolean("is_banned").default(false),
     createdAt: timestamp("created_at").defaultNow(),
 });

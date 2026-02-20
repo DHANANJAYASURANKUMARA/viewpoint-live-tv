@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "./db";
-import { channels, favorites, settings, operators } from "./schema";
+import { channels, favorites, settings, operators, users } from "./schema";
 import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
@@ -233,6 +233,7 @@ export async function getDbStats() {
         const operatorCount = await db.select().from(operators);
         const favoriteCount = await db.select().from(favorites);
         const settingCount = await db.select().from(settings);
+        const userCount = await db.select().from(users);
 
         return {
             success: true,
@@ -241,6 +242,7 @@ export async function getDbStats() {
                 operators: operatorCount.length,
                 favorites: favoriteCount.length,
                 settings: settingCount.length,
+                users: userCount.length,
             }
         };
     } catch (error) {
@@ -264,5 +266,54 @@ export async function clearTable(tableName: "channels" | "operators" | "favorite
     } catch (error) {
         console.error(`Failed to clear table ${tableName}:`, error);
         return { success: false };
+    }
+}
+
+export async function getUsers() {
+    try {
+        return await db.select({
+            id: users.id,
+            name: users.name,
+            email: users.email,
+            country: users.country,
+            device: users.device,
+            lastLogin: users.lastLogin,
+            isBanned: users.isBanned,
+            createdAt: users.createdAt,
+        }).from(users).orderBy(users.createdAt);
+    } catch (error: any) {
+        console.error("Failed to fetch users:", error);
+        return [];
+    }
+}
+
+export async function banUser(id: string, ban: boolean) {
+    try {
+        await db.update(users).set({ isBanned: ban }).where(eq(users.id, id));
+        revalidatePath("/admin/users");
+        return { success: true };
+    } catch (error: any) {
+        console.error("Failed to ban/unban user:", error);
+        return { success: false, error: error?.message };
+    }
+}
+
+export async function deleteUser(id: string) {
+    try {
+        await db.delete(users).where(eq(users.id, id));
+        revalidatePath("/admin/users");
+        return { success: true };
+    } catch (error: any) {
+        console.error("Failed to delete user:", error);
+        return { success: false, error: error?.message };
+    }
+}
+
+export async function getActiveOperatorCount() {
+    try {
+        const all = await db.select().from(operators).where(eq(operators.status, "Active"));
+        return { success: true, count: all.length };
+    } catch (error) {
+        return { success: false, count: 0 };
     }
 }

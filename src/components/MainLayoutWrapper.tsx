@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar";
 import AdminSidebar from "./AdminSidebar";
 import TopBar from "./TopBar";
 import SettingsModal from "./SettingsModal";
+import CookieConsent from "./CookieConsent";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { Shield, ShieldAlert } from "lucide-react";
@@ -347,6 +348,9 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
                 isOpen={isSettingsOpen}
                 onClose={() => setIsSettingsOpen(false)}
             />
+
+            {/* Cookie Consent - only on public pages */}
+            {!isAdminSector && <CookieConsent />}
         </div>
     );
 }

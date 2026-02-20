@@ -28,7 +28,10 @@ export default function LoginPage() {
             return;
         }
         setLoading(true);
-        const res = await loginUser(email, password);
+        // Capture device and locale for admin tracking
+        const device = navigator.userAgent;
+        const country = Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown";
+        const res = await loginUser(email, password, device, country);
         setLoading(false);
         if (res.success && res.user) {
             localStorage.setItem("vpoint-user", JSON.stringify(res.user));
