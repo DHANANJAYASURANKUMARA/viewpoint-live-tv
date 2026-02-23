@@ -14,22 +14,33 @@ export default function NotificationCenter() {
     const [notifs, setNotifs] = useState<any[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [lastNotifId, setLastNotifId] = useState<string | null>(null);
+    const [showToast, setShowToast] = useState<any>(null);
     const { config } = useConfig();
 
     const loadNotifications = async (showLoading = false) => {
         if (showLoading) setIsLoading(true);
         const data = await getNotifications(true);
+
+        // Ghost Sync: Check for new transmissions for Toast
+        if (!showLoading && data.length > 0 && lastNotifId && data[0].id !== lastNotifId && !data[0].isRead) {
+            setShowToast(data[0]);
+            // Auto-dismiss toast after 5 seconds
+            setTimeout(() => setShowToast(null), 5000);
+        }
+
         setNotifs(data);
+        if (data.length > 0) setLastNotifId(data[0].id);
         setUnreadCount(data.filter((n: any) => !n.isRead).length);
         setIsLoading(false);
     };
 
     useEffect(() => {
         loadNotifications(true);
-        // Poll for notifications every 15 seconds for snappier experience
-        const interval = setInterval(() => loadNotifications(false), 15000);
+        // Turbo Polling: 5 seconds for real-time feel
+        const interval = setInterval(() => loadNotifications(false), 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [lastNotifId]);
 
     const handleMarkRead = async (id: string) => {
         const res = await markNotificationAsRead(id);
@@ -188,6 +199,29 @@ export default function NotificationCenter() {
                             </div>
                         </motion.div>
                     </>
+                )}
+
+                {/* Instant Toast Notification */}
+                {showToast && !isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, x: 100 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 100 }}
+                        onClick={() => { setIsOpen(true); setShowToast(null); }}
+                        className="fixed bottom-6 right-6 z-[200] w-80 glass-dark border border-neon-cyan/30 rounded-2xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] cursor-pointer hover:border-neon-cyan transition-colors"
+                    >
+                        <div className="flex items-start gap-3">
+                            <div className="mt-1">{getTypeIcon(showToast.type)}</div>
+                            <div className="flex-1 space-y-1">
+                                <h4 className="text-[10px] font-black text-white uppercase tracking-widest">New Transmission</h4>
+                                <p className="text-[11px] font-bold text-white uppercase tracking-tight line-clamp-1">{showToast.title}</p>
+                                <p className="text-[9px] text-slate-400 font-medium line-clamp-2 italic">{showToast.message}</p>
+                            </div>
+                            <button onClick={(e) => { e.stopPropagation(); setShowToast(null); }}>
+                                <X size={14} className="text-slate-500 hover:text-white" />
+                            </button>
+                        </div>
+                    </motion.div>
                 )}
             </AnimatePresence>
         </div>
