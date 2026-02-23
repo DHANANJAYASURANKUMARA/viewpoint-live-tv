@@ -17,7 +17,7 @@ import {
     Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { updateUserProfile } from "@/lib/actions";
+import { updateUserProfile, getUserProfile } from "@/lib/actions";
 
 export default function NexusProfilePage() {
     const [user, setUser] = useState<any>(null);
@@ -25,26 +25,46 @@ export default function NexusProfilePage() {
     const [saving, setSaving] = useState(false);
     const [status, setStatus] = useState<{ type: 'success' | 'error', msg: string } | null>(null);
     const [isBirthday, setIsBirthday] = useState(false);
+    const [socialModal, setSocialModal] = useState<string | null>(null);
 
     useEffect(() => {
         const session = localStorage.getItem("vpoint-user");
         if (session) {
             try {
-                const parsed = JSON.parse(session);
-                setUser(parsed);
+                const sessionUser = JSON.parse(session);
+                loadProfile(sessionUser.id);
+            } catch {
+                setLoading(false);
+            }
+        } else {
+            setLoading(false);
+        }
+    }, []);
 
-                // Check birthday
-                if (parsed.birthday) {
-                    const bday = new Date(parsed.birthday);
-                    const today = new Date();
-                    if (bday.getDate() === today.getDate() && bday.getMonth() === today.getMonth()) {
-                        setIsBirthday(true);
-                    }
+    const loadProfile = async (userId: string) => {
+        const fullProfile = await getUserProfile(userId);
+        if (fullProfile) {
+            // Parse social links
+            let socials = { twt: '', gh: '', li: '', ig: '' };
+            try {
+                if (fullProfile.socialLinks) {
+                    socials = { ...socials, ...JSON.parse(fullProfile.socialLinks) };
                 }
             } catch { }
+
+            setUser({ ...fullProfile, socialLinks: socials });
+
+            // Check birthday
+            if (fullProfile.birthday) {
+                const bday = new Date(fullProfile.birthday);
+                const today = new Date();
+                if (bday.getDate() === today.getDate() && bday.getMonth() === today.getMonth()) {
+                    setIsBirthday(true);
+                }
+            }
         }
         setLoading(false);
-    }, []);
+    };
 
     const handleSave = async () => {
         if (!user?.id) return;
@@ -54,7 +74,7 @@ export default function NexusProfilePage() {
         const res = await updateUserProfile(user.id, {
             displayName: user.displayName,
             bio: user.bio,
-            birthday: user.birthday,
+            birthday: user.birthday ? new Date(user.birthday) : null,
             socialLinks: JSON.stringify(user.socialLinks || {})
         });
 
@@ -154,13 +174,18 @@ export default function NexusProfilePage() {
                             <h4 className="text-[10px] font-black text-white uppercase tracking-widest text-center">Social Interlinks</h4>
                             <div className="grid grid-cols-2 gap-3">
                                 {[
-                                    { id: 'twt', icon: Twitter, color: 'text-blue-400' },
-                                    { id: 'gh', icon: Github, color: 'text-white' },
-                                    { id: 'li', icon: LinkedIn, color: 'text-blue-600' },
-                                    { id: 'ig', icon: Instagram, color: 'text-pink-500' }
+                                    { id: 'twt', icon: Twitter, color: 'text-blue-400', label: 'Twitter' },
+                                    { id: 'gh', icon: Github, color: 'text-white', label: 'GitHub' },
+                                    { id: 'li', icon: LinkedIn, color: 'text-blue-600', label: 'LinkedIn' },
+                                    { id: 'ig', icon: Instagram, color: 'text-pink-500', label: 'Instagram' }
                                 ].map(soc => (
-                                    <div key={soc.id} className="p-4 glass-dark border border-white/5 rounded-2xl flex items-center justify-center group hover:border-white/20 transition-all cursor-pointer">
+                                    <div
+                                        key={soc.id}
+                                        onClick={() => setSocialModal(soc.id)}
+                                        className={`p-4 glass-dark border rounded-2xl flex flex-col items-center justify-center gap-2 group transition-all cursor-pointer ${user?.socialLinks?.[soc.id] ? 'border-neon-cyan/40 bg-neon-cyan/5' : 'border-white/5 hover:border-white/20'}`}
+                                    >
                                         <soc.icon size={20} className={`${soc.color} group-hover:scale-110 transition-transform`} />
+                                        <span className="text-[7px] font-black uppercase tracking-widest text-slate-500">{soc.label}</span>
                                     </div>
                                 ))}
                             </div>
@@ -237,6 +262,51 @@ export default function NexusProfilePage() {
                     </div>
                 </div>
             </div>
+            {/* Social Link Edit Modal */}
+            <AnimatePresence>
+                {socialModal && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setSocialModal(null)}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="relative w-full max-w-sm glass border border-white/10 rounded-[2.5rem] p-8 space-y-6 bg-vpoint-dark"
+                        >
+                            <div className="space-y-2 text-center">
+                                <h4 className="text-xl font-black text-white uppercase tracking-tighter">Update Interlink</h4>
+                                <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Configure your neural endpoint</p>
+                            </div>
+                            <div className="space-y-3">
+                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2">URL / Username</label>
+                                <input
+                                    type="text"
+                                    autoFocus
+                                    value={user?.socialLinks?.[socialModal] || ""}
+                                    onChange={(e) => setUser({
+                                        ...user,
+                                        socialLinks: { ...user.socialLinks, [socialModal]: e.target.value }
+                                    })}
+                                    className="w-full bg-black/40 border border-white/10 rounded-xl py-4 px-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-cyan/50 transition-all uppercase"
+                                    placeholder="https://..."
+                                />
+                            </div>
+                            <button
+                                onClick={() => setSocialModal(null)}
+                                className="w-full py-4 bg-neon-cyan text-black rounded-xl text-[10px] font-black uppercase tracking-widest"
+                            >
+                                Confirm Link
+                            </button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

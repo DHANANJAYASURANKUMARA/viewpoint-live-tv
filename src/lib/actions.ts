@@ -475,3 +475,13 @@ export async function getSystemConfig() {
         return null;
     }
 }
+
+export async function getUserProfile(userId: string) {
+    try {
+        const result = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+        return result.length > 0 ? result[0] : null;
+    } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+        return null;
+    }
+}
