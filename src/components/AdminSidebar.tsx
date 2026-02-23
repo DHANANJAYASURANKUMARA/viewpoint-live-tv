@@ -14,7 +14,8 @@ import {
     Zap,
     Users,
     Database,
-    UserCog
+    UserCog,
+    Bell
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { getActiveOperatorCount } from "@/lib/actions";
@@ -45,6 +46,7 @@ export default function AdminSidebar() {
         { icon: Users, label: "User Management", path: "/admin/users", color: "text-neon-cyan" },
         { icon: Zap, label: "Appearance", path: "/admin/appearance", color: "text-neon-magenta" },
         { icon: UserCog, label: "Operators", path: "/admin/operators", color: "text-amber-500" },
+        { icon: Bell, label: "Notifications", path: "/admin/notifications", color: "text-amber-500" },
         { icon: Database, label: "Database", path: "/admin/database", color: "text-emerald-500" },
     ];
 

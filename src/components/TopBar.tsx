@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
 import { useConfig } from "./ConfigContext";
+import NotificationCenter from "./NotificationCenter";
 
 export default function TopBar() {
     const { config } = useConfig();
@@ -131,6 +132,8 @@ export default function TopBar() {
                     </div>
                     <div className="hidden sm:block h-3 w-[1px] bg-white/10 mx-2" />
                 </div>
+
+                <NotificationCenter />
 
                 <div className="flex flex-col items-end">
                     <div className="flex items-center gap-2">

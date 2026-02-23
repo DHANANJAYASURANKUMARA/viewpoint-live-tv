@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useConfig } from "./ConfigContext";
+import NotificationCenter from "./NotificationCenter";
 
 interface LandingPageProps {
     onLaunch: () => void;
@@ -91,6 +92,9 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                             >
                                 WATCH NOW <ArrowRight size={14} />
                             </button>
+
+                            <NotificationCenter />
+
                             <button
                                 className="lg:hidden text-white"
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "./db";
-import { channels, favorites, settings, operators, users } from "./schema";
+import { channels, favorites, settings, operators, users, notifications } from "./schema";
 import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
@@ -349,5 +349,65 @@ export async function getActiveOperatorCount() {
         return { success: true, count: all.length };
     } catch (error) {
         return { success: false, count: 0 };
+    }
+}
+
+export async function getNotifications() {
+    try {
+        return await db.select().from(notifications).orderBy(notifications.createdAt);
+    } catch (error) {
+        console.error("Failed to fetch notifications:", error);
+        return [];
+    }
+}
+
+export async function markNotificationAsRead(id: string) {
+    try {
+        await db.update(notifications).set({ isRead: true }).where(eq(notifications.id, id));
+        revalidatePath("/");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to mark notification as read:", error);
+        return { success: false };
+    }
+}
+
+export async function sendGlobalNotification(data: { title: string; message: string; type: string }) {
+    try {
+        await db.insert(notifications).values({
+            title: data.title,
+            message: data.message,
+            type: data.type,
+        });
+        revalidatePath("/");
+        revalidatePath("/admin/notifications");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to send global notification:", error);
+        return { success: false };
+    }
+}
+
+export async function deleteNotification(id: string) {
+    try {
+        await db.delete(notifications).where(eq(notifications.id, id));
+        revalidatePath("/");
+        revalidatePath("/admin/notifications");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete notification:", error);
+        return { success: false };
+    }
+}
+
+export async function clearNotifications() {
+    try {
+        await db.delete(notifications);
+        revalidatePath("/");
+        revalidatePath("/admin/notifications");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to clear notifications:", error);
+        return { success: false };
     }
 }

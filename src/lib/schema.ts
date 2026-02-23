@@ -64,3 +64,12 @@ export const adminLogs = pgTable("admin_logs", {
     category: text("category").default("SYSTEM"), // AUTH, CONFIG, OPERATOR, USER, SIGNAL
     createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const notifications = pgTable("notifications", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    title: text("title").notNull(),
+    message: text("message").notNull(),
+    type: text("type").notNull().default("INFO"), // INFO, ALERT, SUCCESS, WARNING
+    isRead: boolean("is_read").default(false),
+    createdAt: timestamp("created_at").defaultNow(),
+});
