@@ -29,6 +29,9 @@ export default function AdminNotifications() {
 
     useEffect(() => {
         loadHistory();
+        // Turbo Polling: 5 seconds for real-time history sync
+        const interval = setInterval(loadHistory, 5000);
+        return () => clearInterval(interval);
     }, []);
 
     const handleBroadcast = async (e: React.FormEvent) => {
