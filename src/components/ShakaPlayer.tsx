@@ -38,7 +38,7 @@ export default function ShakaPlayer({
 
     useEffect(() => {
         let shaka: any;
-        let player: any = null;
+        const player: any = null;
 
         const initPlayer = async () => {
             if (!videoRef.current) return;

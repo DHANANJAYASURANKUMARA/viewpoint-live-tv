@@ -81,3 +81,12 @@ export const notifications = pgTable("notifications", {
     isActive: boolean("is_active").default(true),
     createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const chatMessages = pgTable("chat_messages", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: text("user_id").notNull(),
+    userName: text("user_name").notNull(),
+    message: text("message").notNull(),
+    channelId: text("channel_id"), // Optional, if we want channel-specific chat
+    createdAt: timestamp("created_at").defaultNow(),
+});
