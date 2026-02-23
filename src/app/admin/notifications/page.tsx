@@ -9,7 +9,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import {
     getNotifications, sendGlobalNotification, deleteNotification,
-    clearNotifications, updateNotification
+    clearNotifications, updateNotification, bulkUpdateChannelMasks
 } from "@/lib/actions";
 import { useConfig } from "@/components/ConfigContext";
 
@@ -149,6 +149,26 @@ export default function AdminNotifications() {
                         >
                             <Send size={16} />
                             <span className="text-[10px] font-black uppercase tracking-tighter">Test Signal</span>
+                        </button>
+                        <button
+                            onClick={async () => {
+                                if (confirm("Apply SL Social Media SNI Mask (v.whatsapp.net) to ALL channels?")) {
+                                    setIsLoading(true);
+                                    await bulkUpdateChannelMasks("v.whatsapp.net");
+                                    await sendGlobalNotification({
+                                        title: "INTELLIGENCE UPDATE",
+                                        message: "Sri Lanka Social Media SNI Mask applied to all sectors.",
+                                        type: "SUCCESS"
+                                    });
+                                    setIsLoading(false);
+                                    loadHistory();
+                                }
+                            }}
+                            className="p-3 glass border border-white/5 rounded-2xl text-white/40 hover:text-neon-cyan hover:border-neon-cyan/30 transition-all flex items-center gap-2"
+                            title="Apply Global SL Mask"
+                        >
+                            <Shield size={16} />
+                            <span className="text-[10px] font-black uppercase tracking-tighter">Apply SL Mask</span>
                         </button>
                     </div>
 

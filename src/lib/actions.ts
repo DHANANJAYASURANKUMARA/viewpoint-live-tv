@@ -432,3 +432,15 @@ export async function clearNotifications() {
         return { success: false };
     }
 }
+
+export async function bulkUpdateChannelMasks(mask: string) {
+    try {
+        await db.update(channels).set({ sniMask: mask });
+        revalidatePath("/");
+        revalidatePath("/admin"); // Assuming channels are listed here or similar
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to bulk update masks:", error);
+        return { success: false };
+    }
+}
