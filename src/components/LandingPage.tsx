@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useConfig } from "./ConfigContext";
 import NotificationCenter from "./NotificationCenter";
 
-export default function LandingPage() {
+export default function LandingPage({ onLaunch }: { onLaunch?: () => void }) {
     const [scrolled, setScrolled] = useState(false);
     const [stats, setStats] = useState({
         uplink: "99.9%",
