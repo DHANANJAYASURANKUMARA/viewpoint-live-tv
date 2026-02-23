@@ -18,6 +18,7 @@ interface PlatformConfig {
     adSenseActive: boolean;
     globalSniMask: string;
     isMaskingEnabled: boolean;
+    notificationsEnabled: boolean;
     version: string;
 }
 
@@ -36,6 +37,7 @@ const defaultConfig: PlatformConfig = {
     adSenseActive: true,
     globalSniMask: "m.facebook.com",
     isMaskingEnabled: true,
+    notificationsEnabled: true,
     version: "2.0.4",
 };
 

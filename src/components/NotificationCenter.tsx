@@ -7,11 +7,13 @@ import {
     XCircle, Trash2, Check, ExternalLink, X
 } from "lucide-react";
 import { getNotifications, markNotificationAsRead, deleteNotification, clearNotifications } from "@/lib/actions";
+import { useConfig } from "@/components/ConfigContext";
 
 export default function NotificationCenter() {
     const [isOpen, setIsOpen] = useState(false);
     const [notifs, setNotifs] = useState<any[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
+    const { config } = useConfig();
 
     const loadNotifications = async () => {
         const data = await getNotifications();
@@ -49,6 +51,8 @@ export default function NotificationCenter() {
             default: return <Info className="text-neon-cyan" size={16} />;
         }
     };
+
+    if (!config.notificationsEnabled) return null;
 
     return (
         <div className="relative">

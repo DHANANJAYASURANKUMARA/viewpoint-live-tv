@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getNotifications, sendGlobalNotification, deleteNotification, clearNotifications } from "@/lib/actions";
+import { useConfig } from "@/components/ConfigContext";
 
 export default function AdminNotifications() {
     const [title, setTitle] = useState("");
@@ -15,6 +16,7 @@ export default function AdminNotifications() {
     const [type, setType] = useState("INFO");
     const [history, setHistory] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const { config, updateConfig } = useConfig();
 
     const loadHistory = async () => {
         const data = await getNotifications();
@@ -83,6 +85,43 @@ export default function AdminNotifications() {
                 </div>
             </div>
 
+            {/* System Config HUD */}
+            <div className="glass-dark border border-white/10 rounded-[2.5rem] p-8 flex flex-col md:flex-row items-center justify-between gap-8 bg-gradient-to-r from-neon-cyan/5 to-transparent">
+                <div className="flex items-center gap-6">
+                    <div className={`w-16 h-16 rounded-[2rem] flex items-center justify-center border transition-all duration-500 ${config.notificationsEnabled ? "bg-neon-cyan/10 border-neon-cyan/30 text-neon-cyan shadow-[0_0_30px_rgba(34,211,238,0.2)]" : "bg-white/5 border-white/10 text-slate-500"}`}>
+                        <Bell size={28} className={config.notificationsEnabled ? "animate-bounce" : ""} />
+                    </div>
+                    <div className="space-y-1">
+                        <h2 className="text-xl font-black text-white uppercase tracking-tighter">Global Signal Hub</h2>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                            Master system control for all terminal notifications
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-8">
+                    <div className="flex flex-col items-end">
+                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1 ${config.notificationsEnabled ? "text-emerald-400" : "text-rose-500"}`}>
+                            System {config.notificationsEnabled ? "Active" : "Offline"}
+                        </span>
+                        <span className="text-[8px] font-bold text-slate-600 uppercase tracking-tighter">Synchronized with nodes</span>
+                    </div>
+
+                    <button
+                        onClick={() => updateConfig({ notificationsEnabled: !config.notificationsEnabled })}
+                        className={`relative w-20 h-10 rounded-full transition-all duration-500 p-1.5 ${config.notificationsEnabled ? "bg-neon-cyan/20 border border-neon-cyan/30" : "bg-white/5 border border-white/10"}`}
+                    >
+                        <motion.div
+                            animate={{ x: config.notificationsEnabled ? 40 : 0 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                            className={`w-6 h-6 rounded-full shadow-lg flex items-center justify-center ${config.notificationsEnabled ? "bg-neon-cyan" : "bg-slate-600"}`}
+                        >
+                            <div className={`w-2 h-2 rounded-full bg-white ${config.notificationsEnabled ? "animate-pulse" : ""}`} />
+                        </motion.div>
+                    </button>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 {/* Composition HUD */}
                 <div className="lg:col-span-1 space-y-8">
@@ -124,8 +163,8 @@ export default function AdminNotifications() {
                                             type="button"
                                             onClick={() => setType(opt.id)}
                                             className={`flex items-center gap-3 p-4 rounded-2xl border transition-all text-left ${type === opt.id
-                                                    ? "bg-white/10 border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.05)]"
-                                                    : "bg-transparent border-white/5 hover:border-white/10"
+                                                ? "bg-white/10 border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+                                                : "bg-transparent border-white/5 hover:border-white/10"
                                                 }`}
                                         >
                                             <div className={`${opt.color}`}>{opt.icon}</div>
