@@ -68,11 +68,11 @@ export default function UsersActivityPage() {
                 const parsed = JSON.parse(auth);
                 // Handle both old string "true" format and new object format
                 if (parsed === true || parsed === "true" || parsed?.isSuperAdmin === true) {
-                    setIsSuperAdmin(true);
+                    Promise.resolve().then(() => setIsSuperAdmin(true));
                 }
             } catch { }
         }
-        loadData();
+        Promise.resolve().then(() => loadData());
     }, []);
 
     const handleBan = async (id: string, currentBanStatus: boolean | null) => {

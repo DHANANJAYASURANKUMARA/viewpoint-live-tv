@@ -34,7 +34,7 @@ export default function AdminSidebar() {
         if (admin) {
             try {
                 const parsed = JSON.parse(admin);
-                setAdminName(parsed.name || "Admin");
+                Promise.resolve().then(() => setAdminName(parsed.name || "Admin"));
             } catch { }
         }
     }, []);

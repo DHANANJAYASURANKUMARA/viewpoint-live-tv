@@ -14,8 +14,8 @@ interface NotificationLog {
     title: string;
     message: string;
     type: string;
-    isRead: boolean;
-    createdAt: Date | string;
+    isRead: boolean | null;
+    createdAt: Date | string | null;
 }
 
 export default function NotificationCenter() {
@@ -40,12 +40,12 @@ export default function NotificationCenter() {
 
         setNotifs(data as NotificationLog[]);
         if (data.length > 0) setLastNotifId((data[0] as NotificationLog).id);
-        setUnreadCount(data.filter((n: any) => !n.isRead).length);
+        setUnreadCount(data.filter((n: NotificationLog) => !n.isRead).length);
         setIsLoading(false);
     }, [lastNotifId]);
 
     useEffect(() => {
-        loadNotifications(true);
+        Promise.resolve().then(() => loadNotifications(true));
         // Turbo Polling: 5 seconds for real-time feel
         const interval = setInterval(() => loadNotifications(false), 5000);
         return () => clearInterval(interval);

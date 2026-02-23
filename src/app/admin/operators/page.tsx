@@ -62,9 +62,12 @@ export default function OperatorManagementPage() {
     useEffect(() => {
         const auth = localStorage.getItem("vpoint-admin-auth");
         if (auth) {
-            try { setCurrentActor(JSON.parse(auth)); } catch { }
+            try {
+                const parsed = JSON.parse(auth);
+                Promise.resolve().then(() => setCurrentActor(parsed));
+            } catch { }
         }
-        loadOperators();
+        Promise.resolve().then(() => loadOperators());
     }, []);
 
     const openAddModal = () => {

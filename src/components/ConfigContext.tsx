@@ -62,13 +62,13 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
 
             if (Object.keys(dbSettings).length > 0) {
                 const newConfig = { ...defaultConfig };
-                Object.keys(dbSettings).forEach(key => {
-                    if (key in newConfig) {
-                        const val = dbSettings[key];
-                        if (typeof (newConfig as any)[key] === "boolean") {
-                            (newConfig as any)[key] = val === "true";
+                Object.entries(dbSettings).forEach(([key, val]) => {
+                    const typedKey = key as keyof PlatformConfig;
+                    if (typedKey in newConfig) {
+                        if (typeof defaultConfig[typedKey] === "boolean") {
+                            (newConfig as any)[typedKey] = val === "true";
                         } else {
-                            (newConfig as any)[key] = val;
+                            (newConfig as any)[typedKey] = val;
                         }
                     }
                 });
@@ -86,7 +86,7 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
                         Object.keys(parsed).forEach((key: string) => {
                             updateSetting(key, String(parsed[key]));
                         });
-                    } catch (e) {
+                    } catch (e: unknown) {
                         console.error("Failed to parse config from localStorage", e);
                     }
                 }
@@ -109,18 +109,18 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     }, [config, isInitialized]);
 
     const updateConfig = (newConfig: Partial<PlatformConfig>) => {
-        const keys = Object.keys(newConfig);
-        keys.forEach(key => {
-            const val = (newConfig as any)[key];
-            updateSetting(key, val.toString());
+        Object.entries(newConfig).forEach(([key, val]) => {
+            if (val !== undefined) {
+                updateSetting(key, val.toString());
+            }
         });
         setConfig(prev => ({ ...prev, ...newConfig }));
     };
 
     const resetConfig = async () => {
         // Reset in DB as well
-        Object.keys(defaultConfig).forEach(key => {
-            updateSetting(key, (defaultConfig as any)[key].toString());
+        Object.entries(defaultConfig).forEach(([key, val]) => {
+            updateSetting(key, val.toString());
         });
         setConfig(defaultConfig);
     };

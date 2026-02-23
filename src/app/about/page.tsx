@@ -1,6 +1,7 @@
+"use client";
 
 import Link from "next/link";
-import { Zap, Globe, Shield, Users, Star, ArrowRight } from "lucide-react";
+import { Tv, Globe, Shield, Users, Star, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -21,7 +22,7 @@ export default function AboutPage() {
                 {/* Hero */}
                 <div className="space-y-6">
                     <div className="flex items-center gap-3 text-neon-cyan">
-                        <Zap size={32} />
+                        <Tv size={32} />
                         <span className="text-[10px] font-bold uppercase tracking-[0.4em]">About Us</span>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none">
@@ -39,7 +40,7 @@ export default function AboutPage() {
                         {[
                             { icon: Star, title: "Live Cricket Streaming", desc: "Watch T20 World Cup, IPL, ODI, and Test matches live for free in HD quality." },
                             { icon: Globe, title: "International Channels", desc: "Access 200+ live TV channels from around the world covering sports, news, entertainment, and more." },
-                            { icon: Zap, title: "Free Live Sports", desc: "Stream football, cricket, kabaddi, tennis, and other live sports events without any subscription." },
+                            { icon: Tv, title: "Free Live Sports", desc: "Stream football, cricket, kabaddi, tennis, and other live sports events without any subscription." },
                             { icon: Users, title: "For Everyone", desc: "No registration required to browse. Simple, fast, and free access to live TV from any device." },
                         ].map(({ icon: Icon, title, desc }) => (
                             <div key={title} className="flex items-start gap-4 p-6 bg-white/5 border border-white/10 rounded-2xl">

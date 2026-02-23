@@ -21,7 +21,7 @@ import {
     Zap
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getChannels, addChannel, updateChannel, deleteChannel, seedChannels, bulkMaskChannels } from "@/lib/actions";
+import { getChannels, createChannel, updateChannel, deleteChannel, seedChannels, bulkMaskChannels } from "@/lib/actions";
 import { initialChannels } from "@/lib/constants";
 
 interface Signal {
@@ -64,7 +64,7 @@ export default function SignalControlPage() {
     };
 
     useEffect(() => {
-        loadSignals();
+        Promise.resolve().then(() => loadSignals());
     }, []);
 
     const handleBulkSync = async () => {
@@ -75,12 +75,12 @@ export default function SignalControlPage() {
         if (res.success) {
             alert(`Institutional Signal Sync Complete. ${res.count} new nodes established.`);
         } else {
-            alert(`Signal Sync Failed: ${(res as any).error || 'Unknown error'}`);
+            alert(`Signal Sync Failed: ${(res as { error?: string }).error || 'Unknown error'}`);
         }
     };
 
     const handleAddSignal = async () => {
-        const payload = {
+        const newChannel = {
             id: Date.now().toString(),
             name: newSignal.name.toUpperCase(),
             url: newSignal.url,
@@ -88,9 +88,9 @@ export default function SignalControlPage() {
             sniMask: newSignal.sniMask,
             proxyActive: newSignal.proxyActive,
             status: newSignal.status,
-            scheduledAt: newSignal.status === 'Scheduled' ? new Date(newSignal.scheduledAt).toISOString() : null
+            scheduledAt: newSignal.status === 'Scheduled' ? new Date(newSignal.scheduledAt) : null
         };
-        const res = await addChannel(payload);
+        const res = await createChannel(newChannel);
         if (res.success) {
             setIsAddModalOpen(false);
             setNewSignal({ name: "", url: "", category: "Entertainment", sniMask: "", proxyActive: false, status: "Live", scheduledAt: "" });

@@ -37,7 +37,7 @@ export default function DatabaseManagementPage() {
     };
 
     useEffect(() => {
-        loadStats();
+        Promise.resolve().then(() => loadStats());
     }, []);
 
     const handleClearTable = async (tableName: "channels" | "operators" | "favorites" | "settings") => {

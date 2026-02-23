@@ -13,15 +13,15 @@ interface ProfileModalProps {
 }
 
 export default function ProfileModal({ userId, currentUser, isOpen, onClose }: ProfileModalProps) {
-    const [profile, setProfile] = useState<any>(null);
+    const [profile, setProfile] = useState<Record<string, any> | null>(null);
     const [loading, setLoading] = useState(true);
     const [friendshipStatus, setFriendshipStatus] = useState<string | null>(null);
-    const [friendshipRelation, setFriendshipRelation] = useState<any>(null);
+    const [friendshipRelation, setFriendshipRelation] = useState<Record<string, any> | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    const loadProfile = async () => {
+    const loadProfile = React.useCallback(async () => {
         setLoading(true);
-        const data = await getUserProfile(userId) as any;
+        const data = await getUserProfile(userId) as Record<string, any>;
         if (data) {
             // Parse social links
             try {
@@ -35,17 +35,17 @@ export default function ProfileModal({ userId, currentUser, isOpen, onClose }: P
             // Check friendship
             const friends = await getFriends(currentUser.id);
             const relation = friends.find(f => f.requesterId === userId || f.receiverId === userId);
-            setFriendshipRelation(relation);
+            setFriendshipRelation(relation || null);
             setFriendshipStatus(relation ? relation.status : null);
         }
         setLoading(false);
-    };
+    }, [userId, currentUser.id]);
 
     useEffect(() => {
         if (isOpen && userId) {
-            loadProfile();
+            Promise.resolve().then(() => loadProfile());
         }
-    }, [isOpen, userId]);
+    }, [isOpen, userId, loadProfile]);
 
     const handleAddFriend = async () => {
         setIsProcessing(true);

@@ -99,14 +99,14 @@ interface OperatorData {
     isSuperAdmin?: boolean;
 }
 
-export async function manageOperatorFull(data: OperatorData, actorName: string = "Super Admin") {
+export async function manageOperatorFull(data: Record<string, unknown>, actorName: string = "Super Admin") {
     try {
-        const payload: any = { ...data };
+        const payload = { ...data };
 
         // Never allow changing Super Admin via this endpoint
         if (payload.isSuperAdmin) delete payload.isSuperAdmin;
 
-        if (payload.password && payload.password.trim() !== "") {
+        if (payload.password && typeof payload.password === 'string' && payload.password.trim() !== "") {
             payload.password = await bcrypt.hash(payload.password, 10);
         } else {
             delete payload.password; // Don't overwrite if empty
@@ -117,15 +117,15 @@ export async function manageOperatorFull(data: OperatorData, actorName: string =
 
         if (id) {
             // Guard: can't edit Super Admin unless actor is Super Admin
-            const existing = await db.select().from(operators).where(eq(operators.id, id));
+            const existing = await db.select().from(operators).where(eq(operators.id, id as string));
             if (existing.length > 0 && existing[0].isSuperAdmin && actorName !== "Super Admin") {
                 return { success: false, error: "Cannot modify Super Admin account." };
             }
-            await db.update(operators).set(setPayload).where(eq(operators.id, id));
-            await logAdminAction("UPDATE_OPERATOR", data.name, `Updated by ${actorName}`, "OPERATOR", actorName);
+            await db.update(operators).set(setPayload as any).where(eq(operators.id, id as string));
+            await logAdminAction("UPDATE_OPERATOR", data.name as string, `Updated by ${actorName}`, "OPERATOR", actorName);
         } else {
-            await db.insert(operators).values(setPayload);
-            await logAdminAction("CREATE_OPERATOR", data.name, `Created by ${actorName}`, "OPERATOR", actorName);
+            await db.insert(operators).values(setPayload as any);
+            await logAdminAction("CREATE_OPERATOR", data.name as string, `Created by ${actorName}`, "OPERATOR", actorName);
         }
         revalidatePath("/admin/operators");
         return { success: true };
@@ -154,11 +154,14 @@ export async function changeSuperAdminCredentials(
         }
 
         const updates: any = {};
-        if (newLoginId.trim()) updates.loginId = newLoginId.trim();
+        if (newLoginId.trim()) {
+            updates.loginId = newLoginId.trim();
+            updates.name = newLoginId.trim();
+        }
         if (newPassword.trim()) updates.password = await bcrypt.hash(newPassword.trim(), 10);
 
         await db.update(operators).set(updates).where(eq(operators.id, sa.id));
-        await logAdminAction("CHANGE_SUPER_ADMIN_CREDENTIALS", sa.name, "Credentials updated", "AUTH", sa.name, sa.id);
+        await logAdminAction("CHANGE_SUPER_ADMIN_CREDENTIALS", updates.name || sa.name, "Credentials updated", "AUTH", updates.name || sa.name, sa.id);
         return { success: true };
     } catch (error: unknown) {
         const e = error as Error;
@@ -187,8 +190,8 @@ export async function deleteOperatorSecure(
         await logAdminAction("DELETE_OPERATOR", target[0].name, `Deleted by ${actorName}`, "OPERATOR", actorName);
         revalidatePath("/admin/operators");
         return { success: true };
-    } catch (e: any) {
-        return { success: false, error: e?.message || "Delete failed." };
+    } catch (e: unknown) {
+        return { success: false, error: (e as Error)?.message || "Delete failed." };
     }
 }
 
@@ -213,8 +216,8 @@ export async function suspendOperator(
         );
         revalidatePath("/admin/operators");
         return { success: true };
-    } catch (e: any) {
-        return { success: false, error: e?.message };
+    } catch (e: unknown) {
+        return { success: false, error: (e as Error)?.message };
     }
 }
 
