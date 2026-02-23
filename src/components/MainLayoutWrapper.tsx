@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Sidebar from "./Sidebar";
-import AdminSidebar from "./AdminSidebar";
 import TopBar from "./TopBar";
 import SettingsModal from "./SettingsModal";
 import CookieConsent from "./CookieConsent";
@@ -240,13 +239,6 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
                 )}
             </AnimatePresence>
 
-            <AnimatePresence>
-                {isAdminSector && !isAdminLogin && (
-                    <div className="hidden lg:block h-full">
-                        <AdminSidebar />
-                    </div>
-                )}
-            </AnimatePresence>
 
             <AnimatePresence>
                 {(!isCinemaMode && isWatchPage) && (
@@ -279,14 +271,6 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
                         >
                             <TopBar />
                         </motion.div>
-                    )}
-                    {isAdminSector && !isAdminLogin && (
-                        <div className="p-8 border-b border-white/5 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <Shield size={20} className="text-neon-cyan" />
-                                <span className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Institutional Access Level: Alpha</span>
-                            </div>
-                        </div>
                     )}
                 </AnimatePresence>
 
