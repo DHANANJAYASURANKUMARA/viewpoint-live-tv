@@ -100,6 +100,33 @@ export default function AdminNotifications() {
                 </div>
 
                 <div className="flex items-center gap-8">
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => { window.location.reload(); }}
+                            className="p-3 glass border border-white/5 rounded-2xl text-white/40 hover:text-neon-cyan hover:border-neon-cyan/30 transition-all flex items-center gap-2"
+                            title="Force System Sync"
+                        >
+                            <Activity size={16} />
+                            <span className="text-[10px] font-black uppercase tracking-tighter">Sync Nodes</span>
+                        </button>
+                        <button
+                            onClick={async () => {
+                                await sendGlobalNotification({
+                                    title: "DIAGNOSTIC SIGNAL",
+                                    message: "Pulse transmission successful. Neural link established.",
+                                    type: "SUCCESS"
+                                });
+                                loadHistory();
+                            }}
+                            className="p-3 glass border border-white/5 rounded-2xl text-white/40 hover:text-emerald-400 hover:border-emerald-400/30 transition-all flex items-center gap-2"
+                        >
+                            <Send size={16} />
+                            <span className="text-[10px] font-black uppercase tracking-tighter">Test Signal</span>
+                        </button>
+                    </div>
+
+                    <div className="h-10 w-[1px] bg-white/5 mx-2" />
+
                     <div className="flex flex-col items-end">
                         <span className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1 ${config.notificationsEnabled ? "text-emerald-400" : "text-rose-500"}`}>
                             System {config.notificationsEnabled ? "Active" : "Offline"}

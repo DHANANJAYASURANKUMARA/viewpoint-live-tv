@@ -107,6 +107,7 @@ export async function updateSetting(key: string, value: string, userId: string =
                 userId,
             });
         }
+        revalidatePath("/");
         return { success: true };
     } catch (error) {
         console.error("Failed to update setting:", error);
@@ -354,7 +355,8 @@ export async function getActiveOperatorCount() {
 
 export async function getNotifications() {
     try {
-        return await db.select().from(notifications).orderBy(notifications.createdAt);
+        const { desc } = require("drizzle-orm");
+        return await db.select().from(notifications).orderBy(desc(notifications.createdAt));
     } catch (error) {
         console.error("Failed to fetch notifications:", error);
         return [];

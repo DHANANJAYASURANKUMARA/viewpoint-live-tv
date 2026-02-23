@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Bell, BellRing, Info, AlertTriangle, CheckCircle,
-    XCircle, Trash2, Check, ExternalLink, X
+    XCircle, Trash2, Check, ExternalLink, X, Activity
 } from "lucide-react";
 import { getNotifications, markNotificationAsRead, deleteNotification, clearNotifications } from "@/lib/actions";
 import { useConfig } from "@/components/ConfigContext";
@@ -13,18 +13,21 @@ export default function NotificationCenter() {
     const [isOpen, setIsOpen] = useState(false);
     const [notifs, setNotifs] = useState<any[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
     const { config } = useConfig();
 
-    const loadNotifications = async () => {
+    const loadNotifications = async (showLoading = false) => {
+        if (showLoading) setIsLoading(true);
         const data = await getNotifications();
         setNotifs(data);
         setUnreadCount(data.filter((n: any) => !n.isRead).length);
+        setIsLoading(false);
     };
 
     useEffect(() => {
-        loadNotifications();
-        // Poll for notifications every 30 seconds
-        const interval = setInterval(loadNotifications, 30000);
+        loadNotifications(true);
+        // Poll for notifications every 15 seconds for snappier experience
+        const interval = setInterval(() => loadNotifications(false), 15000);
         return () => clearInterval(interval);
     }, []);
 
@@ -38,9 +41,16 @@ export default function NotificationCenter() {
         if (res.success) loadNotifications();
     };
 
-    const handleClearAll = async () => {
+    const handleClearAll = async (e: React.MouseEvent) => {
+        e.stopPropagation();
         const res = await clearNotifications();
         if (res.success) loadNotifications();
+    };
+
+    const handleMarkAllRead = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        await Promise.all(notifs.filter(n => !n.isRead).map(n => markNotificationAsRead(n.id)));
+        loadNotifications();
     };
 
     const getTypeIcon = (type: string) => {
@@ -97,25 +107,40 @@ export default function NotificationCenter() {
                                         {notifs.length} Logs
                                     </span>
                                 </div>
-                                {notifs.length > 0 && (
-                                    <button
-                                        onClick={handleClearAll}
-                                        className="text-[10px] font-black text-rose-500/70 hover:text-rose-500 uppercase tracking-tighter transition-colors"
-                                    >
-                                        Clear Deck
-                                    </button>
-                                )}
+                                <div className="flex items-center gap-4">
+                                    {unreadCount > 0 && (
+                                        <button
+                                            onClick={handleMarkAllRead}
+                                            className="text-[10px] font-black text-neon-cyan/70 hover:text-neon-cyan uppercase tracking-tighter transition-colors"
+                                        >
+                                            Read All
+                                        </button>
+                                    )}
+                                    {notifs.length > 0 && (
+                                        <button
+                                            onClick={handleClearAll}
+                                            className="text-[10px] font-black text-rose-500/70 hover:text-rose-500 uppercase tracking-tighter transition-colors"
+                                        >
+                                            Clear Deck
+                                        </button>
+                                    )}
+                                </div>
                             </div>
 
-                            <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
-                                {notifs.length === 0 ? (
+                            <div className="max-h-[60vh] lg:max-h-[400px] overflow-y-auto custom-scrollbar">
+                                {isLoading ? (
+                                    <div className="py-20 flex flex-col items-center justify-center text-center space-y-4 opacity-30">
+                                        <Activity className="w-12 h-12 animate-spin" />
+                                        <p className="text-[10px] font-black uppercase tracking-widest italic animate-pulse">Scanning Frequency...</p>
+                                    </div>
+                                ) : notifs.length === 0 ? (
                                     <div className="py-20 flex flex-col items-center justify-center text-center space-y-4 opacity-30">
                                         <Bell className="w-12 h-12" />
                                         <p className="text-[10px] font-black uppercase tracking-widest">No Active Transmissions</p>
                                     </div>
                                 ) : (
                                     <div className="divide-y divide-white/5">
-                                        {notifs.slice().reverse().map((n) => (
+                                        {notifs.map((n) => (
                                             <div
                                                 key={n.id}
                                                 className={`p-5 transition-colors group relative ${n.isRead ? "opacity-60" : "bg-neon-cyan/[0.02] border-l-2 border-neon-cyan"}`}
@@ -137,14 +162,14 @@ export default function NotificationCenter() {
                                                         <div className="flex items-center gap-4 pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                             {!n.isRead && (
                                                                 <button
-                                                                    onClick={() => handleMarkRead(n.id)}
+                                                                    onClick={(e) => { e.stopPropagation(); handleMarkRead(n.id); }}
                                                                     className="flex items-center gap-1.5 text-[8px] font-black text-neon-cyan uppercase tracking-widest hover:text-white transition-colors"
                                                                 >
                                                                     <Check size={10} /> Mark Read
                                                                 </button>
                                                             )}
                                                             <button
-                                                                onClick={() => handleDelete(n.id)}
+                                                                onClick={(e) => { e.stopPropagation(); handleDelete(n.id); }}
                                                                 className="flex items-center gap-1.5 text-[8px] font-black text-rose-500 uppercase tracking-widest hover:text-white transition-colors"
                                                             >
                                                                 <Trash2 size={10} /> Purge
