@@ -59,10 +59,10 @@ export default function PrivacyPage() {
                             <span className="w-8 h-[1px] bg-neon-purple/30" /> 04. Google AdSense &amp; Third-Party Advertising
                         </h2>
                         <p className="text-xs leading-relaxed text-slate-400">
-                            VIEWPOINT uses Google AdSense to display advertisements. Google, as a third-party vendor, uses cookies to serve ads on our site. Google's use of the DoubleClick cookie enables it and its partners to serve ads to our users based on their visit to our site and other sites on the internet.
+                            VIEWPOINT uses Google AdSense to display advertisements. Google, as a third-party vendor, uses cookies to serve ads on our site. Google&apos;s use of the DoubleClick cookie enables it and its partners to serve ads to our users based on their visit to our site and other sites on the internet.
                         </p>
                         <p className="text-xs leading-relaxed text-slate-400">
-                            You may opt out of the use of the DoubleClick cookie for interest-based advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-neon-cyan hover:underline">Google Ads Settings</a>. Alternatively, you can opt out of a third-party vendor's use of cookies for interest-based advertising by visiting <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" className="text-neon-cyan hover:underline">aboutads.info</a>.
+                            You may opt out of the use of the DoubleClick cookie for interest-based advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-neon-cyan hover:underline">Google Ads Settings</a>. Alternatively, you can opt out of a third-party vendor&apos;s use of cookies for interest-based advertising by visiting <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" className="text-neon-cyan hover:underline">aboutads.info</a>.
                         </p>
                         <p className="text-xs leading-relaxed text-slate-400">
                             We comply with the <strong className="text-white">Google Publisher Policies</strong> and do not place ads on pages with illegal content, adult content, or copyrighted material without authorisation. All ad placements follow Google AdSense program policies.
@@ -76,14 +76,14 @@ export default function PrivacyPage() {
                         <p className="text-xs leading-relaxed text-slate-400">
                             You maintain full control over your data. You may:
                             (a) disable cookies in your browser settings,
-                            (b) opt out of Google personalised ads via Google's ad settings,
+                            (b) opt out of Google personalised ads via Google&apos;s ad settings,
                             (c) delete your VIEWPOINT account and all associated data at any time by contacting us at <a href="mailto:viewpointlivetv@gmail.com" className="text-neon-cyan hover:underline">viewpointlivetv@gmail.com</a>.
                         </p>
                     </section>
 
                     <section className="space-y-4">
                         <h2 className="text-sm font-black text-white uppercase tracking-[0.2em] flex items-center gap-3">
-                            <span className="w-8 h-[1px] bg-neon-purple/30" /> 06. Children's Privacy
+                            <span className="w-8 h-[1px] bg-neon-purple/30" /> 06. Children&apos;s Privacy
                         </h2>
                         <p className="text-xs leading-relaxed text-slate-400">
                             VIEWPOINT is not directed at children under 13 years of age. We do not knowingly collect personal information from children under 13. If you believe we have inadvertently collected such information, please contact us immediately.
@@ -113,7 +113,7 @@ export default function PrivacyPage() {
 
                 {/* Footer Seal */}
                 <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 opacity-30">
-                    <span className="text-[8px] font-black uppercase tracking-[0.5em]">© 2026 Viewpoint Neural Systems • All Data Encrypted</span>
+                    <span className="text-[8px] font-black uppercase tracking-[0.5em]">&copy; 2026 Viewpoint Neural Systems • All Data Encrypted</span>
                     <Shield size={20} className="text-neon-purple" />
                 </div>
             </div>

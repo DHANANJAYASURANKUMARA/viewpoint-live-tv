@@ -14,8 +14,7 @@ import {
     AlertTriangle,
     ShieldPlus,
     Copy,
-    Check,
-    Star
+    Check
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getUsers, banUser, deleteUser, getDbStats } from "@/lib/actions";
@@ -36,8 +35,6 @@ interface User {
     createdAt: Date | null;
 }
 
-const ROLES = ["Operator", "Analyst", "Moderator", "Lead"];
-
 export default function UsersActivityPage() {
     const [stats, setStats] = useState<{ users: number } | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
@@ -50,6 +47,19 @@ export default function UsersActivityPage() {
     const [promoted, setPromoted] = useState<{ name: string; loginId: string; password: string } | null>(null);
     const [copied, setCopied] = useState(false);
     const [promoteError, setPromoteError] = useState("");
+
+    const loadData = async () => {
+        setLoading(true);
+        const [userData, statsData] = await Promise.all([
+            getUsers(),
+            getDbStats()
+        ]);
+        setUsers(userData as User[]);
+        if (statsData.success) {
+            setStats(statsData.stats as { users: number });
+        }
+        setLoading(false);
+    };
 
     useEffect(() => {
         const auth = localStorage.getItem("vpoint-admin-auth");
@@ -64,17 +74,6 @@ export default function UsersActivityPage() {
         }
         loadData();
     }, []);
-
-    const loadData = async () => {
-        setLoading(true);
-        const [userData, statsData] = await Promise.all([
-            getUsers(),
-            getDbStats()
-        ]);
-        setUsers(userData as User[]);
-        if (statsData.success) setStats(statsData.stats);
-        setLoading(false);
-    };
 
     const handleBan = async (id: string, currentBanStatus: boolean | null) => {
         await banUser(id, !currentBanStatus);
@@ -123,13 +122,6 @@ export default function UsersActivityPage() {
     const formatDate = (date: Date | null) => {
         if (!date) return "Never";
         return new Date(date).toLocaleString();
-    };
-
-    const getDeviceShort = (device: string | null) => {
-        if (!device) return "Unknown";
-        if (device.toLowerCase().includes("mobile") || device.toLowerCase().includes("android") || device.toLowerCase().includes("iphone")) return "Mobile";
-        if (device.toLowerCase().includes("tablet") || device.toLowerCase().includes("ipad")) return "Tablet";
-        return "Desktop";
     };
 
     return (

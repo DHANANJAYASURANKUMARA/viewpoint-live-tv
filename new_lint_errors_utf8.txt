@@ -1,0 +1,522 @@
+﻿
+> viewpoint-premium@2.0.4 lint
+> eslint
+
+
+D:\New folder\premium-live-tv\scripts\generate-icons.js
+  4:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  5:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  6:14  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+D:\New folder\premium-live-tv\src\app\about\page.tsx
+  5:36  warning  'Check' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\New folder\premium-live-tv\src\app\admin\analytics\page.tsx
+  19:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\New folder\premium-live-tv\src\app\admin\appearance\page.tsx
+  17:10  warning  'motion' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\New folder\premium-live-tv\src\app\admin\dashboard\page.tsx
+   13:5   warning  'MoreVertical' is defined but never used  @typescript-eslint/no-unused-vars
+   30:44  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   31:46  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   36:56  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   76:45  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   95:48  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  105:51  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\New folder\premium-live-tv\src\app\admin\database\page.tsx
+  15:10  warning  'motion' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  40:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\app\admin\database\page.tsx:40:9
+  38 |
+  39 |     useEffect(() => {
+> 40 |         loadStats();
+     |         ^^^^^^^^^ Avoid calling setState() directly within an effect
+  41 |     }, []);
+  42 |
+  43 |     const handleClearTable = async (tableName: "channels" | "operators" | "favorites" | "settings") => {  react-hooks/set-state-in-effect
+
+D:\New folder\premium-live-tv\src\app\admin\notifications\page.tsx
+  40:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\app\admin\notifications\page.tsx:40:9
+  38 |
+  39 |     useEffect(() => {
+> 40 |         loadHistory();
+     |         ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  41 |         // Turbo Polling: 5 seconds for real-time history sync
+  42 |         const interval = setInterval(loadHistory, 5000);
+  43 |         return () => clearInterval(interval);  react-hooks/set-state-in-effect
+
+D:\New folder\premium-live-tv\src\app\admin\operators\page.tsx
+  35:54  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-explicit-any
+  65:19  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\app\admin\operators\page.tsx:65:19
+  63 |         const auth = localStorage.getItem("vpoint-admin-auth");
+  64 |         if (auth) {
+> 65 |             try { setCurrentActor(JSON.parse(auth)); } catch { }
+     |                   ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  66 |         }
+  67 |         loadOperators();
+  68 |     }, []);  react-hooks/set-state-in-effect
+
+D:\New folder\premium-live-tv\src\app\admin\signals\page.tsx
+   13:5   warning  'Eye' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   14:5   warning  'EyeOff' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   16:5   warning  'Globe' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+   21:5   warning  'Zap' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   67:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\app\admin\signals\page.tsx:67:9
+  65 |
+  66 |     useEffect(() => {
+> 67 |         loadSignals();
+     |         ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  68 |     }, []);
+  69 |
+  70 |     const handleBulkSync = async () => {  react-hooks/set-state-in-effect
+   78:50  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+   99:48  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+  115:45  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+  125:51  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+  139:60  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+
+D:\New folder\premium-live-tv\src\app\admin\system\page.tsx
+   7:5   warning  'Cpu' is defined but never used           @typescript-eslint/no-unused-vars
+  15:5   warning  'Filter' is defined but never used        @typescript-eslint/no-unused-vars
+  17:17  warning  'SettingsIcon' is defined but never used  @typescript-eslint/no-unused-vars
+  28:38  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:42  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\New folder\premium-live-tv\src\app\admin\users\page.tsx
+   38:7   warning  'ROLES' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+   73:21  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\app\admin\users\page.tsx:73:21
+  71 |                 // Handle both old string "true" format and new object format
+  72 |                 if (parsed === true || parsed === "true" || parsed?.isSuperAdmin === true) {
+> 73 |                     setIsSuperAdmin(true);
+     |                     ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  74 |                 }
+  75 |             } catch { }
+  76 |         }  react-hooks/set-state-in-effect
+  129:11  warning  'getDeviceShort' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+
+D:\New folder\premium-live-tv\src\app\disclaimer\page.tsx
+  35:80   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  35:86   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  35:92   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  35:105  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+D:\New folder\premium-live-tv\src\app\nexus\page.tsx
+   74:17  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\app\nexus\page.tsx:74:17
+  72 |             try {
+  73 |                 const sessionUser = JSON.parse(session);
+> 74 |                 loadProfile(sessionUser.id);
+     |                 ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  75 |             } catch {
+  76 |                 setLoading(false);
+  77 |             }  react-hooks/set-state-in-effect
+  173:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @next/next/no-img-element
+
+D:\New folder\premium-live-tv\src\app\warning\page.tsx
+  5:28  warning  'ArrowLeft' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\New folder\premium-live-tv\src\app\watch\page.tsx
+  31:9   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\app\watch\page.tsx:31:9
+  29 |
+  30 |     useEffect(() => {
+> 31 |         handleResize();
+     |         ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  32 |         window.addEventListener("resize", handleResize);
+  33 |         return () => window.removeEventListener("resize", handleResize);
+  34 |     }, [handleResize]);                           react-hooks/set-state-in-effect
+  55:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\app\watch\page.tsx:55:13
+  53 |         try {
+  54 |             const user = JSON.parse(session);
+> 55 |             setIsAuthenticated(true);
+     |             ^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  56 |             setUserName(user.displayName || user.name || "User");
+  57 |             setUserId(user.id);
+  58 |         } catch {  react-hooks/set-state-in-effect
+
+D:\New folder\premium-live-tv\src\components\AdminSidebar.tsx
+  10:5   warning  'Settings' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+  37:17  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\components\AdminSidebar.tsx:37:17
+  35 |             try {
+  36 |                 const parsed = JSON.parse(admin);
+> 37 |                 setAdminName(parsed.name || "Admin");
+     |                 ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  38 |             } catch { }
+  39 |         }
+  40 |     }, []);  react-hooks/set-state-in-effect
+
+D:\New folder\premium-live-tv\src\components\ChannelGrid.tsx
+   5:28  warning  'Search' is defined but never used            @typescript-eslint/no-unused-vars
+  16:46  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  17:12  warning  'loading' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\New folder\premium-live-tv\src\components\ConfigContext.tsx
+   68:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   69:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   71:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  114:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  123:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\New folder\premium-live-tv\src\components\LandingPage.tsx
+   6:34  warning  'Play' is defined but never used          @typescript-eslint/no-unused-vars
+   7:23  warning  'Users' is defined but never used         @typescript-eslint/no-unused-vars
+   7:43  warning  'FileText' is defined but never used      @typescript-eslint/no-unused-vars
+  40:39  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\New folder\premium-live-tv\src\components\LiveChat.tsx
+   4:64  warning  'ChevronDown' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+   4:77  warning  'ChevronUp' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+  63:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\components\LiveChat.tsx:63:9
+  61 |
+  62 |     useEffect(() => {
+> 63 |         loadMessages();
+     |         ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  64 |         const interval = setInterval(loadMessages, 5000); // Poll every 5 seconds
+  65 |         return () => clearInterval(interval);
+  66 |     }, [loadMessages]);  react-hooks/set-state-in-effect
+
+D:\New folder\premium-live-tv\src\components\MainLayoutWrapper.tsx
+   10:18  warning  'ShieldAlert' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+   22:11  warning  'isAdminLogin' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   34:48  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+   39:50  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+   50:49  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+   55:53  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+   64:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\components\MainLayoutWrapper.tsx:64:9
+  62 |     // Effect for window resize and initial mount
+  63 |     useEffect(() => {
+> 64 |         setIsMounted(true);
+     |         ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  65 |         let prevWidth = window.innerWidth;
+  66 |
+  67 |         const handleResize = () => {                                                                                                                                                                                   react-hooks/set-state-in-effect
+  102:21  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\components\MainLayoutWrapper.tsx:102:21
+  100 |                 const parsed = JSON.parse(saved);
+  101 |                 if (parsed.accentColor) {
+> 102 |                     setTheme(parsed.accentColor);
+      |                     ^^^^^^^^ Avoid calling setState() directly within an effect
+  103 |                 }
+  104 |             } catch { /* ignore parse error */ }
+  105 |         }                                                                                                                           react-hooks/set-state-in-effect
+  189:29  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\components\MainLayoutWrapper.tsx:189:29
+  187 |                         const lastShown = sessionStorage.getItem("vpoint-bday-shown");
+  188 |                         if (!lastShown) {
+> 189 |                             setShowBirthdayGreeting(true);
+      |                             ^^^^^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  190 |                             sessionStorage.setItem("vpoint-bday-shown", "true");
+  191 |                         }
+  192 |                     }  react-hooks/set-state-in-effect
+
+D:\New folder\premium-live-tv\src\components\NotificationCenter.tsx
+   7:29  warning  'ExternalLink' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  43:40  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-explicit-any
+  48:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\components\NotificationCenter.tsx:48:9
+  46 |
+  47 |     useEffect(() => {
+> 48 |         loadNotifications(true);
+     |         ^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  49 |         // Turbo Polling: 5 seconds for real-time feel
+  50 |         const interval = setInterval(() => loadNotifications(false), 5000);
+  51 |         return () => clearInterval(interval);  react-hooks/set-state-in-effect
+
+D:\New folder\premium-live-tv\src\components\PWAManager.tsx
+   5:10  warning  'Download' is defined but never used      @typescript-eslint/no-unused-vars
+   8:58  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:47  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\New folder\premium-live-tv\src\components\ProfileModal.tsx
+    5:18  warning  'AnimatePresence' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   16:44  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   19:66  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   24:54  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   46:13  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\components\ProfileModal.tsx:46:13
+  44 |     useEffect(() => {
+  45 |         if (isOpen && userId) {
+> 46 |             loadProfile();
+     |             ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  47 |         }
+  48 |     }, [isOpen, userId]);
+  49 |  react-hooks/set-state-in-effect
+   48:8   warning  React Hook useEffect has a missing dependency: 'loadProfile'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           react-hooks/exhaustive-deps
+  113:45  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @next/next/no-img-element
+
+D:\New folder\premium-live-tv\src\components\SettingsModal.tsx
+   13:5    warning  'Wind' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   68:17   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\components\SettingsModal.tsx:68:17
+  66 |             try {
+  67 |                 const parsed = JSON.parse(saved);
+> 68 |                 setSettings(prev => ({
+     |                 ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  69 |                     ...prev,
+  70 |                     ...parsed
+  71 |                 }));  react-hooks/set-state-in-effect
+   76:56   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+  238:118  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-explicit-any
+
+D:\New folder\premium-live-tv\src\components\ShakaPlayer.tsx
+   11:22  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+   13:22  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+   14:31  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+   37:30  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+   40:20  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+   41:15  warning  'player' is assigned a value but never used                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   41:23  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+   49:41  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+   63:35  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  109:84  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  109:98  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  124:62  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  129:66  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  140:60  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  145:34  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  145:42  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  165:8   warning  React Hook useEffect has missing dependencies: 'onBuffering', 'onError', 'onQualityLevels', 'onReady', 'proxyActive', and 'sniMask'. Either include them or remove the dependency array. If 'onReady' changes too often, find the parent component that defines it and wrap that definition in useCallback  react-hooks/exhaustive-deps
+  192:78  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  192:86  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  226:26  warning  'e' is defined but never used                                                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+
+D:\New folder\premium-live-tv\src\components\Sidebar.tsx
+    7:5   warning  'Menu' is defined but never used              @typescript-eslint/no-unused-vars
+    9:5   warning  'Star' is defined but never used              @typescript-eslint/no-unused-vars
+   10:5   warning  'LayoutGrid' is defined but never used        @typescript-eslint/no-unused-vars
+   11:5   warning  'Flame' is defined but never used             @typescript-eslint/no-unused-vars
+   12:5   warning  'Music2' is defined but never used            @typescript-eslint/no-unused-vars
+   14:17  warning  'SettingsIcon' is defined but never used      @typescript-eslint/no-unused-vars
+   18:5   warning  'MessageCircle' is defined but never used     @typescript-eslint/no-unused-vars
+   19:5   warning  'Clapperboard' is defined but never used      @typescript-eslint/no-unused-vars
+   30:5   warning  'Tv' is defined but never used                @typescript-eslint/no-unused-vars
+   34:18  warning  'AnimatePresence' is defined but never used   @typescript-eslint/no-unused-vars
+   62:12  warning  'loading' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  146:41  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+
+D:\New folder\premium-live-tv\src\components\TopBar.tsx
+  26:34   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:41   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:40   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:73   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:109  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  44:36   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\New folder\premium-live-tv\src\components\VideoPlayer.tsx
+   43:30  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+   50:56  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+   70:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\components\VideoPlayer.tsx:70:9
+  68 |         // Use functional updates or refs if these need to be sync but avoid cascading if possible
+  69 |         // These are fine as they only run when URL changes
+> 70 |         setError(null);
+     |         ^^^^^^^^ Avoid calling setState() directly within an effect
+  71 |         setIsReady(false);
+  72 |         return () => {
+  73 |             if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);                                                                                                                                                                    react-hooks/set-state-in-effect
+   78:40  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+   82:42  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  102:17  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\New folder\premium-live-tv\src\components\VideoPlayer.tsx:102:17
+  100 |                 // We use a slight delay or conditional to avoid the "cascading render" warning if it's considered heavy
+  101 |                 // but for small settings objects it's usually acceptable although frowned upon by newer lint rules.
+> 102 |                 setSettings(prev => ({
+      |                 ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  103 |                     ...prev,
+  104 |                     lowLatency: parsed.lowLatency ?? prev.lowLatency,
+  105 |                     maxBufferLength: parsed.maxBufferLength ?? prev.maxBufferLength,  react-hooks/set-state-in-effect
+  256:34  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  265:47  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  286:34  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  331:34  warning  'p' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+
+D:\New folder\premium-live-tv\src\lib\actions.ts
+    4:59  warning  'adminLogs' is defined but never used     @typescript-eslint/no-unused-vars
+    5:19  warning  'sql' is defined but never used           @typescript-eslint/no-unused-vars
+   17:85  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   81:34  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   81:45  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  127:44  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  161:55  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  164:21  warning  '_' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  170:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  183:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  189:40  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  207:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  223:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  229:53  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  259:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  325:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  336:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  347:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  357:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  364:26  error    A `require()` style import is forbidden   @typescript-eslint/no-require-imports
+  368:70  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  418:60  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  454:63  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  460:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  499:75  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  542:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  561:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  574:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  588:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  603:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  616:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  626:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+
+D:\New folder\premium-live-tv\src\lib\adminAuth.ts
+   41:14  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+   84:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   91:48  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   93:24  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  121:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  144:24  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  151:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  177:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  203:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  226:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  282:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\New folder\premium-live-tv\src\lib\auth.ts
+  26:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  63:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Γ£û 181 problems (123 errors, 58 warnings)
+

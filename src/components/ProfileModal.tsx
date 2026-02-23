@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { X, User, Facebook, Twitter, Linkedin, Instagram, MapPin, UserPlus, MessageSquare, Shield, ShieldAlert, Globe } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { getUserProfile, sendFriendRequest, handleFriendRequest, getFriends } from "@/lib/actions";
 
 interface ProfileModalProps {
@@ -18,12 +18,6 @@ export default function ProfileModal({ userId, currentUser, isOpen, onClose }: P
     const [friendshipStatus, setFriendshipStatus] = useState<string | null>(null);
     const [friendshipRelation, setFriendshipRelation] = useState<any>(null);
     const [isProcessing, setIsProcessing] = useState(false);
-
-    useEffect(() => {
-        if (isOpen && userId) {
-            loadProfile();
-        }
-    }, [isOpen, userId]);
 
     const loadProfile = async () => {
         setLoading(true);
@@ -46,6 +40,12 @@ export default function ProfileModal({ userId, currentUser, isOpen, onClose }: P
         }
         setLoading(false);
     };
+
+    useEffect(() => {
+        if (isOpen && userId) {
+            loadProfile();
+        }
+    }, [isOpen, userId]);
 
     const handleAddFriend = async () => {
         setIsProcessing(true);

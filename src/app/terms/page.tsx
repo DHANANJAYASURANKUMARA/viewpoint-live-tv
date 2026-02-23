@@ -74,7 +74,7 @@ export default function TermsPage() {
 
                 {/* Footer Seal */}
                 <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 opacity-30">
-                    <span className="text-[8px] font-black uppercase tracking-[0.5em]">© 2026 Viewpoint Neural Systems • All Terms Encrypted</span>
+                    <span className="text-[8px] font-black uppercase tracking-[0.5em]">&copy; 2026 Viewpoint Neural Systems • All Terms Encrypted</span>
                     <ShieldCheck size={20} className="text-neon-cyan" />
                 </div>
             </div>

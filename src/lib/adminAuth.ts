@@ -81,14 +81,25 @@ export async function adminLogin(loginId: string, password: string) {
                 isSuperAdmin: op.isSuperAdmin,
             }
         };
-    } catch (e: any) {
+    } catch (error: unknown) {
+        const e = error as Error;
         console.error("Admin login failed:", e);
         return { success: false, error: e?.message || "Login failed." };
     }
 }
 
 // ─── Create / Update Operator (Super Admin only) ──────────────────────────────
-export async function manageOperatorFull(data: any, actorName: string = "Super Admin") {
+interface OperatorData {
+    id?: string;
+    name: string;
+    loginId: string;
+    password?: string;
+    role: string;
+    status: string;
+    isSuperAdmin?: boolean;
+}
+
+export async function manageOperatorFull(data: OperatorData, actorName: string = "Super Admin") {
     try {
         const payload: any = { ...data };
 
@@ -118,7 +129,8 @@ export async function manageOperatorFull(data: any, actorName: string = "Super A
         }
         revalidatePath("/admin/operators");
         return { success: true };
-    } catch (e: any) {
+    } catch (error: unknown) {
+        const e = error as Error;
         console.error("Manage operator failed:", e);
         return { success: false, error: e?.message || "Operation failed." };
     }
@@ -148,7 +160,8 @@ export async function changeSuperAdminCredentials(
         await db.update(operators).set(updates).where(eq(operators.id, sa.id));
         await logAdminAction("CHANGE_SUPER_ADMIN_CREDENTIALS", sa.name, "Credentials updated", "AUTH", sa.name, sa.id);
         return { success: true };
-    } catch (e: any) {
+    } catch (error: unknown) {
+        const e = error as Error;
         return { success: false, error: e?.message || "Failed to change credentials." };
     }
 }
@@ -279,7 +292,8 @@ export async function promoteUserToOperator(
                 password: rawPassword,  // plain text — shown once to SA
             }
         };
-    } catch (e: any) {
+    } catch (error: unknown) {
+        const e = error as Error;
         console.error("promoteUserToOperator failed:", e);
         return { success: false, error: e?.message || "Promotion failed." };
     }

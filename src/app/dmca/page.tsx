@@ -77,7 +77,7 @@ export default function DMCAPage() {
 
                 {/* Footer Seal */}
                 <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 opacity-30">
-                    <span className="text-[8px] font-black uppercase tracking-[0.5em]">© 2026 Viewpoint Neural Systems • All Reports Synchronized</span>
+                    <span className="text-[8px] font-black uppercase tracking-[0.5em]">&copy; 2026 Viewpoint Neural Systems • All Reports Synchronized</span>
                     <Zap size={20} className="text-neon-magenta" />
                 </div>
             </div>

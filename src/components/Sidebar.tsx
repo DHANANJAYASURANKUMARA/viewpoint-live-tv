@@ -4,19 +4,8 @@ import React, { useState, useEffect } from "react";
 import { getChannels } from "@/lib/actions";
 import {
     Search,
-    Menu,
+    Tv,
     X,
-    Star,
-    LayoutGrid,
-    Flame,
-    Music2,
-    Trophy,
-    Settings as SettingsIcon,
-    Radio,
-    ChevronRight,
-    SearchX,
-    MessageCircle,
-    Clapperboard,
     Globe,
     Music,
     Gamepad2,
@@ -27,11 +16,14 @@ import {
     Heart,
     Settings,
     Activity,
-    Tv,
+    Radio,
+    SearchX,
     LogOut,
-    User
+    User,
+    Trophy,
+    ChevronRight
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useConfig } from "./ConfigContext";
@@ -67,62 +59,53 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
         if (session) {
             try {
                 const user = JSON.parse(session);
-                setCurrentUser(user.name || "User");
+                // Wrap in a microtask or check if different to avoid cascading
+                Promise.resolve().then(() => {
+                    setCurrentUser(user.name || "User");
+                });
             } catch { }
         }
     }, []);
-
-    const handleLogout = () => {
-        localStorage.removeItem("vpoint-user");
-        router.push("/login");
-    };
 
     useEffect(() => {
         const loadChannels = async () => {
             try {
                 const data = await getChannels();
-                if (data && data.length > 0) {
-                    setChannels(data.map(c => ({
-                        id: c.id,
-                        name: c.name,
-                        url: c.url,
-                        category: c.category,
-                        description: `Managed ${c.category} transmission.`,
-                        isLive: (c.status || "Live") === "Live"
-                    })));
-                }
-            } catch (err) {
-                console.error("Sidebar DB sync failed:", err);
-            } finally {
+                setChannels(data);
+                setLoading(false);
+            } catch (error) {
+                console.error("Failed to load channels:", error);
                 setLoading(false);
             }
         };
         loadChannels();
+
+        const savedFavorites = localStorage.getItem("vpoint-favorites");
+        if (savedFavorites) {
+            try {
+                const parsed = JSON.parse(savedFavorites);
+                Promise.resolve().then(() => {
+                    setFavorites(parsed);
+                });
+            } catch { }
+        }
     }, []);
 
-    // Custom URL support
-    const [customUrl, setCustomUrl] = useState("");
-    const [showCustomInput, setShowCustomInput] = useState(false);
-
-    const handleChannelSelect = (channel: Channel | { url: string; name: string; category: string }) => {
-        window.dispatchEvent(new CustomEvent("vpoint-channel-select", {
-            detail: {
-                url: channel.url,
-                name: channel.name,
-                category: (channel as Channel).category || 'Custom'
-            }
-        }));
-        onClose(); // Auto-close on selection for mobile better UX
-    };
-
-    const toggleFavorite = (id: string | number, e: React.MouseEvent) => {
+    const toggleFavorite = (id: string, e: React.MouseEvent) => {
         e.stopPropagation();
-        setFavorites(prev =>
-            prev.includes(id.toString())
-                ? prev.filter(f => f !== id.toString())
-                : [...prev, id.toString()]
-        );
+        const newFavs = favorites.includes(id)
+            ? favorites.filter(favId => favId !== id)
+            : [...favorites, id];
+        setFavorites(newFavs);
+        localStorage.setItem("vpoint-favorites", JSON.stringify(newFavs));
     };
+
+    const handleChannelSelect = (channel: any) => {
+        onClose();
+        router.push(`/watch?url=${encodeURIComponent(channel.url)}&name=${encodeURIComponent(channel.name)}`);
+    };
+
+    const [customUrl, setCustomUrl] = useState("");
 
     const handleCustomSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -143,7 +126,7 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
         return matchesCategory && matchesSearch && isActuallyLive;
     }).sort((a, b) => a.name.localeCompare(b.name));
 
-    const categoryIcons: Record<string, any> = {
+    const categoryIcons: Record<string, React.ReactNode> = {
         All: <Globe size={16} />,
         Entertainment: <Music size={16} />,
         Sports: <Gamepad2 size={16} />,
@@ -196,195 +179,153 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
             <div className="flex-1 overflow-y-auto pr-2 space-y-10 custom-scrollbar">
                 {/* Categories */}
                 <div className="space-y-4">
-                    <div className="flex items-center justify-between px-2">
-                        <h3 className="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em]">Transmission Sectors</h3>
-                        <Activity className="text-slate-700" size={10} />
-                    </div>
+                    <h3 className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em] px-2 flex items-center gap-2">
+                        <Activity size={10} className="text-neon-cyan" /> Network Sectors
+                    </h3>
                     <div className="grid grid-cols-2 gap-2">
-                        {categories.slice(0, 6).map((cat) => (
+                        {categories.map((cat) => (
                             <button
                                 key={cat}
                                 onClick={() => setActiveCategory(cat)}
-                                className={`flex items-center gap-2.5 p-3 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${activeCategory === cat
-                                    ? "bg-neon-cyan/10 border-neon-cyan/30 text-neon-cyan shadow-[0_0_20px_rgba(34,211,238,0.1)]"
-                                    : "bg-white/[0.02] border-white/5 text-slate-500 hover:text-white hover:border-white/10"
+                                className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-[9px] font-black uppercase tracking-widest ${activeCategory === cat
+                                    ? "bg-white text-vpoint-dark border-white shadow-[0_0_15px_rgba(255,255,255,0.15)]"
+                                    : "bg-white/[0.02] text-slate-500 border-white/5 hover:border-white/10 hover:bg-white/[0.04]"
                                     }`}
                             >
-                                {categoryIcons[cat]}
+                                <span className={activeCategory === cat ? "text-vpoint-dark" : "text-slate-600"}>
+                                    {categoryIcons[cat]}
+                                </span>
                                 {cat}
                             </button>
                         ))}
                     </div>
                 </div>
 
-                {/* Channel Flux */}
+                {/* Signals Hub */}
                 <div className="space-y-4">
-                    <div className="flex items-center justify-between px-2">
-                        <h3 className="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em]">Available Signals</h3>
-                        <span className="px-2 py-0.5 rounded-full bg-white/5 text-[7px] font-black text-slate-600">{filteredChannels.length} ON</span>
-                    </div>
+                    <h3 className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em] px-2 flex items-center justify-between">
+                        <span className="flex items-center gap-2"><Radio size={10} className="text-neon-magenta" /> Transmissions</span>
+                        <span className="text-neon-cyan">{filteredChannels.length} ACTIVE</span>
+                    </h3>
 
-                    <div className="space-y-2.5">
-                        {filteredChannels.length > 0 ? (
-                            filteredChannels.map((channel) => {
-                                const isActive = activeChannelUrl === channel.url;
-
-                                // Map category to Lucide icon for premium look
-                                const ChannelIcon = channel.category === "Sports" ? Trophy :
-                                    channel.category === "News" ? Globe :
-                                        channel.category === "Movies" ? Film :
-                                            channel.category === "Entertainment" ? Radio : Activity;
-
-                                return (
-                                    <motion.div
-                                        key={channel.id}
-                                        layout
-                                        role="button"
-                                        tabIndex={0}
-                                        onClick={() => handleChannelSelect(channel)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter' || e.key === ' ') {
-                                                e.preventDefault();
-                                                handleChannelSelect(channel);
-                                            }
-                                        }}
-                                        className={`mx-1 group relative flex items-center justify-between p-4 rounded-2xl transition-all duration-500 cursor-pointer outline-none focus-visible:border-neon-cyan/50 focus-visible:bg-white/[0.05] ${isActive ?
-                                            "bg-white/[0.08] border-neon-magenta/50 shadow-[0_0_20px_rgba(255,45,85,0.15)] ring-1 ring-neon-magenta/30" :
-                                            "bg-white/[0.01] border-white/5 hover:border-neon-cyan/20 hover:bg-white/[0.03]"
-                                            }`}
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-inner transition-transform group-hover:scale-110 duration-500 ${isActive ? "bg-neon-magenta/20 text-neon-magenta shadow-[0_0_15px_rgba(255,45,85,0.3)]" :
-                                                channel.category === "Entertainment" ? "bg-amber-500/10 text-amber-500" :
-                                                    channel.category === "Sports" ? "bg-emerald-500/10 text-emerald-500" :
-                                                        channel.category === "News" ? "bg-blue-500/10 text-blue-500" : "bg-neon-magenta/10 text-neon-magenta"
-                                                }`}>
-                                                <ChannelIcon size={18} />
+                    <div className="space-y-2">
+                        {loading ? (
+                            Array(8).fill(0).map((_, i) => (
+                                <div key={i} className="h-16 w-full glass-dark border border-white/5 rounded-2xl animate-pulse" />
+                            ))
+                        ) : filteredChannels.length > 0 ? (
+                            filteredChannels.map((channel) => (
+                                <button
+                                    key={channel.id}
+                                    onClick={() => handleChannelSelect(channel)}
+                                    className={`w-full group relative p-4 rounded-2xl border transition-all flex items-center justify-between overflow-hidden ${activeChannelUrl === channel.url
+                                        ? "bg-neon-cyan/5 border-neon-cyan/20 shadow-[0_0_20px_rgba(0,255,243,0.05)]"
+                                        : "bg-white/[0.01] border-white/5 hover:bg-white/[0.03] hover:border-white/10"
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-4 relative z-10">
+                                        <div className={`w-10 h-10 glass border rounded-xl flex items-center justify-center transition-all ${activeChannelUrl === channel.url ? "border-neon-cyan/40 bg-neon-cyan/10" : "border-white/5"}`}>
+                                            <Tv size={18} className={activeChannelUrl === channel.url ? "text-neon-cyan" : "text-slate-500"} />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className={`text-[10px] font-black uppercase tracking-widest ${activeChannelUrl === channel.url ? "text-neon-cyan" : "text-white"}`}>
+                                                {channel.name}
                                             </div>
-                                            <div className="text-left">
-                                                <h4 className={`text-[10px] font-black group-hover:text-neon-cyan transition-colors uppercase tracking-widest ${isActive ? "text-neon-magenta" : "text-white"}`}>
-                                                    {channel.name}
-                                                </h4>
-                                                <div className="flex items-center gap-2 mt-1">
-                                                    {isActive ? (
-                                                        <div className="flex items-center gap-1">
-                                                            <div className="relative flex h-1.5 w-1.5">
-                                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-magenta opacity-75"></span>
-                                                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-neon-magenta"></span>
-                                                            </div>
-                                                            <span className="text-[7px] font-black text-neon-magenta uppercase tracking-tighter">NOW PLAYING</span>
-                                                        </div>
-                                                    ) : channel.isLive && (
-                                                        <div className="flex items-center gap-1">
-                                                            <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                                                            <span className="text-[7px] font-bold text-emerald-500 uppercase tracking-tighter">LIVE FEED</span>
-                                                        </div>
-                                                    )}
-                                                    <span className="text-[7px] font-bold text-slate-600 uppercase tracking-tighter">HD • {channel.category}</span>
-                                                </div>
+                                            <div className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">
+                                                {channel.category} • SIGNAL OPTIMAL
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3">
-                                            <button
-                                                onClick={(e) => toggleFavorite(channel.id, e)}
-                                                className={`p-2 rounded-lg transition-all ${favorites.includes(channel.id.toString()) ? "text-neon-magenta" : "text-slate-700 hover:text-white"}`}
-                                            >
-                                                <Heart size={14} fill={favorites.includes(channel.id.toString()) ? "currentColor" : "none"} />
-                                            </button>
-                                            <ChevronRight size={14} className="text-slate-800 group-hover:text-neon-cyan group-hover:translate-x-1 transition-all" />
-                                        </div>
-                                    </motion.div>
-                                );
-                            })
+                                    </div>
+
+                                    <div className="flex items-center gap-3 relative z-10">
+                                        <button
+                                            onClick={(e) => toggleFavorite(channel.id, e)}
+                                            className={`p-2 rounded-lg transition-all ${favorites.includes(channel.id) ? "text-neon-magenta" : "text-slate-600 hover:text-white"}`}
+                                        >
+                                            <Heart size={14} fill={favorites.includes(channel.id) ? "currentColor" : "none"} />
+                                        </button>
+                                        <ChevronRight size={14} className="text-slate-700 group-hover:text-neon-cyan transition-colors" />
+                                    </div>
+
+                                    {activeChannelUrl === channel.url && (
+                                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-neon-cyan animate-pulse" />
+                                    )}
+                                </button>
+                            ))
                         ) : (
-                            <div className="flex flex-col items-center justify-center py-10 text-center opacity-40">
-                                <SearchX size={24} className="mb-2" />
-                                <p className="text-[9px] font-black uppercase tracking-widest">No Signal Found</p>
+                            <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
+                                <div className="w-16 h-16 glass border border-white/5 rounded-3xl flex items-center justify-center text-slate-700">
+                                    <SearchX size={32} />
+                                </div>
+                                <div className="space-y-1">
+                                    <div className="text-[10px] font-black text-white uppercase tracking-widest">No Signals Found</div>
+                                    <div className="text-[8px] font-bold text-slate-600 uppercase tracking-widest">Try adjusting your scan</div>
+                                </div>
                             </div>
                         )}
                     </div>
                 </div>
-            </div>
 
-            {/* Custom Link Terminal */}
-            <div className="mt-8 pt-8 border-t border-white/5 space-y-4">
-                {!showCustomInput ? (
-                    <button
-                        onClick={() => setShowCustomInput(true)}
-                        className="w-full py-4 glass-dark border border-white/5 rounded-2xl flex items-center justify-center gap-3 text-slate-500 hover:text-neon-magenta hover:border-neon-magenta/30 transition-all text-[9px] font-black uppercase tracking-[0.2em]"
-                    >
-                        <Zap size={14} />
-                        Inject Custom Stream
-                    </button>
-                ) : (
-                    <motion.form
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        onSubmit={handleCustomSubmit}
-                        className="space-y-3"
-                    >
-                        <div className="relative">
-                            <input
-                                autoFocus
-                                type="text"
-                                placeholder="PASTE M3U8 / MPD LINK..."
-                                value={customUrl}
-                                onChange={(e) => setCustomUrl(e.target.value)}
-                                className="w-full bg-black/40 border border-neon-magenta/20 rounded-xl py-3 px-4 text-[9px] font-black text-white focus:outline-none focus:border-neon-magenta/50 transition-all uppercase tracking-widest"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowCustomInput(false)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-white"
-                            >
-                                <X size={12} />
-                            </button>
-                        </div>
+                {/* Neural Custom Injector */}
+                <div className="space-y-4 pb-10">
+                    <h3 className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em] px-2 flex items-center gap-2">
+                        <Zap size={10} className="text-amber-500" /> Manual Signal Injection
+                    </h3>
+                    <form onSubmit={handleCustomSubmit} className="relative group">
+                        <input
+                            type="text"
+                            placeholder="PASTE HUD URL..."
+                            value={customUrl}
+                            onChange={(e) => setCustomUrl(e.target.value)}
+                            className="w-full bg-vpoint-dark border border-white/5 rounded-2xl py-4 pl-5 pr-14 text-[9px] font-bold text-white placeholder:text-slate-700 focus:outline-none focus:border-white/20 transition-all uppercase tracking-widest shadow-inner"
+                        />
                         <button
                             type="submit"
-                            className="w-full py-3 bg-neon-magenta/80 hover:bg-neon-magenta text-white rounded-xl text-[9px] font-black uppercase tracking-[0.3em] transition-all shadow-[0_0_20px_rgba(255,45,85,0.2)]"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 glass border border-white/10 rounded-xl flex items-center justify-center text-white hover:bg-white/5 transition-all"
                         >
-                            Sync Signal
+                            <ArrowRight size={14} />
                         </button>
-                    </motion.form>
-                )}
+                    </form>
+                </div>
+            </div>
 
-                <button
-                    onClick={() => window.dispatchEvent(new CustomEvent("vpoint-open-settings"))}
-                    className="w-full py-4 glass-dark border border-white/5 rounded-2xl flex items-center justify-center gap-3 text-slate-500 hover:text-neon-cyan hover:border-neon-cyan/30 transition-all text-[9px] font-black uppercase tracking-[0.2em]"
-                >
-                    <Settings size={14} />
-                    Advanced Settings
-                </button>
-
-                {currentUser && (
-                    <div className="space-y-3">
-                        <Link
-                            href="/nexus"
-                            onClick={onClose}
-                            className="w-full py-4 glass-dark border border-white/5 rounded-2xl flex items-center justify-center gap-3 text-slate-500 hover:text-neon-cyan hover:border-neon-cyan/30 transition-all text-[9px] font-black uppercase tracking-[0.2em]"
-                        >
-                            <User size={14} />
-                            Manage Nexus Profile
-                        </Link>
-                        <div className="px-4 py-3 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">{currentUser}</span>
-                            <button
-                                onClick={handleLogout}
-                                className="text-slate-600 hover:text-red-400 transition-colors"
-                                title="Logout"
-                            >
-                                <LogOut size={14} />
-                            </button>
+            {/* User Identity Matrix */}
+            <div className="mt-auto pt-6 border-t border-white/5">
+                <div className="p-4 glass border border-white/5 rounded-3xl flex items-center justify-between group cursor-pointer hover:border-white/10 transition-all">
+                    <div className="flex items-center gap-4">
+                        <div className="relative">
+                            <div className="w-10 h-10 glass border border-white/10 rounded-xl flex items-center justify-center relative overflow-hidden">
+                                <User className="text-white/40" size={18} />
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
+                            </div>
+                            <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-vpoint-dark" />
+                        </div>
+                        <div className="text-left">
+                            <div className="text-[10px] font-black text-white uppercase tracking-widest">{currentUser || "GUEST PROTOCOL"}</div>
+                            <div className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Rank: New Citizen</div>
                         </div>
                     </div>
-                )}
-
-                <div className="px-2 flex items-center justify-between text-slate-800">
-                    <span className="text-[7px] font-black uppercase tracking-widest">{config.brandingText} MODULE v{config.version}</span>
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/20" />
+                    <div className="flex gap-2">
+                        <button className="p-2 text-slate-600 hover:text-neon-cyan transition-colors">
+                            <Settings size={14} />
+                        </button>
+                        <button className="p-2 text-slate-600 hover:text-neon-magenta transition-colors">
+                            <LogOut size={14} />
+                        </button>
+                    </div>
                 </div>
+            </div>
+
+            {/* HUD Decoration */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[6px] font-black text-white/5 uppercase tracking-[1em] pointer-events-none whitespace-nowrap">
+                VIEWPOINT NEURAL HUD v2.4.9
             </div>
         </div>
     );
 }
+
+const ArrowRight = ({ size, className }: { size: number, className?: string }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M5 12h14m-7-7 7 7-7 7" />
+    </svg>
+);

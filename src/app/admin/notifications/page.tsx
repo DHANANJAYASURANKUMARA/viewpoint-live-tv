@@ -13,26 +13,35 @@ import {
 } from "@/lib/actions";
 import { useConfig } from "@/components/ConfigContext";
 
+interface NotificationLog {
+    id: string;
+    title: string;
+    message: string;
+    type: string;
+    isActive: boolean;
+    createdAt: Date | string;
+}
+
 export default function AdminNotifications() {
     const [title, setTitle] = useState("");
     const [message, setMessage] = useState("");
     const [type, setType] = useState("INFO");
-    const [history, setHistory] = useState<any[]>([]);
+    const [history, setHistory] = useState<NotificationLog[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [editId, setEditId] = useState<string | null>(null);
     const { config, updateConfig } = useConfig();
 
-    const loadHistory = async () => {
+    const loadHistory = React.useCallback(async () => {
         const data = await getNotifications();
-        setHistory(data); // data is already ordered by desc in the action now
-    };
+        setHistory(data as NotificationLog[]);
+    }, []);
 
     useEffect(() => {
         loadHistory();
         // Turbo Polling: 5 seconds for real-time history sync
         const interval = setInterval(loadHistory, 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [loadHistory]);
 
     const handleBroadcast = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -52,7 +61,7 @@ export default function AdminNotifications() {
         loadHistory();
     };
 
-    const handleEditInitiate = (log: any) => {
+    const handleEditInitiate = (log: NotificationLog) => {
         setEditId(log.id);
         setTitle(log.title);
         setMessage(log.message);
@@ -67,7 +76,7 @@ export default function AdminNotifications() {
         setType("INFO");
     };
 
-    const handleToggleVisibility = async (log: any) => {
+    const handleToggleVisibility = async (log: NotificationLog) => {
         await updateNotification(log.id, { isActive: !log.isActive });
         loadHistory();
     };

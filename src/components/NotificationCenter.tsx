@@ -9,38 +9,47 @@ import {
 import { getNotifications, markNotificationAsRead, deleteNotification, clearNotifications } from "@/lib/actions";
 import { useConfig } from "@/components/ConfigContext";
 
+interface NotificationLog {
+    id: string;
+    title: string;
+    message: string;
+    type: string;
+    isRead: boolean;
+    createdAt: Date | string;
+}
+
 export default function NotificationCenter() {
     const [isOpen, setIsOpen] = useState(false);
-    const [notifs, setNotifs] = useState<any[]>([]);
+    const [notifs, setNotifs] = useState<NotificationLog[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [lastNotifId, setLastNotifId] = useState<string | null>(null);
-    const [showToast, setShowToast] = useState<any>(null);
+    const [showToast, setShowToast] = useState<NotificationLog | null>(null);
     const { config } = useConfig();
 
-    const loadNotifications = async (showLoading = false) => {
+    const loadNotifications = React.useCallback(async (showLoading = false) => {
         if (showLoading) setIsLoading(true);
         const data = await getNotifications(true);
 
         // Ghost Sync: Check for new transmissions for Toast
-        if (!showLoading && data.length > 0 && lastNotifId && data[0].id !== lastNotifId && !data[0].isRead) {
-            setShowToast(data[0]);
+        if (!showLoading && data.length > 0 && lastNotifId && (data[0] as NotificationLog).id !== lastNotifId && !(data[0] as NotificationLog).isRead) {
+            setShowToast(data[0] as NotificationLog);
             // Auto-dismiss toast after 5 seconds
             setTimeout(() => setShowToast(null), 5000);
         }
 
-        setNotifs(data);
-        if (data.length > 0) setLastNotifId(data[0].id);
+        setNotifs(data as NotificationLog[]);
+        if (data.length > 0) setLastNotifId((data[0] as NotificationLog).id);
         setUnreadCount(data.filter((n: any) => !n.isRead).length);
         setIsLoading(false);
-    };
+    }, [lastNotifId]);
 
     useEffect(() => {
         loadNotifications(true);
         // Turbo Polling: 5 seconds for real-time feel
         const interval = setInterval(() => loadNotifications(false), 5000);
         return () => clearInterval(interval);
-    }, [lastNotifId]);
+    }, [loadNotifications]);
 
     const handleMarkRead = async (id: string) => {
         const res = await markNotificationAsRead(id);

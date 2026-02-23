@@ -1,9 +1,10 @@
 // Run with: node scripts/generate-icons.js
 // Generates 192x192 and 512x512 PNG icons for the PWA
 
-const { createCanvas } = require('canvas');
-const fs = require('fs');
-const path = require('path');
+import { createCanvas } from 'canvas';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 function generateIcon(size) {
     const canvas = createCanvas(size, size);
@@ -53,12 +54,15 @@ function generateIcon(size) {
     return canvas.toBuffer('image/png');
 }
 
-const iconsDir = path.join(__dirname, '..', 'public', 'icons');
-if (!fs.existsSync(iconsDir)) fs.mkdirSync(iconsDir, { recursive: true });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const ICONS_DIR = path.join(__dirname, '../public/icons');
+if (!fs.existsSync(ICONS_DIR)) fs.mkdirSync(ICONS_DIR, { recursive: true });
 
 [192, 512].forEach(size => {
     const buffer = generateIcon(size);
-    const filePath = path.join(iconsDir, `icon-${size}.png`);
+    const filePath = path.join(ICONS_DIR, `icon-${size}.png`);
     fs.writeFileSync(filePath, buffer);
     console.log(`✓ Generated ${filePath}`);
 });

@@ -2,9 +2,24 @@
 
 import { db } from "./db";
 import { channels, operators, favorites, settings, users, adminLogs, notifications, chatMessages, messageReactions, friendships, directMessages } from "./schema";
-import { eq, and, sql, desc, lt, or } from "drizzle-orm";
+import { eq, and, sql, desc, lt, or, ne } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
+import { cookies } from "next/headers";
+
+interface SignalData {
+    id: string;
+    name: string;
+    url: string;
+    category: string;
+    status?: string;
+    sniMask?: string;
+    proxyActive?: boolean;
+    scheduledAt?: Date | null;
+    logo?: string | null;
+    viewers?: string | null;
+    trending?: boolean;
+}
 
 export async function getChannels() {
     try {
@@ -115,6 +130,19 @@ export async function updateSetting(key: string, value: string, userId: string =
     }
 }
 
+export async function createChannel(data: Partial<SignalData>) {
+    try {
+        await db.insert(channels).values(data as any);
+        revalidatePath("/admin/signals");
+        revalidatePath("/admin/dashboard");
+        revalidatePath("/");
+        return { success: true };
+    } catch (error: any) {
+        console.error("Failed to add channel:", error);
+        return { success: false, error: error?.message || "Unknown error" };
+    }
+}
+
 export async function getOperators() {
     try {
         return await db.select().from(operators).orderBy(operators.name);
@@ -158,11 +186,25 @@ export async function deleteOperator(id: string) {
     }
 }
 
-export async function updateChannel(id: string, data: any) {
+export async function votePoll(pollId: string, optionIndex: number) {
+    const cookieStore = await cookies();
+    const session = cookieStore.get("vpoint-user")?.value;
+    if (!session) return { success: false, error: "Authentication required" };
+
+    try {
+        const user = JSON.parse(session);
+        const userId = user.id;
+    } catch (error: any) {
+        console.error("Failed to vote poll:", error);
+        return { success: false, error: error?.message || "Unknown error" };
+    }
+}
+
+export async function updateChannel(id: string, data: Partial<typeof channels.$inferInsert>) {
     try {
         // Strip id from data to prevent unique constraint conflict during update
-        const { id: _, ...payload } = data;
-        await db.update(channels).set(payload).where(eq(channels.id, id));
+        const { id: _, ...updateData } = data as any;
+        await db.update(channels).set(updateData).where(eq(channels.id, id));
         revalidatePath("/admin/signals");
         revalidatePath("/admin/dashboard");
         revalidatePath("/");
@@ -176,13 +218,10 @@ export async function updateChannel(id: string, data: any) {
 export async function deleteChannel(id: string) {
     try {
         await db.delete(channels).where(eq(channels.id, id));
-        revalidatePath("/admin/signals");
-        revalidatePath("/admin/dashboard");
-        revalidatePath("/");
         return { success: true };
-    } catch (error: any) {
-        console.error("Failed to delete channel:", error);
-        return { success: false, error: error?.message || "Unknown error" };
+    } catch (error: unknown) {
+        const e = error as Error;
+        return { success: false, error: e.message };
     }
 }
 
@@ -361,7 +400,6 @@ export async function getActiveOperatorCount() {
 
 export async function getNotifications(onlyActive: boolean = false) {
     try {
-        const { desc } = require("drizzle-orm");
         let query = db.select().from(notifications);
 
         if (onlyActive) {
@@ -415,7 +453,14 @@ export async function deleteNotification(id: string) {
     }
 }
 
-export async function updateNotification(id: string, data: any) {
+interface UpdateData {
+    title?: string;
+    message?: string;
+    type?: string;
+    isActive?: boolean;
+}
+
+export async function updateNotification(id: string, data: UpdateData) {
     try {
         await db.update(notifications).set(data).where(eq(notifications.id, id));
         revalidatePath("/");

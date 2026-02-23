@@ -1,6 +1,7 @@
-import React from "react";
+"use client";
+
 import Link from "next/link";
-import { Tv, Globe, Shield, Users, Mail, Star, ArrowRight } from "lucide-react";
+import { Tv, Globe, Shield, Users, Star, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -15,7 +16,7 @@ export default function AboutPage() {
 
                 {/* Back */}
                 <Link href="/" className="inline-flex items-center gap-2 px-6 py-2.5 glass border border-white/10 text-white rounded-full font-bold text-[11px] uppercase tracking-widest hover:bg-white/5 transition-all">
-                    ← Back to Home
+                    &larr; Back to Home
                 </Link>
 
                 {/* Hero */}
@@ -60,7 +61,7 @@ export default function AboutPage() {
                     <h2 className="text-2xl font-black text-white uppercase tracking-tight">Watch Free Live TV Online</h2>
                     <div className="prose prose-invert max-w-none space-y-4 text-slate-400 text-sm leading-relaxed">
                         <p>
-                            VIEWPOINT makes it easy to <strong className="text-white">watch live TV free online</strong>. Whether you're looking for live cricket streaming, the T20 World Cup, IPL matches, or free live football streaming — we have it all in one place.
+                            VIEWPOINT makes it easy to <strong className="text-white">watch live TV free online</strong>. Whether you&apos;re looking for live cricket streaming, the T20 World Cup, IPL matches, or free live football streaming &mdash; we have it all in one place.
                         </p>
                         <p>
                             Our platform streams hundreds of <strong className="text-white">free live TV channels</strong> in HD quality. Watch live match today without any subscription or registration. Our zero-lag technology ensures buffer-free streaming even on slower connections.

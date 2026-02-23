@@ -12,17 +12,20 @@ import {
     AlertTriangle,
     CheckCircle
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { getDbStats, clearTable } from "@/lib/actions";
 
+interface DbStats {
+    channels: number;
+    operators: number;
+    favorites: number;
+    settings: number;
+}
+
 export default function DatabaseManagementPage() {
-    const [stats, setStats] = useState<any>(null);
+    const [stats, setStats] = useState<DbStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<string | null>(null);
-
-    useEffect(() => {
-        loadStats();
-    }, []);
 
     const loadStats = async () => {
         setLoading(true);
@@ -33,7 +36,11 @@ export default function DatabaseManagementPage() {
         setLoading(false);
     };
 
-    const handleClearTable = async (tableName: any) => {
+    useEffect(() => {
+        loadStats();
+    }, []);
+
+    const handleClearTable = async (tableName: "channels" | "operators" | "favorites" | "settings") => {
         if (confirm(`ARE YOU ABSOLUTELY SURE? THIS WILL PURGE ALL DATA FROM ${tableName.toUpperCase()}!`)) {
             setActionLoading(tableName);
             const res = await clearTable(tableName);
@@ -66,12 +73,12 @@ export default function DatabaseManagementPage() {
 
             {/* Stats Overview */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                {[
+                {([
                     { label: "Signal Nodes", val: stats?.channels || 0, color: "text-neon-purple", table: "channels" },
                     { label: "Operators", val: stats?.operators || 0, color: "text-amber-500", table: "operators" },
                     { label: "Favorites", val: stats?.favorites || 0, color: "text-neon-magenta", table: "favorites" },
                     { label: "Settings", val: stats?.settings || 0, color: "text-neon-cyan", table: "settings" }
-                ].map((s, i) => (
+                ] as const).map((s, i) => (
                     <div key={i} className="glass border border-white/5 p-8 rounded-[2.5rem] bg-white/[0.02] space-y-4">
                         <div className="flex items-center justify-between">
                             <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">

@@ -40,23 +40,30 @@ export default function LiveChat({ channelId, userName, userId }: LiveChatProps)
     const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
 
-    const loadMessages = async () => {
+    const loadMessages = React.useCallback(async () => {
         const data = await getChatMessages(channelId);
         if (data) {
-            setMessages(data.reverse());
-            // Fetch reactions for messages
-            for (const msg of data) {
+            const reversedData = data.reverse();
+            setMessages(reversedData);
+            // Fetch reactions for messages efficiently
+            const reactsPromises = reversedData.map(async (msg) => {
                 const reacts = await getMessageReactions(msg.id);
-                setReactions(prev => ({ ...prev, [msg.id]: reacts }));
-            }
+                return { id: msg.id, reacts };
+            });
+            const allReacts = await Promise.all(reactsPromises);
+            const reactionsMap: Record<string, Reaction[]> = {};
+            allReacts.forEach(item => {
+                reactionsMap[item.id] = item.reacts;
+            });
+            setReactions(reactionsMap);
         }
-    };
+    }, [channelId]);
 
     useEffect(() => {
         loadMessages();
         const interval = setInterval(loadMessages, 5000); // Poll every 5 seconds
         return () => clearInterval(interval);
-    }, [channelId]);
+    }, [loadMessages]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -196,11 +203,11 @@ export default function LiveChat({ channelId, userName, userId }: LiveChatProps)
                                     {reactions[msg.id]?.length > 0 && (
                                         <div className="flex flex-wrap gap-1 mt-2">
                                             {Object.entries(
-                                                reactions[msg.id].reduce((acc: any, r) => {
+                                                reactions[msg.id].reduce((acc: Record<string, number>, r) => {
                                                     acc[r.emoji] = (acc[r.emoji] || 0) + 1;
                                                     return acc;
                                                 }, {})
-                                            ).map(([emoji, count]: [string, any]) => (
+                                            ).map(([emoji, count]) => (
                                                 <div key={emoji} className="px-1.5 py-0.5 bg-white/5 border border-white/10 rounded-lg text-[8px] flex items-center gap-1">
                                                     <span>{emoji}</span>
                                                     <span className="text-slate-500">{count}</span>
