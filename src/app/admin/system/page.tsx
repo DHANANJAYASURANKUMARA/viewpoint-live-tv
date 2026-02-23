@@ -141,7 +141,7 @@ export default function MasterLogsPage() {
             </div>
 
             {/* Log Matrix */}
-            <div className="glass border border-white/10 rounded-[3rem] overflow-hidden bg-white/5">
+            <div className="glass border border-white/10 rounded-[3rem] overflow-hidden bg-white/5 custom-scrollbar">
                 <div className="p-8 space-y-4">
                     <AnimatePresence mode="popLayout">
                         {filteredLogs.map((log, idx) => (

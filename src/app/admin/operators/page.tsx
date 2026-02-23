@@ -178,7 +178,7 @@ export default function OperatorManagementPage() {
             </div>
 
             {/* Operators table */}
-            <div className="glass border border-white/10 rounded-[3rem] overflow-hidden bg-white/5 admin-table-container">
+            <div className="glass border border-white/10 rounded-[3rem] overflow-hidden bg-white/5 admin-table-container custom-scrollbar">
                 <div className="p-5 bg-white/[0.02] border-b border-white/5 grid grid-cols-12 gap-3 text-[9px] font-black text-slate-600 uppercase tracking-widest min-w-[1000px]">
                     <span className="col-span-3">Name</span>
                     <span className="col-span-2">Login ID</span>

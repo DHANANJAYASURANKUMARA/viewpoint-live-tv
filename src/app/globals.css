@@ -141,7 +141,7 @@
   }
 
   .admin-table-container {
-    @apply overflow-x-auto custom-scrollbar;
+    @apply overflow-x-auto;
   }
 
   .admin-table-container table {

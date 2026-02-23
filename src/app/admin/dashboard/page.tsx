@@ -242,7 +242,7 @@ export default function AdminDashboard() {
                             <Plus size={14} /> Inject Signal
                         </button>
                     </div>
-                    <div className="glass border border-white/10 rounded-[2.5rem] overflow-hidden bg-white/5 admin-table-container">
+                    <div className="glass border border-white/10 rounded-[2.5rem] overflow-hidden bg-white/5 admin-table-container custom-scrollbar">
                         <table className="w-full text-left">
                             <thead className="border-b border-white/5 bg-white/[0.02]">
                                 <tr>
