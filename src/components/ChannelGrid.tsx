@@ -108,12 +108,12 @@ export default function ChannelGrid({ onChannelSelect, channels: initialChannels
                         </div>
 
                         <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-5 z-20">
-                            <div className="text-2xl lg:text-3xl mb-1 group-hover:scale-110 transition-transform origin-left duration-500">{channel.logo}</div>
-                            <p className="text-[7px] lg:text-[8px] font-black text-neon-cyan uppercase tracking-widest mb-1">{channel.category}</p>
-                            <h4 className="text-xs lg:text-sm font-black truncate leading-tight uppercase tracking-wide group-hover:text-neon-cyan transition-colors">{channel.name}</h4>
+                            <div className="text-2xl lg:text-3xl mb-1 group-hover:scale-110 transition-transform origin-left duration-500">{(channel as any).logo}</div>
+                            <p className="text-[7px] lg:text-[8px] font-black text-neon-cyan uppercase tracking-widest mb-1">{(channel as any).category}</p>
+                            <h4 className="text-xs lg:text-sm font-black truncate leading-tight uppercase tracking-wide group-hover:text-neon-cyan transition-colors">{(channel as any).name}</h4>
                             <p className="text-slate-400 text-[7px] lg:text-[8px] mt-1 lg:mt-1.5 flex items-center gap-1.5 uppercase font-black tracking-widest">
-                                <span className={`w-1 h-1 lg:w-1.5 lg:h-1.5 rounded-full ${channel.id === 'apple-event' ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'}`} />
-                                {channel.viewers} Viewers
+                                <span className={`w-1 h-1 lg:w-1.5 lg:h-1.5 rounded-full ${(channel as any).id === 'apple-event' ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'}`} />
+                                {(channel as any).viewers} Viewers
                             </p>
                         </div>
                     </motion.button>
