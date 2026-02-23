@@ -9,6 +9,7 @@ import CookieConsent from "./CookieConsent";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { Shield, ShieldAlert } from "lucide-react";
+import LoadingScreen from "./LoadingScreen";
 
 import { useConfig } from "./ConfigContext";
 
@@ -24,6 +25,7 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
     const [isCinemaMode, setIsCinemaMode] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [theme, setTheme] = useState('cyan');
     const [isMobile, setIsMobile] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
@@ -78,7 +80,16 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
         };
         handleResize();
         window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
+
+        // Initial loading simulation
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 3500);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+            clearTimeout(timer);
+        };
     }, []);
 
     // Effect for initial theme load from localStorage
@@ -161,10 +172,12 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
     // Maintenance Mode Overlay
     const isMaintenanceActive = config.maintenanceMode && !isAdminSector;
 
-    if (!isMounted) return <div className="fixed inset-0 bg-vpoint-dark" />;
-
     return (
         <div className={`flex w-full h-screen overflow-hidden vpoint-bg transition-colors duration-300 ${theme === 'magenta' ? 'theme-magenta' : ''}`}>
+            <AnimatePresence>
+                {isLoading && <LoadingScreen key="loader" />}
+            </AnimatePresence>
+
             <AnimatePresence>
                 {isMaintenanceActive && (
                     <motion.div
