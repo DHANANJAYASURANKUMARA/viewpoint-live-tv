@@ -7,7 +7,7 @@ import SettingsModal from "./SettingsModal";
 import CookieConsent from "./CookieConsent";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
-import { Shield, ShieldAlert } from "lucide-react";
+import { Shield, ShieldAlert, Gift, Sparkles } from "lucide-react";
 import LoadingScreen from "./LoadingScreen";
 import PWAManager from "./PWAManager";
 
@@ -171,9 +171,71 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
 
     // Maintenance Mode Overlay
     const isMaintenanceActive = config.maintenanceMode && !isAdminSector;
+    const maintenanceMessage = config.maintenanceMessage || "The Viewpoint matrix is currently undergoing scheduled structural refinement. Signal stability is being recalibrated for enhanced digital density.";
+    const [showBirthdayGreeting, setShowBirthdayGreeting] = useState(false);
+
+    useEffect(() => {
+        const session = localStorage.getItem("vpoint-user");
+        if (session) {
+            try {
+                const user = JSON.parse(session);
+                if (user.birthday) {
+                    const bday = new Date(user.birthday);
+                    const today = new Date();
+                    if (bday.getDate() === today.getDate() && bday.getMonth() === today.getMonth()) {
+                        // Only show once per session
+                        const lastShown = sessionStorage.getItem("vpoint-bday-shown");
+                        if (!lastShown) {
+                            setShowBirthdayGreeting(true);
+                            sessionStorage.setItem("vpoint-bday-shown", "true");
+                        }
+                    }
+                }
+            } catch { }
+        }
+    }, []);
 
     return (
         <div className={`flex w-full h-screen overflow-hidden vpoint-bg transition-colors duration-300 ${theme === 'magenta' ? 'theme-magenta' : ''}`}>
+            {/* Global Birthday Greeting Overlay */}
+            <AnimatePresence>
+                {showBirthdayGreeting && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[2000] bg-black/80 backdrop-blur-xl flex items-center justify-center p-6"
+                    >
+                        <motion.div
+                            className="glass border border-neon-magenta/30 p-12 rounded-[3.5rem] bg-neon-magenta/5 relative overflow-hidden text-center space-y-8 max-w-lg w-full"
+                        >
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon-magenta to-transparent" />
+                            <motion.div
+                                animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className="w-24 h-24 mx-auto bg-neon-magenta/20 rounded-full flex items-center justify-center text-neon-magenta shadow-[0_0_40px_rgba(255,45,85,0.4)]"
+                            >
+                                <Gift size={48} />
+                            </motion.div>
+                            <div className="space-y-3">
+                                <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic">Neural <span className="text-neon-magenta">Birthday</span></h2>
+                                <p className="text-[11px] font-black text-slate-500 uppercase tracking-[0.5em]">Nexus Optimization Event Detected</p>
+                            </div>
+                            <p className="text-slate-400 text-sm font-medium leading-relaxed italic border-l-2 border-neon-magenta/30 pl-8 text-left">
+                                The Viewpoint Matrix wishes you a productive solar iteration. Your personal signal density has been recalibrated for maximum throughput today.
+                            </p>
+                            <button
+                                onClick={() => setShowBirthdayGreeting(false)}
+                                className="w-full py-5 bg-neon-magenta text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.4em] shadow-[0_10px_30px_rgba(255,45,85,0.3)] hover:scale-[1.02] transition-all"
+                            >
+                                Accept Transmission
+                            </button>
+                            <Sparkles className="absolute top-12 left-12 text-neon-cyan/20 animate-pulse" size={48} />
+                            <Sparkles className="absolute bottom-12 right-12 text-neon-magenta/20 animate-pulse delay-700" size={48} />
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
             <PWAManager />
             <AnimatePresence>
                 {isLoading && <LoadingScreen key="loader" />}
@@ -212,7 +274,7 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
                             </div>
 
                             <p className="text-slate-400 text-sm font-medium leading-relaxed italic border-l-2 border-neon-magenta/30 pl-6 text-left max-w-md mx-auto">
-                                The Viewpoint matrix is currently undergoing scheduled structural refinement. Signal stability is being recalibrated for enhanced digital density.
+                                {maintenanceMessage}
                                 <span className="block mt-4 text-neon-magenta/70 font-bold uppercase text-[10px]">Access Restoration: PENDING</span>
                             </p>
 

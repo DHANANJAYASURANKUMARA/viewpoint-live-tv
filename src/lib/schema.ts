@@ -45,10 +45,17 @@ export const settings = pgTable("settings", {
 export const users = pgTable("users", {
     id: uuid("id").defaultRandom().primaryKey(),
     name: text("name").notNull(),
+    displayName: text("display_name"),
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
+    birthday: timestamp("birthday"),
+    profilePicture: text("profile_picture"),
+    bio: text("bio"),
+    socialLinks: text("social_links"), // Store as JSON string
     country: text("country").default("Unknown"),
+    location: text("location").default("Unknown"),
     device: text("device").default("Unknown"),
+    browser: text("browser").default("Unknown"),
     lastLogin: timestamp("last_login"),
     isBanned: boolean("is_banned").default(false),
     createdAt: timestamp("created_at").defaultNow(),

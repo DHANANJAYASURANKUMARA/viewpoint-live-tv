@@ -20,6 +20,7 @@ interface PlatformConfig {
     isMaskingEnabled: boolean;
     notificationsEnabled: boolean;
     version: string;
+    maintenanceMessage: string;
 }
 
 const defaultConfig: PlatformConfig = {
@@ -38,7 +39,8 @@ const defaultConfig: PlatformConfig = {
     globalSniMask: "m.facebook.com",
     isMaskingEnabled: true,
     notificationsEnabled: true,
-    version: "2.0.4",
+    version: "2.1.0",
+    maintenanceMessage: "The Viewpoint matrix is currently undergoing scheduled structural refinement. Signal stability is being recalibrated for enhanced digital density.",
 };
 
 interface ConfigContextType {

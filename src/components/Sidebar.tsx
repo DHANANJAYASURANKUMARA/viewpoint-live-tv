@@ -28,7 +28,8 @@ import {
     Settings,
     Activity,
     Tv,
-    LogOut
+    LogOut,
+    User
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -358,6 +359,14 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
 
                 {currentUser && (
                     <div className="space-y-3">
+                        <Link
+                            href="/nexus"
+                            onClick={onClose}
+                            className="w-full py-4 glass-dark border border-white/5 rounded-2xl flex items-center justify-center gap-3 text-slate-500 hover:text-neon-cyan hover:border-neon-cyan/30 transition-all text-[9px] font-black uppercase tracking-[0.2em]"
+                        >
+                            <User size={14} />
+                            Manage Nexus Profile
+                        </Link>
                         <div className="px-4 py-3 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">{currentUser}</span>
                             <button

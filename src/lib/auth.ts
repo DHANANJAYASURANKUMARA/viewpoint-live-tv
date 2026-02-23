@@ -29,7 +29,7 @@ export async function registerUser(name: string, email: string, password: string
     }
 }
 
-export async function loginUser(email: string, password: string, device?: string, country?: string) {
+export async function loginUser(email: string, password: string, device?: string, country?: string, browser?: string, location?: string) {
     try {
         const result = await db.select().from(users).where(eq(users.email, email.toLowerCase()));
         if (result.length === 0) {
@@ -52,6 +52,8 @@ export async function loginUser(email: string, password: string, device?: string
             lastLogin: new Date(),
             device: device || user.device || "Unknown",
             country: country || user.country || "Unknown",
+            browser: browser || user.browser || "Unknown",
+            location: location || user.location || "Unknown",
         }).where(eq(users.id, user.id));
 
         return {

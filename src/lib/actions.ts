@@ -309,9 +309,13 @@ export async function getUsers() {
         return await db.select({
             id: users.id,
             name: users.name,
+            displayName: users.displayName,
             email: users.email,
             country: users.country,
+            location: users.location,
             device: users.device,
+            browser: users.browser,
+            birthday: users.birthday,
             lastLogin: users.lastLogin,
             isBanned: users.isBanned,
             createdAt: users.createdAt,
@@ -442,5 +446,32 @@ export async function bulkUpdateChannelMasks(mask: string) {
     } catch (error) {
         console.error("Failed to bulk update masks:", error);
         return { success: false };
+    }
+}
+
+export async function updateUserProfile(userId: string, data: any) {
+    try {
+        await db.update(users).set(data).where(eq(users.id, userId));
+        revalidatePath("/nexus");
+        revalidatePath("/admin/users");
+        return { success: true };
+    } catch (error: any) {
+        console.error("Failed to update user profile:", error);
+        return { success: false, error: error?.message };
+    }
+}
+
+export async function getSystemConfig() {
+    try {
+        const dbSettings = await getSettings();
+        return {
+            version: dbSettings.version || "2.1.0",
+            maintenanceMode: dbSettings.maintenanceMode === "true",
+            maintenanceMessage: dbSettings.maintenanceMessage || "The Viewpoint matrix is currently undergoing scheduled structural refinement.",
+            updateLog: dbSettings.updateLog || "[]",
+        };
+    } catch (error) {
+        console.error("Failed to fetch system config:", error);
+        return null;
     }
 }

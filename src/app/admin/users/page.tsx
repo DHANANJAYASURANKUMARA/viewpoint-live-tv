@@ -24,9 +24,13 @@ import { promoteUserToOperator } from "@/lib/adminAuth";
 interface User {
     id: string;
     name: string;
+    displayName: string | null;
     email: string;
     country: string | null;
+    location: string | null;
     device: string | null;
+    browser: string | null;
+    birthday: Date | null;
     lastLogin: Date | null;
     isBanned: boolean | null;
     createdAt: Date | null;
@@ -110,8 +114,10 @@ export default function UsersActivityPage() {
 
     const filtered = users.filter(u =>
         u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (u.displayName || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
         u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (u.country || "").toLowerCase().includes(searchTerm.toLowerCase())
+        (u.country || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (u.location || "").toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const formatDate = (date: Date | null) => {
@@ -199,12 +205,12 @@ export default function UsersActivityPage() {
             {/* Users Table */}
             <div className="glass border border-white/10 rounded-[3rem] overflow-hidden bg-white/5">
                 <div className="p-6 bg-white/[0.02] border-b border-white/5 grid grid-cols-12 gap-4 text-[9px] font-black text-slate-600 uppercase tracking-widest">
-                    <span className="col-span-3">Identity</span>
-                    <span className="col-span-3">Email</span>
-                    <span className="col-span-1 text-center">Country</span>
-                    <span className="col-span-1 text-center">Device</span>
-                    <span className="col-span-2 text-center">Last Login</span>
-                    <span className="col-span-1 text-center">Status</span>
+                    <span className="col-span-2">Identity</span>
+                    <span className="col-span-2">Email</span>
+                    <span className="col-span-2 text-center">Intel (Loc/Browser)</span>
+                    <span className="col-span-2 text-center">Device Flux</span>
+                    <span className="col-span-2 text-center">Last Pulse</span>
+                    <span className="col-span-1 text-center">Matrix</span>
                     <span className="col-span-1 text-right">Actions</span>
                 </div>
 
@@ -228,32 +234,38 @@ export default function UsersActivityPage() {
                                 className={`p-6 grid grid-cols-12 gap-4 items-center hover:bg-white/[0.02] transition-colors ${user.isBanned ? "opacity-50" : ""}`}
                             >
                                 {/* Name */}
-                                <div className="col-span-3 flex items-center gap-3">
+                                <div className="col-span-2 flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 shrink-0">
                                         <UsersIcon size={14} />
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-[10px] font-black text-white uppercase tracking-wide truncate">{user.name}</p>
-                                        <p className="text-[8px] font-mono text-slate-600 truncate">{user.id.slice(0, 8)}...</p>
+                                        <p className="text-[10px] font-black text-white uppercase tracking-wide truncate">{user.displayName || user.name}</p>
+                                        <p className="text-[8px] font-mono text-slate-600 truncate">{user.name}</p>
                                     </div>
                                 </div>
 
                                 {/* Email */}
-                                <div className="col-span-3 flex items-center gap-2">
+                                <div className="col-span-2 flex items-center gap-2">
                                     <Mail size={12} className="text-slate-600 shrink-0" />
                                     <span className="text-[10px] font-mono text-neon-cyan truncate">{user.email}</span>
                                 </div>
 
-                                {/* Country */}
-                                <div className="col-span-1 flex items-center justify-center gap-1">
-                                    <Globe size={12} className="text-slate-600" />
-                                    <span className="text-[9px] font-black text-slate-400 uppercase">{user.country || "?"}</span>
+                                {/* Intel */}
+                                <div className="col-span-2 flex flex-col items-center justify-center">
+                                    <div className="flex items-center gap-1">
+                                        <Globe size={11} className="text-slate-600" />
+                                        <span className="text-[9px] font-black text-slate-400 uppercase truncate max-w-[80px]">{user.location || user.country || "Shadow"}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 opacity-60">
+                                        <Search size={10} className="text-slate-700" />
+                                        <span className="text-[8px] font-mono text-slate-500 truncate max-w-[80px]">{user.browser || "Unknown"}</span>
+                                    </div>
                                 </div>
 
                                 {/* Device */}
-                                <div className="col-span-1 flex items-center justify-center gap-1">
+                                <div className="col-span-2 flex items-center justify-center gap-2">
                                     <Monitor size={12} className="text-slate-600" />
-                                    <span className="text-[9px] font-black text-slate-400">{getDeviceShort(user.device)}</span>
+                                    <span className="text-[9px] font-black text-slate-400 truncate max-w-[100px]">{user.device || "Neural Interlink"}</span>
                                 </div>
 
                                 {/* Last Login */}

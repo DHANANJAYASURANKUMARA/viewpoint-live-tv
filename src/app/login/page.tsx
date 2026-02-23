@@ -31,7 +31,9 @@ export default function LoginPage() {
         // Capture device and locale for admin tracking
         const device = navigator.userAgent;
         const country = Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown";
-        const res = await loginUser(email, password, device, country);
+        const browser = navigator.appName + " " + (navigator as any).appVersion;
+        const location = country; // Use timezone as proxy for location for now
+        const res = await loginUser(email, password, device, country, browser, location);
         setLoading(false);
         if (res.success && res.user) {
             localStorage.setItem("vpoint-user", JSON.stringify(res.user));

@@ -42,11 +42,12 @@ export default function AdminSidebar() {
     const menuItems = [
         { icon: LayoutDashboard, label: "Overview", path: "/admin/dashboard", color: "text-neon-cyan" },
         { icon: Radio, label: "Signals", path: "/admin/signals", color: "text-neon-purple" },
+        { icon: Users, label: "Users", path: "/admin/users", color: "text-emerald-500" },
         { icon: Bell, label: "Alerts", path: "/admin/notifications", color: "text-amber-500" },
         { icon: UserCog, label: "Staff", path: "/admin/operators", color: "text-neon-magenta" },
-        { icon: Terminal, label: "System Logs", path: "/admin/system", color: "text-emerald-500" },
-        { icon: Zap, label: "Appearance", path: "/admin/appearance", color: "text-neon-cyan" },
         { icon: Database, label: "Core Data", path: "/admin/database", color: "text-slate-400" },
+        { icon: Terminal, label: "Logs & System", path: "/admin/system", color: "text-neon-cyan" },
+        { icon: Zap, label: "Appearance", path: "/admin/appearance", color: "text-neon-purple" },
     ];
 
     const handleLogout = () => {
