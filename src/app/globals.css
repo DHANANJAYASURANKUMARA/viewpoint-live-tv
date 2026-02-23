@@ -125,4 +125,39 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: var(--neon-cyan);
   }
+
+  /* Admin Tactical Responsive Utilities */
+  .admin-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .admin-grid-layout {
+      grid-template-columns: repeat(var(--cols, 3), 1fr);
+      gap: 2.5rem;
+    }
+  }
+
+  .admin-table-container {
+    @apply overflow-x-auto custom-scrollbar;
+  }
+
+  .admin-table-container table {
+    @apply min-w-[800px] w-full;
+  }
+
+  /* Neural Glow Variations */
+  .glow-cyan {
+    box-shadow: 0 0 30px rgba(34, 211, 238, 0.15);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+  }
+
+  .glow-magenta {
+    box-shadow: 0 0 30px rgba(255, 45, 85, 0.15);
+  }
 }

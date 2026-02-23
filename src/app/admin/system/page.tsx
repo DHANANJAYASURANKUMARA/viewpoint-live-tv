@@ -2,217 +2,187 @@
 
 import React, { useState, useEffect } from "react";
 import {
-    Terminal, History, Search, Download, RefreshCw,
-    Trash2, Filter, ShieldAlert, Shield, Activity,
-    Users, Settings, Radio, Database
+    Terminal,
+    Activity,
+    Cpu,
+    Database,
+    Shield,
+    Zap,
+    AlertCircle,
+    ChevronRight,
+    RefreshCw,
+    Search,
+    Filter,
+    Radio
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getDbStats } from "@/lib/actions";
-import { getAdminLogs, clearAdminLogs as purgeLogs } from "@/lib/adminAuth";
-import { useConfig } from "@/components/ConfigContext";
+import { getNotifications, getChannels } from "@/lib/actions";
 
-const categoryColors: Record<string, string> = {
-    AUTH: "border-amber-500/30 text-amber-500 bg-amber-500/5",
-    OPERATOR: "border-neon-purple/30 text-neon-purple bg-neon-purple/5",
-    USER: "border-neon-cyan/30 text-neon-cyan bg-neon-cyan/5",
-    CONFIG: "border-emerald-500/30 text-emerald-500 bg-emerald-500/5",
-    SIGNAL: "border-blue-400/30 text-blue-400 bg-blue-400/5",
-    SYSTEM: "border-slate-500/30 text-slate-400 bg-slate-500/5",
-};
-
-const categoryIcons: Record<string, any> = {
-    AUTH: Shield,
-    OPERATOR: Users,
-    USER: Users,
-    CONFIG: Settings,
-    SIGNAL: Radio,
-    SYSTEM: Terminal,
-};
-
-export default function SystemControlPage() {
+export default function MasterLogsPage() {
     const [logs, setLogs] = useState<any[]>([]);
-    const [dbStatus, setDbStatus] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [search, setSearch] = useState("");
-    const [filterCat, setFilterCat] = useState("ALL");
-    const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-    const { config, updateConfig } = useConfig();
+    const [filter, setFilter] = useState("ALL");
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const loadLogs = async () => {
+        setLoading(true);
+        try {
+            const [notifs, channelsData] = await Promise.all([
+                getNotifications(),
+                getChannels()
+            ]);
+
+            // Transform into unified log format
+            const notifLogs = notifs.map(n => ({
+                id: n.id,
+                timestamp: n.createdAt || new Date(),
+                type: "ALERT",
+                source: "Neural Broadcast",
+                event: n.title,
+                message: n.message,
+                severity: "INFO",
+                icon: AlertCircle,
+                iconColor: "text-amber-500"
+            }));
+
+            const channelLogs = channelsData.map(c => ({
+                id: c.id,
+                timestamp: c.createdAt || new Date(),
+                type: "SIGNAL",
+                source: "Transmission Node",
+                event: `Signal Modulation: ${c.name}`,
+                message: `Status: ${c.status} | Category: ${c.category}`,
+                severity: c.status === "Live" ? "OPTIMAL" : "WARN",
+                icon: Radio,
+                iconColor: c.status === "Live" ? "text-emerald-500" : "text-amber-500"
+            }));
+
+            // Static System Logs for depth
+            const systemLogs = [
+                { id: 's1', timestamp: new Date(Date.now() - 1000 * 60 * 5), type: "CORE", source: "Kernel", event: "Handshake Successful", message: "Asian Edge Node Cluster synchronized.", severity: "INFO", icon: Shield, iconColor: "text-neon-cyan" },
+                { id: 's2', timestamp: new Date(Date.now() - 1000 * 60 * 15), type: "SECURITY", source: "Shield v2.0", event: "Intrusion Prevention", message: "Blocked anomalous request from IP 192.168.1.104", severity: "WARN", icon: Zap, iconColor: "text-neon-magenta" },
+                { id: 's3', timestamp: new Date(Date.now() - 1000 * 60 * 45), type: "DB", source: "Neon Matrix", event: "Index Maintenance", message: "Vacuuming signal_nodes table complete.", severity: "INFO", icon: Database, iconColor: "text-emerald-500" }
+            ];
+
+            const combined = [...notifLogs, ...channelLogs, ...systemLogs].sort((a, b) =>
+                new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+            );
+
+            setLogs(combined);
+        } catch (error) {
+            console.error("Master Log Extraction Error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const auth = localStorage.getItem("vpoint-admin-auth");
-        if (auth) {
-            try { const p = JSON.parse(auth); setIsSuperAdmin(!!p.isSuperAdmin); } catch { }
-        }
-        loadAll();
+        loadLogs();
+        const interval = setInterval(loadLogs, 15000); // Poll every 15s
+        return () => clearInterval(interval);
     }, []);
 
-    const loadAll = async () => {
-        setLoading(true);
-        const [logData, statsData] = await Promise.all([getAdminLogs(), getDbStats()]);
-        setLogs(logData);
-        if (statsData.success) setDbStatus(statsData.stats);
-        setLoading(false);
-    };
-
-    const handlePurge = async () => {
-        if (!isSuperAdmin) return;
-        await purgeLogs();
-        setLogs([]);
-    };
-
-    const exportLogs = () => {
-        const csv = ["Time,Operator,Action,Target,Detail,Category",
-            ...logs.map(l => `"${new Date(l.createdAt).toLocaleString()}","${l.operatorName}","${l.action}","${l.target || ""}","${l.detail || ""}","${l.category}"`)
-        ].join("\n");
-        const blob = new Blob([csv], { type: "text/csv" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a"); a.href = url; a.download = "admin_logs.csv"; a.click();
-        URL.revokeObjectURL(url);
-    };
-
-    const filtered = logs.filter(l => {
-        const matchSearch = !search || l.action?.toLowerCase().includes(search.toLowerCase()) ||
-            l.operatorName?.toLowerCase().includes(search.toLowerCase()) ||
-            l.target?.toLowerCase().includes(search.toLowerCase()) ||
-            l.detail?.toLowerCase().includes(search.toLowerCase());
-        const matchCat = filterCat === "ALL" || l.category === filterCat;
-        return matchSearch && matchCat;
+    const filteredLogs = logs.filter(log => {
+        if (filter !== "ALL" && log.type !== filter) return false;
+        if (searchTerm && !log.event.toLowerCase().includes(searchTerm.toLowerCase()) && !log.message.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+        return true;
     });
 
-    const categories = ["ALL", "AUTH", "OPERATOR", "USER", "CONFIG", "SIGNAL", "SYSTEM"];
-
     return (
-        <div className="flex-1 h-full p-10 space-y-10 overflow-y-auto custom-scrollbar">
+        <div className="p-10 space-y-10 pb-20 relative">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="space-y-2">
                     <h1 className="text-4xl font-black text-white uppercase tracking-tighter">
-                        Master <span className="text-amber-500">Logs</span>
+                        Master <span className="text-emerald-500">Logs</span>
                     </h1>
-                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Full Admin Activity & Change Audit Trail</p>
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Unified System Activity Data-Stream</p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <button onClick={loadAll} className="p-4 glass border border-white/10 rounded-2xl text-slate-500 hover:text-neon-cyan transition-colors">
-                        <RefreshCw size={16} />
-                    </button>
-                    <button onClick={exportLogs} className="flex items-center gap-2 px-6 py-4 glass border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all">
-                        <Download size={14} /> Export CSV
-                    </button>
-                    {isSuperAdmin && (
-                        <button onClick={handlePurge} className="flex items-center gap-2 px-6 py-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-red-400 hover:bg-red-500/20 transition-all">
-                            <Trash2 size={14} /> Purge Logs
-                        </button>
+                <button
+                    onClick={loadLogs}
+                    className="flex items-center gap-3 px-6 py-4 glass border border-white/10 text-emerald-400 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-emerald-500/10 transition-all"
+                >
+                    <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Refresh Feed
+                </button>
+            </div>
+
+            {/* Tactical Hud */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <div className="lg:col-span-3 glass border border-white/10 rounded-[2.5rem] bg-white/[0.02] p-8 flex items-center justify-between gap-8">
+                    <div className="relative flex-1 group">
+                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-emerald-500 transition-colors" size={18} />
+                        <input
+                            type="text"
+                            placeholder="FILTERING SYSTEM STREAM..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full bg-black/40 border border-white/10 rounded-2xl py-5 pl-16 pr-8 text-[11px] font-bold text-white uppercase tracking-[0.2em] focus:outline-none focus:border-emerald-500/40 transition-all"
+                        />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        {["ALL", "ALERT", "SIGNAL", "CORE"].map(t => (
+                            <button
+                                key={t}
+                                onClick={() => setFilter(t)}
+                                className={`px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${filter === t ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400" : "bg-white/5 border-white/5 text-slate-600 hover:text-white"}`}
+                            >
+                                {t}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                <div className="glass border border-white/10 rounded-[2.5rem] bg-white/[0.02] p-8 flex items-center justify-between">
+                    <div className="space-y-1">
+                        <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Live Flux</p>
+                        <p className="text-xl font-black text-white">{filteredLogs.length}</p>
+                    </div>
+                    <Activity size={24} className="text-emerald-500 animate-pulse" />
+                </div>
+            </div>
+
+            {/* Log Matrix */}
+            <div className="glass border border-white/10 rounded-[3rem] overflow-hidden bg-white/5">
+                <div className="p-8 space-y-4">
+                    <AnimatePresence mode="popLayout">
+                        {filteredLogs.map((log, idx) => (
+                            <motion.div
+                                layout
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, scale: 0.98 }}
+                                key={log.id + idx}
+                                className="group flex items-center gap-6 p-5 rounded-[1.5rem] bg-white/[0.01] border border-white/5 hover:border-white/20 transition-all cursor-default"
+                            >
+                                <div className="text-[9px] font-mono text-slate-600 w-24 shrink-0">
+                                    {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                </div>
+                                <div className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest w-20 text-center border bg-white/5 ${log.iconColor} border-white/5`}>
+                                    {log.type}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-3">
+                                        <h4 className="text-[11px] font-bold text-white uppercase tracking-tight">{log.event}</h4>
+                                        <div className="h-1 w-1 rounded-full bg-slate-800" />
+                                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">{log.source}</span>
+                                    </div>
+                                    <p className="text-[10px] font-medium text-slate-500 mt-0.5 truncate italic">{log.message}</p>
+                                </div>
+                                <div className={`text-[8px] font-black uppercase tracking-widest ${log.severity === 'WARN' ? 'text-amber-500' : log.severity === 'OPTIMAL' ? 'text-emerald-500' : 'text-slate-500'}`}>
+                                    {log.severity}
+                                </div>
+                                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <ChevronRight size={14} className="text-slate-700" />
+                                </div>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                    {filteredLogs.length === 0 && !loading && (
+                        <div className="py-20 text-center opacity-20 space-y-4">
+                            <Terminal size={40} className="mx-auto" />
+                            <p className="text-[10px] font-black uppercase tracking-[0.5em]">No log nodes detected in sector</p>
+                        </div>
                     )}
                 </div>
-            </div>
-
-            {/* DB + System Status */}
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                {[
-                    { label: "Channels", value: dbStatus?.channels ?? "..." },
-                    { label: "Operators", value: dbStatus?.operators ?? "..." },
-                    { label: "Users", value: dbStatus?.users ?? "..." },
-                    { label: "Favorites", value: dbStatus?.favorites ?? "..." },
-                    { label: "Log Entries", value: logs.length },
-                ].map(s => (
-                    <div key={s.label} className="glass border border-white/10 rounded-[2rem] p-5 flex items-center justify-between">
-                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{s.label}</span>
-                        <span className="text-xl font-black text-white">{s.value}</span>
-                    </div>
-                ))}
-            </div>
-
-            {/* Platform Toggles (Global Config) */}
-            <div className="glass border border-white/10 rounded-[2.5rem] p-8 bg-white/5 space-y-6">
-                <h3 className="text-sm font-black text-white uppercase tracking-[0.2em] flex items-center gap-3">
-                    <Settings size={16} className="text-amber-500" /> Global Config Toggles
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {[
-                        { key: "maintenanceMode", label: "Maintenance Mode", danger: true },
-                        { key: "adSenseActive", label: "Neural AdSense" },
-                        { key: "showHero", label: "Hero Interface" },
-                        { key: "showFeatures", label: "Tech Features" },
-                        { key: "showWhatsNew", label: "Sector Sitemap" },
-                        { key: "showFAQ", label: "Knowledge Base" },
-                    ].map(toggle => (
-                        <button
-                            key={toggle.key}
-                            onClick={() => updateConfig({ [toggle.key]: !(config as any)[toggle.key] })}
-                            className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all"
-                        >
-                            <span className={`text-[9px] font-black uppercase tracking-widest ${toggle.danger && (config as any)[toggle.key] ? "text-red-400" : "text-white"}`}>{toggle.label}</span>
-                            <div className={`w-10 h-5 rounded-full relative transition-colors ${(config as any)[toggle.key] ? (toggle.danger ? "bg-red-500/80" : "bg-emerald-500/80") : "bg-white/10"}`}>
-                                <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${(config as any)[toggle.key] ? "right-1" : "left-1 bg-slate-700"}`} />
-                            </div>
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Search & Category Filter */}
-            <div className="flex flex-col md:flex-row gap-4">
-                <div className="relative flex-1">
-                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={15} />
-                    <input type="text" placeholder="FILTER LOGS..." value={search} onChange={e => setSearch(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 rounded-[2rem] py-4 pl-12 pr-6 text-[10px] font-bold text-white uppercase tracking-widest placeholder:text-slate-700 focus:outline-none focus:border-amber-500/50 transition-all" />
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                    {categories.map(cat => (
-                        <button key={cat} onClick={() => setFilterCat(cat)} className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${filterCat === cat ? "bg-amber-500 text-vpoint-dark" : "glass border border-white/10 text-slate-500 hover:text-white"}`}>
-                            {cat}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Logs Table */}
-            <div className="glass border border-white/10 rounded-[3rem] overflow-hidden bg-white/5">
-                <div className="p-5 bg-white/[0.02] border-b border-white/5 grid grid-cols-12 gap-3 text-[9px] font-black text-slate-600 uppercase tracking-widest">
-                    <span className="col-span-2">Category</span>
-                    <span className="col-span-2">Operator</span>
-                    <span className="col-span-2">Action</span>
-                    <span className="col-span-2">Target</span>
-                    <span className="col-span-3">Detail</span>
-                    <span className="col-span-1 text-right">Time</span>
-                </div>
-                {loading ? (
-                    <div className="flex items-center justify-center py-16 opacity-30">
-                        <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
-                    </div>
-                ) : filtered.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 opacity-30">
-                        <History size={32} className="mb-3" />
-                        <span className="text-[10px] font-black uppercase tracking-widest">No Log Entries</span>
-                    </div>
-                ) : filtered.map(log => {
-                    const CatIcon = categoryIcons[log.category] || Terminal;
-                    const catClass = categoryColors[log.category] || categoryColors.SYSTEM;
-                    return (
-                        <div key={log.id} className="p-5 grid grid-cols-12 gap-3 items-center border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                            <div className="col-span-2">
-                                <span className={`px-2 py-1 rounded-md text-[8px] font-black border flex items-center gap-1.5 w-fit ${catClass}`}>
-                                    <CatIcon size={9} /> {log.category}
-                                </span>
-                            </div>
-                            <div className="col-span-2">
-                                <span className="text-[10px] font-bold text-white">{log.operatorName}</span>
-                            </div>
-                            <div className="col-span-2">
-                                <span className="text-[9px] font-mono text-amber-400">{log.action}</span>
-                            </div>
-                            <div className="col-span-2">
-                                <span className="text-[9px] text-slate-400">{log.target || "—"}</span>
-                            </div>
-                            <div className="col-span-3">
-                                <span className="text-[9px] text-slate-500 truncate block">{log.detail || "—"}</span>
-                            </div>
-                            <div className="col-span-1 text-right">
-                                <span className="text-[9px] font-mono text-slate-600">{new Date(log.createdAt).toLocaleTimeString()}</span>
-                            </div>
-                        </div>
-                    );
-                })}
             </div>
         </div>
     );

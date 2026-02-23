@@ -133,7 +133,7 @@ export default function OperatorManagementPage() {
     const roles = ["Operator", "Analyst", "Moderator", "Lead"];
 
     return (
-        <div className="flex-1 h-full p-10 space-y-10 overflow-y-auto custom-scrollbar relative">
+        <div className="p-10 space-y-10 pb-20 relative">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="space-y-2">
@@ -178,8 +178,8 @@ export default function OperatorManagementPage() {
             </div>
 
             {/* Operators table */}
-            <div className="glass border border-white/10 rounded-[3rem] overflow-hidden bg-white/5">
-                <div className="p-5 bg-white/[0.02] border-b border-white/5 grid grid-cols-12 gap-3 text-[9px] font-black text-slate-600 uppercase tracking-widest">
+            <div className="glass border border-white/10 rounded-[3rem] overflow-hidden bg-white/5 admin-table-container">
+                <div className="p-5 bg-white/[0.02] border-b border-white/5 grid grid-cols-12 gap-3 text-[9px] font-black text-slate-600 uppercase tracking-widest min-w-[1000px]">
                     <span className="col-span-3">Name</span>
                     <span className="col-span-2">Login ID</span>
                     <span className="col-span-2">Role</span>
@@ -191,77 +191,81 @@ export default function OperatorManagementPage() {
                     <div className="flex items-center justify-center py-16 opacity-30">
                         <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
                     </div>
-                ) : filtered.map(op => (
-                    <div key={op.id} className={`p-5 grid grid-cols-12 gap-3 items-center border-b border-white/5 hover:bg-white/[0.02] transition-colors ${op.status === "Suspended" ? "opacity-50" : ""}`}>
-                        {/* Name */}
-                        <div className="col-span-3 flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs border ${op.isSuperAdmin ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "bg-white/5 border-white/10 text-slate-500"}`}>
-                                {op.isSuperAdmin ? <Star size={14} /> : <Users size={14} />}
+                ) : (
+                    <div className="min-w-[1000px]">
+                        {filtered.map(op => (
+                            <div key={op.id} className={`p-5 grid grid-cols-12 gap-3 items-center border-b border-white/5 hover:bg-white/[0.02] transition-colors ${op.status === "Suspended" ? "opacity-50" : ""}`}>
+                                {/* Name */}
+                                <div className="col-span-3 flex items-center gap-3">
+                                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs border ${op.isSuperAdmin ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "bg-white/5 border-white/10 text-slate-500"}`}>
+                                        {op.isSuperAdmin ? <Star size={14} /> : <Users size={14} />}
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black text-white uppercase">{op.name}</p>
+                                        {op.isSuperAdmin && <p className="text-[8px] font-black text-amber-400 uppercase tracking-widest">Super Admin</p>}
+                                    </div>
+                                </div>
+                                {/* Login ID */}
+                                <div className="col-span-2 flex items-center gap-2">
+                                    <span className="text-[10px] font-mono text-neon-cyan">{op.loginId || "—"}</span>
+                                    {op.loginId && (
+                                        <button onClick={() => copyLoginId(op.loginId!)} className="text-slate-600 hover:text-white transition-colors">
+                                            {copied ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
+                                        </button>
+                                    )}
+                                </div>
+                                {/* Role */}
+                                <div className="col-span-2">
+                                    <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${op.isSuperAdmin ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" : "bg-white/5 text-slate-400 border border-white/5"}`}>
+                                        {op.role}
+                                    </span>
+                                </div>
+                                {/* Last Active */}
+                                <div className="col-span-2 text-center">
+                                    <span className="text-[9px] font-mono text-slate-500">
+                                        {op.lastActive ? new Date(op.lastActive).toLocaleDateString() : "Never"}
+                                    </span>
+                                </div>
+                                {/* Status */}
+                                <div className="col-span-1 flex justify-center">
+                                    <span className={`text-[8px] font-black uppercase px-2 py-1 rounded-lg ${op.status === "Active" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"}`}>
+                                        {op.status}
+                                    </span>
+                                </div>
+                                {/* Actions */}
+                                <div className="col-span-2 flex items-center justify-end gap-2">
+                                    {isSuperAdmin && !op.isSuperAdmin && (
+                                        <>
+                                            <button onClick={() => openEditModal(op)} title="Edit" className="p-2 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
+                                                <Key size={13} />
+                                            </button>
+                                            <button onClick={() => handleSuspend(op.id, op.status === "Suspended")} title={op.status === "Suspended" ? "Reinstate" : "Suspend"} className={`p-2 rounded-xl transition-colors ${op.status === "Suspended" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
+                                                {op.status === "Suspended" ? <ShieldCheck size={13} /> : <Ban size={13} />}
+                                            </button>
+                                            <button onClick={() => setConfirmDelete(op.id)} title="Delete" className="p-2 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors">
+                                                <Trash2 size={13} />
+                                            </button>
+                                        </>
+                                    )}
+                                    {!isSuperAdmin && !op.isSuperAdmin && (
+                                        <span className="text-[9px] text-slate-700 uppercase tracking-widest">No Access</span>
+                                    )}
+                                    {op.isSuperAdmin && (
+                                        <span className="text-[9px] text-amber-500/50 uppercase tracking-widest flex items-center gap-1"><ShieldAlert size={11} /> Protected</span>
+                                    )}
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-[10px] font-black text-white uppercase">{op.name}</p>
-                                {op.isSuperAdmin && <p className="text-[8px] font-black text-amber-400 uppercase tracking-widest">Super Admin</p>}
-                            </div>
-                        </div>
-                        {/* Login ID */}
-                        <div className="col-span-2 flex items-center gap-2">
-                            <span className="text-[10px] font-mono text-neon-cyan">{op.loginId || "—"}</span>
-                            {op.loginId && (
-                                <button onClick={() => copyLoginId(op.loginId!)} className="text-slate-600 hover:text-white transition-colors">
-                                    {copied ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
-                                </button>
-                            )}
-                        </div>
-                        {/* Role */}
-                        <div className="col-span-2">
-                            <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${op.isSuperAdmin ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" : "bg-white/5 text-slate-400 border border-white/5"}`}>
-                                {op.role}
-                            </span>
-                        </div>
-                        {/* Last Active */}
-                        <div className="col-span-2 text-center">
-                            <span className="text-[9px] font-mono text-slate-500">
-                                {op.lastActive ? new Date(op.lastActive).toLocaleDateString() : "Never"}
-                            </span>
-                        </div>
-                        {/* Status */}
-                        <div className="col-span-1 flex justify-center">
-                            <span className={`text-[8px] font-black uppercase px-2 py-1 rounded-lg ${op.status === "Active" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"}`}>
-                                {op.status}
-                            </span>
-                        </div>
-                        {/* Actions */}
-                        <div className="col-span-2 flex items-center justify-end gap-2">
-                            {isSuperAdmin && !op.isSuperAdmin && (
-                                <>
-                                    <button onClick={() => openEditModal(op)} title="Edit" className="p-2 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
-                                        <Key size={13} />
-                                    </button>
-                                    <button onClick={() => handleSuspend(op.id, op.status === "Suspended")} title={op.status === "Suspended" ? "Reinstate" : "Suspend"} className={`p-2 rounded-xl transition-colors ${op.status === "Suspended" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
-                                        {op.status === "Suspended" ? <ShieldCheck size={13} /> : <Ban size={13} />}
-                                    </button>
-                                    <button onClick={() => setConfirmDelete(op.id)} title="Delete" className="p-2 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors">
-                                        <Trash2 size={13} />
-                                    </button>
-                                </>
-                            )}
-                            {!isSuperAdmin && !op.isSuperAdmin && (
-                                <span className="text-[9px] text-slate-700 uppercase tracking-widest">No Access</span>
-                            )}
-                            {op.isSuperAdmin && (
-                                <span className="text-[9px] text-amber-500/50 uppercase tracking-widest flex items-center gap-1"><ShieldAlert size={11} /> Protected</span>
-                            )}
-                        </div>
+                        ))}
                     </div>
-                ))}
+                )}
             </div>
 
-            {/* Add/Edit Operator Modal */}
+            {/* Modals */}
             <AnimatePresence>
                 {isModalOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center">
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={() => setIsModalOpen(false)} />
-                        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="relative z-10 glass border border-white/10 rounded-[2rem] p-10 w-full max-w-md space-y-6">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={() => setIsModalOpen(false)} />
+                        <motion.div initial={{ opacity: 0, scale: 0.9, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 30 }} className="relative z-10 glass border border-white/10 rounded-[3rem] p-10 w-full max-w-md bg-vpoint-dark space-y-6">
                             <h2 className="text-xl font-black text-white uppercase tracking-tight">{editOp.id ? "Edit Operator" : "Provision Operator"}</h2>
                             <div className="space-y-4">
                                 <input value={editOp.name} onChange={e => setEditOp(p => ({ ...p, name: e.target.value }))} placeholder="Operator Name" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-xs font-bold text-white focus:outline-none focus:border-amber-500/50 transition-all placeholder:text-slate-600" />
@@ -285,7 +289,7 @@ export default function OperatorManagementPage() {
                                 </div>
                             </div>
                             <div className="flex gap-4">
-                                <button onClick={() => setIsModalOpen(false)} className="flex-1 py-4 glass border border-white/10 rounded-2xl text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors">Cancel</button>
+                                <button onClick={() => setIsModalOpen(false)} className="flex-1 py-4 glass-dark border border-white/10 rounded-2xl text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors">Cancel</button>
                                 <button onClick={handleSave} disabled={saving} className="flex-1 py-4 bg-amber-500 text-vpoint-dark rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-400 transition-all disabled:opacity-50">
                                     {saving ? "Saving..." : editOp.id ? "Update" : "Provision"}
                                 </button>
@@ -293,14 +297,11 @@ export default function OperatorManagementPage() {
                         </motion.div>
                     </div>
                 )}
-            </AnimatePresence>
 
-            {/* Super Admin Credential Change Modal */}
-            <AnimatePresence>
                 {isSAModalOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center">
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={() => setIsSAModalOpen(false)} />
-                        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="relative z-10 glass border border-amber-500/20 rounded-[2rem] p-10 w-full max-w-md space-y-6">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={() => setIsSAModalOpen(false)} />
+                        <motion.div initial={{ opacity: 0, scale: 0.9, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 30 }} className="relative z-10 glass border border-amber-500/20 rounded-[2rem] p-10 w-full max-w-md bg-vpoint-dark space-y-6">
                             <div className="flex items-center gap-3">
                                 <Star size={22} className="text-amber-400" />
                                 <h2 className="text-xl font-black text-white uppercase tracking-tight">Super Admin Credentials</h2>
@@ -313,7 +314,7 @@ export default function OperatorManagementPage() {
                             {saError && <p className="text-[10px] font-black text-red-400 uppercase tracking-widest">{saError}</p>}
                             {saSuccess && <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">{saSuccess}</p>}
                             <div className="flex gap-4">
-                                <button onClick={() => setIsSAModalOpen(false)} className="flex-1 py-4 glass border border-white/10 rounded-2xl text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors">Cancel</button>
+                                <button onClick={() => setIsSAModalOpen(false)} className="flex-1 py-4 glass-dark border border-white/10 rounded-2xl text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors">Cancel</button>
                                 <button onClick={handleSAChange} disabled={saLoading} className="flex-1 py-4 bg-amber-500 text-vpoint-dark rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-400 disabled:opacity-50 transition-all">
                                     {saLoading ? "Updating..." : "Update Credentials"}
                                 </button>
@@ -321,19 +322,16 @@ export default function OperatorManagementPage() {
                         </motion.div>
                     </div>
                 )}
-            </AnimatePresence>
 
-            {/* Delete Confirm */}
-            <AnimatePresence>
                 {confirmDelete && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center">
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={() => setConfirmDelete(null)} />
-                        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="relative z-10 glass border border-red-500/20 rounded-[2rem] p-10 max-w-sm w-full text-center space-y-6">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={() => setConfirmDelete(null)} />
+                        <motion.div initial={{ opacity: 0, scale: 0.9, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 30 }} className="relative z-10 glass border border-red-500/20 rounded-[2rem] p-10 max-w-sm w-full text-center space-y-6 bg-vpoint-dark">
                             <AlertTriangle size={40} className="text-red-400 mx-auto" />
                             <h3 className="text-xl font-black text-white uppercase">Terminate Operator?</h3>
                             <div className="flex gap-4">
-                                <button onClick={() => setConfirmDelete(null)} className="flex-1 py-4 glass border border-white/10 rounded-2xl text-[10px] font-black text-slate-500 uppercase hover:text-white transition-colors">Cancel</button>
-                                <button onClick={() => handleDelete(confirmDelete)} className="flex-1 py-4 bg-red-500 text-white rounded-2xl text-[10px] font-black uppercase hover:bg-red-400 transition-colors">Delete</button>
+                                <button onClick={() => setConfirmDelete(null)} className="flex-1 py-4 glass-dark border border-white/10 rounded-2xl text-[10px] font-black text-slate-500 uppercase hover:text-white transition-colors">Cancel</button>
+                                <button onClick={() => handleDelete(confirmDelete)} className="flex-1 py-4 bg-red-500 text-white rounded-2xl text-[10px] font-black uppercase hover:bg-red-400 transition-colors shadow-2xl shadow-red-500/20">Delete</button>
                             </div>
                         </motion.div>
                     </div>

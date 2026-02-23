@@ -156,7 +156,7 @@ export default function SignalControlPage() {
     const filtered = signals.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     return (
-        <div className="flex-1 h-full p-10 space-y-10 overflow-y-auto custom-scrollbar relative">
+        <div className="p-10 space-y-10 pb-20 relative">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="space-y-2">
@@ -257,7 +257,7 @@ export default function SignalControlPage() {
                                                 placeholder="MASK ENDPOINT..."
                                                 defaultValue={signal.sniMask}
                                                 onBlur={(e) => updateSNIMask(signal.id, e.target.value)}
-                                                className="bg-black/40 border border-white/5 rounded-lg px-3 py-1.5 text-[9px] text-white font-mono focus:border-neon-cyan/50 outline-none w-full"
+                                                className="bg-black/40 border border-white/5 rounded-lg px-3 py-1.5 text-[11px] text-white font-mono focus:border-neon-cyan/50 outline-none w-full uppercase tracking-tighter"
                                             />
                                             <button
                                                 onClick={() => toggleSNI(signal.id, signal.proxyActive || false)}
@@ -436,6 +436,7 @@ export default function SignalControlPage() {
                     </div>
                 )}
             </AnimatePresence>
+
             {/* Edit Modal */}
             <AnimatePresence>
                 {isEditModalOpen && editingSignal && (

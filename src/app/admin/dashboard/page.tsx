@@ -15,7 +15,9 @@ import {
     Shield,
     Edit2,
     Trash2,
-    Calendar
+    Calendar,
+    Bell,
+    Database
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getDbStats, getChannels, updateChannel, deleteChannel, addChannel } from "@/lib/actions";
@@ -115,7 +117,7 @@ export default function AdminDashboard() {
     ];
 
     return (
-        <div className="flex-1 h-full p-10 space-y-12 overflow-y-auto custom-scrollbar">
+        <div className="p-10 space-y-12 pb-20">
             {/* Welcome Header */}
             <div className="flex items-center justify-between group">
                 <div className="space-y-2">
@@ -154,6 +156,77 @@ export default function AdminDashboard() {
                 ))}
             </div>
 
+            {/* Command Center: Quick Actions */}
+            <div className="space-y-6">
+                <h3 className="text-sm font-black text-white uppercase tracking-[0.2em] flex items-center gap-3 px-4">
+                    <Zap size={16} className="text-neon-cyan" /> Command Center
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {[
+                        {
+                            label: "Broadcast Alert",
+                            description: "Global Neural Transmission",
+                            icon: Bell,
+                            color: "text-amber-500",
+                            bg: "bg-amber-500/10",
+                            border: "border-amber-500/20",
+                            action: () => router.push("/admin/notifications")
+                        },
+                        {
+                            label: "Mask All Signals",
+                            description: "Global SNI Obfuscation",
+                            icon: Shield,
+                            color: "text-neon-cyan",
+                            bg: "bg-neon-cyan/10",
+                            border: "border-neon-cyan/20",
+                            action: async () => {
+                                if (confirm("INITIATE GLOBAL MASKING SEQUENCE?")) {
+                                    const { bulkUpdateChannelMasks } = await import("@/lib/actions");
+                                    await bulkUpdateChannelMasks("m.facebook.com");
+                                    alert("SHIELD PROTOCOLS ACTIVE");
+                                }
+                            }
+                        },
+                        {
+                            label: "Node Database",
+                            description: "Core Data Management",
+                            icon: Database,
+                            color: "text-emerald-500",
+                            bg: "bg-emerald-500/10",
+                            border: "border-emerald-500/20",
+                            action: () => router.push("/admin/database")
+                        },
+                        {
+                            label: "Purge System Logs",
+                            description: "Terminal History Wipe",
+                            icon: Trash2,
+                            color: "text-red-500",
+                            bg: "bg-red-500/10",
+                            border: "border-red-500/20",
+                            action: async () => {
+                                if (confirm("EXECUTE TOTAL LOG PURGE?")) {
+                                    const { clearNotifications } = await import("@/lib/actions");
+                                    await clearNotifications();
+                                    alert("VOORHEES PROTOCOL COMPLETE");
+                                }
+                            }
+                        },
+                    ].map((cmd, i) => (
+                        <button
+                            key={i}
+                            onClick={cmd.action}
+                            className={`group p-8 glass border ${cmd.border} rounded-[2.5rem] bg-white/[0.02] text-left transition-all hover:scale-[1.02] active:scale-[0.98] hover:bg-white/[0.04]`}
+                        >
+                            <div className={`w-14 h-14 rounded-2xl ${cmd.bg} border ${cmd.border} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                                <cmd.icon size={24} className={cmd.color} />
+                            </div>
+                            <h4 className="text-xs font-black text-white uppercase tracking-widest mb-2 group-hover:text-neon-cyan transition-colors">{cmd.label}</h4>
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">{cmd.description}</p>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
             {/* Management Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 {/* Signals Table */}
@@ -169,7 +242,7 @@ export default function AdminDashboard() {
                             <Plus size={14} /> Inject Signal
                         </button>
                     </div>
-                    <div className="glass border border-white/10 rounded-[2.5rem] overflow-hidden bg-white/5">
+                    <div className="glass border border-white/10 rounded-[2.5rem] overflow-hidden bg-white/5 admin-table-container">
                         <table className="w-full text-left">
                             <thead className="border-b border-white/5 bg-white/[0.02]">
                                 <tr>
