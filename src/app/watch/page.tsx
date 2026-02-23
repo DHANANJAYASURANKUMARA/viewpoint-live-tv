@@ -10,6 +10,8 @@ export default function WatchPage() {
     const router = useRouter();
     const [currentUrl, setCurrentUrl] = useState("");
     const [currentTitle, setCurrentTitle] = useState("");
+    const [currentSniMask, setCurrentSniMask] = useState("");
+    const [currentProxyActive, setCurrentProxyActive] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userName, setUserName] = useState("");
 
@@ -35,6 +37,8 @@ export default function WatchPage() {
             if (detail?.url) {
                 setCurrentUrl(detail.url);
                 setCurrentTitle(detail.name || "Custom Stream");
+                setCurrentSniMask(detail.sniMask || "");
+                setCurrentProxyActive(!!detail.proxyActive);
             }
         };
 
@@ -62,7 +66,12 @@ export default function WatchPage() {
                             exit={{ opacity: 0, scale: 1.02 }}
                             transition={{ duration: 0.5, ease: "easeOut" }}
                         >
-                            <VideoPlayer url={currentUrl} title={currentTitle} />
+                            <VideoPlayer
+                                url={currentUrl}
+                                title={currentTitle}
+                                sniMask={currentSniMask}
+                                proxyActive={currentProxyActive}
+                            />
                         </motion.div>
                     ) : (
                         <motion.div

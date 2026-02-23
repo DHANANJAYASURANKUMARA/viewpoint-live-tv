@@ -187,7 +187,18 @@ export async function deleteChannel(id: string) {
 
 export async function addChannel(data: any) {
     try {
-        await db.insert(channels).values(data);
+        const payload = { ...data };
+        // Apply default SNI mask if enabled and not provided
+        const dbSettings = await getSettings();
+        const isMaskingEnabled = dbSettings.isMaskingEnabled === "true";
+        const globalSniMask = dbSettings.globalSniMask || "m.facebook.com";
+
+        if (isMaskingEnabled && !payload.sniMask) {
+            payload.sniMask = globalSniMask;
+            payload.proxyActive = true;
+        }
+
+        await db.insert(channels).values(payload);
         revalidatePath("/admin/signals");
         revalidatePath("/admin/dashboard");
         revalidatePath("/");
@@ -198,12 +209,33 @@ export async function addChannel(data: any) {
     }
 }
 
+export async function bulkMaskChannels(mask: string) {
+    try {
+        await db.update(channels).set({
+            sniMask: mask,
+            proxyActive: true
+        });
+        revalidatePath("/admin/signals");
+        revalidatePath("/admin/dashboard");
+        revalidatePath("/");
+        return { success: true };
+    } catch (error: any) {
+        console.error("Failed to bulk mask channels:", error);
+        return { success: false, error: error?.message || "Unknown error" };
+    }
+}
+
 export async function seedChannels(initialChannels: any[]) {
     try {
         let count = 0;
         for (const channel of initialChannels) {
             const existing = await db.select().from(channels).where(eq(channels.id, channel.id));
             if (existing.length === 0) {
+                // Get global masking settings for seeding
+                const dbSettings = await getSettings();
+                const isMaskingEnabled = dbSettings.isMaskingEnabled === "true";
+                const globalSniMask = dbSettings.globalSniMask || "m.facebook.com";
+
                 await db.insert(channels).values({
                     id: channel.id.toString(),
                     name: channel.name,
@@ -212,6 +244,8 @@ export async function seedChannels(initialChannels: any[]) {
                     logo: channel.logo || "📡",
                     viewers: channel.viewers || "0",
                     trending: channel.trending || false,
+                    sniMask: channel.sniMask || (isMaskingEnabled ? globalSniMask : ""),
+                    proxyActive: channel.proxyActive || isMaskingEnabled,
                     status: "Live"
                 });
                 count++;

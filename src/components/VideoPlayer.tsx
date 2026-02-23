@@ -27,9 +27,11 @@ const ShakaPlayer = dynamic(() => import("./ShakaPlayer"), { ssr: false }) as an
 interface VideoPlayerProps {
     url: string;
     title?: string;
+    sniMask?: string;
+    proxyActive?: boolean;
 }
 
-export default function VideoPlayer({ url, title = "Live Stream" }: VideoPlayerProps) {
+export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxyActive }: VideoPlayerProps) {
     const [playing, setPlaying] = useState(true);
     const [volume, setVolume] = useState(0.8);
     const [muted, setMuted] = useState(true);
@@ -265,6 +267,8 @@ export default function VideoPlayer({ url, title = "Live Stream" }: VideoPlayerP
                     }}
                     currentQuality={currentQuality}
                     performanceProfile={settings.performanceProfile}
+                    sniMask={sniMask}
+                    proxyActive={proxyActive}
                 />
             ) : (
                 <ReactPlayer

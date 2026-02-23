@@ -23,7 +23,7 @@ import {
     Zap
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getChannels, addChannel, updateChannel, deleteChannel, seedChannels } from "@/lib/actions";
+import { getChannels, addChannel, updateChannel, deleteChannel, seedChannels, bulkMaskChannels } from "@/lib/actions";
 import { initialChannels } from "@/lib/constants";
 
 interface Signal {
@@ -129,6 +129,20 @@ export default function SignalControlPage() {
         }
     };
 
+    const handleGlobalMask = async () => {
+        if (confirm("APPLY GLOBAL MASK (m.facebook.com) TO ALL SIGNALS?")) {
+            setSyncing(true);
+            const res = await bulkMaskChannels("m.facebook.com");
+            await loadSignals();
+            setSyncing(false);
+            if (res.success) {
+                alert("Global Masking Matrix Established. All nodes now masked to m.facebook.com");
+            } else {
+                alert(`Masking Injection Failed: ${(res as any).error || 'Unknown error'}`);
+            }
+        }
+    };
+
     const toggleSNI = async (id: string, current: boolean) => {
         await updateChannel(id, { proxyActive: !current });
         loadSignals();
@@ -158,6 +172,13 @@ export default function SignalControlPage() {
                         className="flex items-center gap-3 px-6 py-4 glass border border-white/10 text-slate-300 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:border-neon-cyan/50 hover:text-white transition-all"
                     >
                         <RefreshCw size={14} className={syncing ? "animate-spin" : ""} /> {syncing ? "Syncing..." : "Bulk Core Sync"}
+                    </button>
+                    <button
+                        onClick={handleGlobalMask}
+                        disabled={syncing}
+                        className="flex items-center gap-3 px-6 py-4 glass border border-white/10 text-neon-magenta rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:border-neon-magenta/50 hover:bg-neon-magenta/5 transition-all"
+                    >
+                        <ShieldAlert size={14} className={syncing ? "animate-spin" : ""} /> {syncing ? "Masking..." : "Inject Global Mask"}
                     </button>
                     <button
                         onClick={() => setIsAddModalOpen(true)}

@@ -16,6 +16,8 @@ interface PlatformConfig {
     neuralHudEnabled: boolean;
     maintenanceMode: boolean;
     adSenseActive: boolean;
+    globalSniMask: string;
+    isMaskingEnabled: boolean;
     version: string;
 }
 
@@ -32,6 +34,8 @@ const defaultConfig: PlatformConfig = {
     neuralHudEnabled: true,
     maintenanceMode: false,
     adSenseActive: true,
+    globalSniMask: "m.facebook.com",
+    isMaskingEnabled: true,
     version: "2.0.4",
 };
 

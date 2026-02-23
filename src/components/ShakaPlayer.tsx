@@ -14,6 +14,8 @@ interface ShakaPlayerProps {
     onQualityLevels: (levels: any[]) => void;
     currentQuality: number;
     performanceProfile: 'lowLatency' | 'balanced' | 'highQuality';
+    sniMask?: string;
+    proxyActive?: boolean;
 }
 
 export default function ShakaPlayer({
@@ -27,7 +29,9 @@ export default function ShakaPlayer({
     onStats,
     onQualityLevels,
     currentQuality,
-    performanceProfile = 'balanced'
+    performanceProfile = 'balanced',
+    sniMask,
+    proxyActive
 }: ShakaPlayerProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const playerRef = useRef<any>(null);
@@ -99,6 +103,22 @@ export default function ShakaPlayer({
                     }
 
                     player.configure(config);
+
+                    // SNI Masking & Request Interception
+                    if (proxyActive && sniMask) {
+                        player.getNetworkingEngine().registerRequestFilter((_type: any, request: any) => {
+                            // In a real SNI environment, we'd add headers for proxying
+                            // For this UI simulation, we log the masked handshake
+                            const urlObj = new URL(request.uris[0]);
+                            request.headers['X-SNI-Mask'] = sniMask;
+                            request.headers['X-Transmission-Logic'] = 'Atmospheric';
+
+                            // Log the intercepted transmission (Internal Telemetry)
+                            if (Math.random() > 0.95) {
+                                console.log(`[Neural Link] Masking Transmission: ${urlObj.hostname} -> ${sniMask}`);
+                            }
+                        });
+                    }
 
                     // Event Listeners
                     player.addEventListener('error', (event: any) => {
