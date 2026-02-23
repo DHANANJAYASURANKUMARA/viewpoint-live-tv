@@ -132,7 +132,7 @@ export default function RootLayout({
               "url": "https://viewpoint-live.vercel.app",
               "logo": {
                 "@type": "ImageObject",
-                "url": "https://viewpoint-live.vercel.app/icons/icon-512.svg"
+                "url": "https://viewpoint-live.vercel.app/icon.png"
               }
             }
           })

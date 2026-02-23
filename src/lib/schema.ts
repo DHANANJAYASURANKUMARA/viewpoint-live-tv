@@ -71,5 +71,6 @@ export const notifications = pgTable("notifications", {
     message: text("message").notNull(),
     type: text("type").notNull().default("INFO"), // INFO, ALERT, SUCCESS, WARNING
     isRead: boolean("is_read").default(false),
+    isActive: boolean("is_active").default(true),
     createdAt: timestamp("created_at").defaultNow(),
 });

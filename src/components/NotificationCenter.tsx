@@ -18,7 +18,7 @@ export default function NotificationCenter() {
 
     const loadNotifications = async (showLoading = false) => {
         if (showLoading) setIsLoading(true);
-        const data = await getNotifications();
+        const data = await getNotifications(true);
         setNotifs(data);
         setUnreadCount(data.filter((n: any) => !n.isRead).length);
         setIsLoading(false);

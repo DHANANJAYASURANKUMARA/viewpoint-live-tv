@@ -353,10 +353,16 @@ export async function getActiveOperatorCount() {
     }
 }
 
-export async function getNotifications() {
+export async function getNotifications(onlyActive: boolean = false) {
     try {
         const { desc } = require("drizzle-orm");
-        return await db.select().from(notifications).orderBy(desc(notifications.createdAt));
+        let query = db.select().from(notifications);
+
+        if (onlyActive) {
+            query = query.where(eq(notifications.isActive, true)) as any;
+        }
+
+        return await query.orderBy(desc(notifications.createdAt));
     } catch (error) {
         console.error("Failed to fetch notifications:", error);
         return [];
@@ -367,6 +373,7 @@ export async function markNotificationAsRead(id: string) {
     try {
         await db.update(notifications).set({ isRead: true }).where(eq(notifications.id, id));
         revalidatePath("/");
+        revalidatePath("/admin/notifications");
         return { success: true };
     } catch (error) {
         console.error("Failed to mark notification as read:", error);
@@ -398,6 +405,18 @@ export async function deleteNotification(id: string) {
         return { success: true };
     } catch (error) {
         console.error("Failed to delete notification:", error);
+        return { success: false };
+    }
+}
+
+export async function updateNotification(id: string, data: any) {
+    try {
+        await db.update(notifications).set(data).where(eq(notifications.id, id));
+        revalidatePath("/");
+        revalidatePath("/admin/notifications");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update notification:", error);
         return { success: false };
     }
 }

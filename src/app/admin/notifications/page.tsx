@@ -7,7 +7,10 @@ import {
     Radio, Activity, Shield
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getNotifications, sendGlobalNotification, deleteNotification, clearNotifications } from "@/lib/actions";
+import {
+    getNotifications, sendGlobalNotification, deleteNotification,
+    clearNotifications, updateNotification
+} from "@/lib/actions";
 import { useConfig } from "@/components/ConfigContext";
 
 export default function AdminNotifications() {
@@ -16,11 +19,12 @@ export default function AdminNotifications() {
     const [type, setType] = useState("INFO");
     const [history, setHistory] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [editId, setEditId] = useState<string | null>(null);
     const { config, updateConfig } = useConfig();
 
     const loadHistory = async () => {
         const data = await getNotifications();
-        setHistory(data.reverse());
+        setHistory(data); // data is already ordered by desc in the action now
     };
 
     useEffect(() => {
@@ -32,14 +36,37 @@ export default function AdminNotifications() {
         if (!title || !message) return;
 
         setIsLoading(true);
-        const res = await sendGlobalNotification({ title, message, type });
+        if (editId) {
+            await updateNotification(editId, { title, message, type });
+            setEditId(null);
+        } else {
+            await sendGlobalNotification({ title, message, type });
+        }
         setIsLoading(false);
 
-        if (res.success) {
-            setTitle("");
-            setMessage("");
-            loadHistory();
-        }
+        setTitle("");
+        setMessage("");
+        loadHistory();
+    };
+
+    const handleEditInitiate = (log: any) => {
+        setEditId(log.id);
+        setTitle(log.title);
+        setMessage(log.message);
+        setType(log.type);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancelEdit = () => {
+        setEditId(null);
+        setTitle("");
+        setMessage("");
+        setType("INFO");
+    };
+
+    const handleToggleVisibility = async (log: any) => {
+        await updateNotification(log.id, { isActive: !log.isActive });
+        loadHistory();
     };
 
     const handleDelete = async (id: string) => {
@@ -156,7 +183,9 @@ export default function AdminNotifications() {
                         <div className="space-y-6">
                             <div className="flex items-center gap-3 mb-2">
                                 <Send size={18} className="text-neon-cyan" />
-                                <h2 className="text-sm font-black text-white uppercase tracking-widest leading-none">Compose Pulse</h2>
+                                <h2 className="text-sm font-black text-white uppercase tracking-widest leading-none">
+                                    {editId ? "Update Payload" : "Compose Pulse"}
+                                </h2>
                             </div>
 
                             <div className="space-y-3">
@@ -206,16 +235,27 @@ export default function AdminNotifications() {
 
                         <button
                             disabled={isLoading || !title || !message}
-                            className="w-full py-5 bg-white text-vpoint-dark rounded-full text-[11px] font-black uppercase tracking-[0.3em] hover:bg-neon-cyan transition-all flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(255,255,255,0.1)] disabled:opacity-30 disabled:cursor-not-allowed group"
+                            className={`w-full py-5 rounded-full text-[11px] font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(255,255,255,0.1)] disabled:opacity-30 disabled:cursor-not-allowed group ${editId ? "bg-neon-cyan text-vpoint-dark hover:bg-white" : "bg-white text-vpoint-dark hover:bg-neon-cyan"}`}
                         >
                             {isLoading ? (
                                 <Activity className="animate-spin" size={16} />
                             ) : (
                                 <>
-                                    BROADCAST SIGNAL <Send size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                    {editId ? "COMMIT UPDATE" : "BROADCAST SIGNAL"}
+                                    <Send size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                 </>
                             )}
                         </button>
+
+                        {editId && (
+                            <button
+                                type="button"
+                                onClick={handleCancelEdit}
+                                className="w-full text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors"
+                            >
+                                Cancel Phase
+                            </button>
+                        )}
                     </form>
 
                     <div className="p-8 glass-dark border border-white/5 rounded-[2rem] flex items-center gap-6">
@@ -276,10 +316,17 @@ export default function AdminNotifications() {
                                                 <div className="flex-1 space-y-3">
                                                     <div className="flex items-center justify-between">
                                                         <div className="flex items-center gap-3">
-                                                            <h4 className="text-[12px] font-black text-white uppercase tracking-tight">{log.title}</h4>
+                                                            <h4 className={`text-[12px] font-black uppercase tracking-tight ${log.isActive ? "text-white" : "text-slate-500 line-through"}`}>
+                                                                {log.title}
+                                                            </h4>
                                                             <span className={`text-[8px] font-bold bg-white/5 px-2 py-0.5 rounded-full uppercase tracking-tighter ${typeOptions.find(o => o.id === log.type)?.color}`}>
                                                                 {log.type}
                                                             </span>
+                                                            {!log.isActive && (
+                                                                <span className="text-[7px] font-black bg-rose-500/10 text-rose-500 px-1.5 py-0.5 rounded uppercase tracking-widest border border-rose-500/20">
+                                                                    Hidden
+                                                                </span>
+                                                            )}
                                                         </div>
                                                         <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter italic">
                                                             {new Date(log.createdAt).toLocaleDateString()} — {new Date(log.createdAt).toLocaleTimeString()}
@@ -289,12 +336,29 @@ export default function AdminNotifications() {
                                                         {log.message}
                                                     </p>
                                                 </div>
-                                                <button
-                                                    onClick={() => handleDelete(log.id)}
-                                                    className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 p-2 text-slate-600 hover:text-rose-500 transition-all hover:bg-rose-500/10 rounded-lg"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
+                                                <div className="absolute top-6 right-6 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                                    <button
+                                                        onClick={() => handleToggleVisibility(log)}
+                                                        className={`p-2 transition-all rounded-lg ${log.isActive ? "text-slate-600 hover:text-amber-500 hover:bg-amber-500/10" : "text-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20"}`}
+                                                        title={log.isActive ? "Hide Notification" : "Show Notification"}
+                                                    >
+                                                        {log.isActive ? <XCircle size={14} /> : <CheckCircle size={14} />}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleEditInitiate(log)}
+                                                        className="p-2 text-slate-600 hover:text-neon-cyan transition-all hover:bg-neon-cyan/10 rounded-lg"
+                                                        title="Edit Transmission"
+                                                    >
+                                                        <Send size={14} className="rotate-45" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(log.id)}
+                                                        className="p-2 text-slate-600 hover:text-rose-500 transition-all hover:bg-rose-500/10 rounded-lg"
+                                                        title="Delete Log"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
                                             </div>
                                         </motion.div>
                                     ))}
