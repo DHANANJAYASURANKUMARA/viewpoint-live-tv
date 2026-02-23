@@ -15,9 +15,11 @@ import {
     Gift,
     Sparkles,
     Lock,
-    Unlock
+    Unlock,
+    X
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { updateUserProfile, getUserProfile } from "@/lib/actions";
 
 export default function NexusProfilePage() {
@@ -137,6 +139,10 @@ export default function NexusProfilePage() {
                 )}
             </AnimatePresence>
 
+            <Link href="/watch" className="fixed top-8 right-8 z-50 p-4 glass border border-white/10 rounded-2xl hover:bg-white/5 text-slate-400 hover:text-white transition-all">
+                <X size={24} />
+            </Link>
+
             <div className="max-w-4xl mx-auto space-y-12">
                 {/* Header */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
@@ -175,9 +181,25 @@ export default function NexusProfilePage() {
                                         <User size={48} />
                                     )}
                                 </div>
-                                <button className="absolute -bottom-2 -right-2 p-3 bg-white text-black rounded-2xl shadow-xl hover:scale-110 transition-transform">
+                                <label className="absolute -bottom-2 -right-2 p-3 bg-white text-black rounded-2xl shadow-xl hover:scale-110 transition-transform cursor-pointer">
                                     <Camera size={16} />
-                                </button>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={async (e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) {
+                                                const reader = new FileReader();
+                                                reader.onloadend = () => {
+                                                    const base64 = reader.result as string;
+                                                    if (user) setUser({ ...user, profilePicture: base64 });
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+                                        }}
+                                    />
+                                </label>
                             </div>
                             <div className="space-y-1">
                                 <h3 className="text-xl font-black text-white uppercase">{user?.displayName || user?.name}</h3>

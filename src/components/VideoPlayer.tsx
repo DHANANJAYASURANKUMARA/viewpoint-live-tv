@@ -144,10 +144,27 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
 
     const useReactPlayer = isDirectStream || isSpecialPlayer;
 
+    // Auto-rotate / Orientation support
+    useEffect(() => {
+        const handleOrientation = () => {
+            if (window.innerHeight < window.innerWidth && /Mobi|Android/i.test(navigator.userAgent)) {
+                setIsCinemaMode(true);
+            }
+        };
+
+        window.addEventListener("orientationchange", handleOrientation);
+        window.addEventListener("resize", handleOrientation);
+        return () => {
+            window.removeEventListener("orientationchange", handleOrientation);
+            window.removeEventListener("resize", handleOrientation);
+        };
+    }, []);
+
     return (
         <div
             className={`video-container relative w-full overflow-hidden glass shadow-[0_0_100px_rgba(0,0,0,0.6)] group border border-white/5 transition-all duration-700 ${isCinemaMode ? "z-[60] scale-105" : "rounded-none"} aspect-video`}
             onMouseMove={handleMouseMove}
+            onTouchStart={handleMouseMove}
             onMouseLeave={() => {
                 setShowControls(false);
                 setShowQualityMenu(false);
@@ -161,12 +178,12 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                         <motion.div
                             animate={{ rotate: 360 }}
                             transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                            className="absolute inset-0 border-[1px] border-dashed border-neon-cyan/20 rounded-full"
+                            className="absolute inset-0 border border-white/5 rounded-full"
                         />
                         <motion.div
                             animate={{ rotate: -360 }}
                             transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                            className="absolute inset-4 border-[1px] border-neon-magenta/10 rounded-full border-t-neon-magenta/40"
+                            className="absolute inset-4 border border-neon-magenta/10 rounded-full border-t-neon-magenta/40 shadow-[inset_0_0_20px_rgba(255,45,85,0.05)]"
                         />
 
                         {/* Scanning Bar Animation */}

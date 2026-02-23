@@ -4,14 +4,13 @@ import React, { useState, useEffect } from "react";
 import { getChannels } from "@/lib/actions";
 import {
     Search,
-    Tv,
+    Zap,
     X,
     Globe,
     Music,
     Gamepad2,
     Newspaper,
     Film,
-    Zap,
     ExternalLink,
     Heart,
     Settings,
@@ -21,7 +20,8 @@ import {
     LogOut,
     User,
     Trophy,
-    ChevronRight
+    ChevronRight,
+    ArrowRight
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -225,7 +225,7 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
                                 >
                                     <div className="flex items-center gap-4 relative z-10">
                                         <div className={`w-10 h-10 glass border rounded-xl flex items-center justify-center transition-all ${activeChannelUrl === channel.url ? "border-neon-cyan/40 bg-neon-cyan/10" : "border-white/5"}`}>
-                                            <Tv size={18} className={activeChannelUrl === channel.url ? "text-neon-cyan" : "text-slate-500"} />
+                                            <Zap size={18} className={activeChannelUrl === channel.url ? "text-neon-cyan" : "text-slate-500"} />
                                         </div>
                                         <div className="text-left">
                                             <div className={`text-[10px] font-black uppercase tracking-widest ${activeChannelUrl === channel.url ? "text-neon-cyan" : "text-white"}`}>
@@ -323,9 +323,3 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
         </div>
     );
 }
-
-const ArrowRight = ({ size, className }: { size: number, className?: string }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M5 12h14m-7-7 7 7-7 7" />
-    </svg>
-);

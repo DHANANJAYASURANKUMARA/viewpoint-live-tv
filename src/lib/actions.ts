@@ -568,6 +568,14 @@ export async function sendChatMessage(data: { userId: string; userName: string; 
 
 export async function addMessageReaction(messageId: string, userId: string, userName: string, emoji: string) {
     try {
+        // Enforce one reaction per user: delete any existing reactions for this message by this user
+        await db.delete(messageReactions).where(
+            and(
+                eq(messageReactions.messageId, messageId),
+                eq(messageReactions.userName, userName)
+            )
+        );
+
         await db.insert(messageReactions).values({
             messageId,
             userId,
@@ -575,9 +583,8 @@ export async function addMessageReaction(messageId: string, userId: string, user
             emoji
         });
         return { success: true };
-    } catch (error) {
-        console.error("Failed to add reaction:", error);
-        return { success: false };
+    } catch (e: any) {
+        return { success: false, error: e.message };
     }
 }
 

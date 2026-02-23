@@ -109,6 +109,19 @@ export default function LiveChat({ channelId, userName, userId }: LiveChatProps)
 
     const handleReact = async (messageId: string, emoji: string) => {
         setShowEmojiPicker(null);
+
+        // Optimistic update for single reaction per user
+        const currentReacts = reactions[messageId] || [];
+        const hasReacted = currentReacts.some(r => r.userName === userName);
+
+        if (hasReacted) {
+            // Check if it's the same emoji, if so remove it, otherwise replace it
+            const existingReact = currentReacts.find(r => r.userName === userName);
+            if (existingReact?.emoji === emoji) {
+                // Toggle off (implement toggle logic if backend supports, otherwise just replace)
+            }
+        }
+
         const res = await addMessageReaction(messageId, userId, userName, emoji);
         if (res.success) {
             const newReacts = await getMessageReactions(messageId);
@@ -244,7 +257,10 @@ export default function LiveChat({ channelId, userName, userId }: LiveChatProps)
                 )}
             </div>
 
-            <form onSubmit={handleSend} className="p-6 bg-black/40 border-t border-white/5 space-y-4 relative">
+            <form
+                onSubmit={handleSend}
+                className="p-6 bg-black/40 border-t border-white/5 space-y-4 relative safe-area-bottom focus-within:pb-10 lg:focus-within:pb-6 transition-all"
+            >
                 {/* Reply Indicator */}
                 <AnimatePresence>
                     {replyingTo && (

@@ -3,11 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-    Tv, Zap, Globe, ShieldCheck, ArrowRight,
-    Activity, Layers, Radio, Info,
-    Mail, ArrowUpRight,
-    Sparkles, Shield, Cpu, Volume2, MessageSquare, Send,
-    Download, Smartphone
+    Zap, Globe, Shield, ArrowRight,
+    Activity, BarChart3, Star, ChevronRight, Play,
+    MessageSquare, Zap as FlashIcon, ArrowUpRight,
+    Download, Smartphone, Info, Mail, Send, Cpu, Layers, ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
 import { useConfig } from "./ConfigContext";
@@ -43,9 +42,9 @@ export default function LandingPage() {
     const features = [
         { icon: <Zap className="text-neon-cyan" />, title: "Hyper-Speed", desc: "Proprietary buffering algorithms for zero-lag transmission." },
         { icon: <Shield className="text-neon-purple" />, title: "Secure HUD", desc: "Military-grade encryption for all neural handshake protocols." },
-        { icon: <Cpu className="text-emerald-500" />, title: "Quantum Mesh", desc: "Distributed signal processing via neural nodes." },
+        { icon: <FlashIcon className="text-emerald-500" />, title: "Quantum Mesh", desc: "Distributed signal processing via neural nodes." },
         { icon: <Globe className="text-blue-500" />, title: "Grid-Wide", desc: "Access signals from every sector of the digital frontier." },
-        { icon: <Layers className="text-amber-500" />, title: "Multi-Stack", desc: "Parallel signal streams for total tactical awareness." }
+        { icon: <Activity className="text-amber-500" />, title: "Multi-Stack", desc: "Parallel signal streams for total tactical awareness." }
     ];
 
     const faqs = [
@@ -63,7 +62,7 @@ export default function LandingPage() {
                         <div className="relative">
                             <div className="absolute -inset-2 bg-neon-cyan/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500" />
                             <div className="w-10 h-10 glass border border-white/20 rounded-xl flex items-center justify-center relative overflow-hidden">
-                                <Tv className="text-neon-cyan relative z-10 w-5 h-5" />
+                                <Zap className="text-neon-cyan relative z-10 w-5 h-5" />
                                 <div className="absolute inset-0 bg-gradient-to-br from-neon-cyan/20 to-transparent" />
                             </div>
                         </div>
@@ -142,7 +141,7 @@ export default function LandingPage() {
                         <div className="space-y-10">
                             <div className="space-y-4">
                                 <div className="flex items-center gap-4 text-neon-purple">
-                                    <ShieldCheck size={24} />
+                                    <Shield className="text-neon-purple" size={24} />
                                     <span className="text-[10px] font-bold uppercase tracking-[0.5em]">System Architecture</span>
                                 </div>
                                 <h2 className="text-5xl md:text-6xl font-black text-white uppercase tracking-tighter">Neural Signal <br /> Propagation</h2>
@@ -206,13 +205,13 @@ export default function LandingPage() {
 
                     <div className="grid md:grid-cols-3 gap-8">
                         {[
-                            { icon: <Sparkles />, title: "Visual Purity", text: "New ultra-clear 4K neural signals deployed across Sector 7." },
-                            { icon: <Radio />, title: "Low Latency", text: "Proprietary mesh protocols reduced ping to sub-5ms globally." },
-                            { icon: <Volume2 />, title: "Neural Audio", text: "Uncompressed spatial soundscapes now standard in all streams." }
+                            { icon: <Star />, title: "Visual Purity", text: "New ultra-clear 4K neural signals deployed across Sector 7." },
+                            { icon: <BarChart3 />, title: "Low Latency", text: "Proprietary mesh protocols reduced ping to sub-5ms globally." },
+                            { icon: <Play />, title: "Neural Audio", text: "Uncompressed spatial soundscapes now standard in all streams." }
                         ].map((post, i) => (
                             <div key={i} className="p-10 glass border border-white/5 rounded-[2.5rem] space-y-6 hover:bg-white/[0.02] transition-colors group">
-                                <div className="w-14 h-14 glass border border-white/10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform text-white">
-                                    {post.icon}
+                                <div className="w-20 h-20 rounded-3xl bg-neon-cyan/10 flex items-center justify-center text-neon-cyan mb-8 group-hover:scale-110 transition-transform border border-neon-cyan/20">
+                                    <Zap size={40} />
                                 </div>
                                 <h3 className="text-xl font-bold text-white uppercase tracking-widest">{post.title}</h3>
                                 <p className="text-sm text-white/30 leading-loose">{post.text}</p>

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import VideoPlayer from "@/components/VideoPlayer";
 import LiveChat from "@/components/LiveChat";
-import { Tv, MousePointer2, MessageCircle, X, ChevronRight } from "lucide-react";
+import { Zap, MousePointer2, MessageCircle, X, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 
@@ -106,7 +106,7 @@ export default function WatchPage() {
                                     <div className="relative">
                                         <div className="absolute inset-0 bg-neon-cyan/20 blur-[60px] rounded-full animate-pulse" />
                                         <div className="relative w-24 h-24 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center shadow-2xl backdrop-blur-2xl">
-                                            <Tv size={48} className="text-neon-cyan animate-pulse" />
+                                            <Zap size={48} className="text-neon-cyan animate-pulse" />
                                         </div>
                                     </div>
 
