@@ -20,7 +20,13 @@ export default function WatchPage() {
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 1024);
+        const handleResize = () => {
+            const mobile = window.innerWidth < 1024;
+            setIsMobile(mobile);
+            // Default chat state: visible on desktop, hidden on mobile initially for better focus
+            if (mobile) setShowChat(false);
+            else setShowChat(true);
+        };
         handleResize();
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
@@ -124,13 +130,17 @@ export default function WatchPage() {
                     </div>
                 </div>
 
-                {/* Sub-Header / Chat Toggle (Mobile/Tablet Only) */}
-                {!isMobile && currentUrl && (
+                {/* Sub-Header / Chat Toggle (All Devices) */}
+                {currentUrl && (
                     <button
                         onClick={() => setShowChat(!showChat)}
-                        className={`fixed bottom-10 z-[70] p-4 glass rounded-2xl border transition-all duration-500 ${showChat ? 'right-[420px] border-neon-cyan/50 text-neon-cyan' : 'right-10 border-white/10 text-slate-500 hover:text-white'}`}
+                        className={`fixed z-[70] p-4 glass rounded-2xl border transition-all duration-500 
+                            ${isMobile
+                                ? `bottom-6 right-6 ${showChat ? 'border-neon-cyan/50 text-neon-cyan' : 'border-white/10 text-slate-500'}`
+                                : `bottom-10 ${showChat ? 'right-[420px] border-neon-cyan/50 text-neon-cyan' : 'right-10 border-white/10 text-slate-500 hover:text-white'}`
+                            }`}
                     >
-                        {showChat ? <ChevronRight size={20} /> : <MessageCircle size={20} />}
+                        {showChat ? (isMobile ? <X size={20} /> : <ChevronRight size={20} />) : <MessageCircle size={20} />}
                     </button>
                 )}
             </div>
@@ -149,12 +159,20 @@ export default function WatchPage() {
                 )}
             </AnimatePresence>
 
-            {/* Mobile Chat Overlay / Section (Optional, keeping it simple for now as a bottom segment if mobile) */}
-            {isMobile && currentUrl && (
-                <div className="h-[400px] w-full flex-shrink-0 border-t border-white/5">
-                    <LiveChat userName={userName} userId={userId} channelId={currentTitle} />
-                </div>
-            )}
+            {/* Mobile Chat Overlay / Section */}
+            <AnimatePresence>
+                {isMobile && showChat && currentUrl && (
+                    <motion.div
+                        initial={{ y: "100%" }}
+                        animate={{ y: 0 }}
+                        exit={{ y: "100%" }}
+                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                        className="fixed inset-x-0 bottom-0 h-[60vh] z-[65] border-t border-white/10 shadow-2xl"
+                    >
+                        <LiveChat userName={userName} userId={userId} channelId={currentTitle} />
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

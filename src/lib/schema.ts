@@ -52,12 +52,14 @@ export const users = pgTable("users", {
     profilePicture: text("profile_picture"),
     bio: text("bio"),
     socialLinks: text("social_links"), // Store as JSON string
+    facebook: text("facebook"),
     country: text("country").default("Unknown"),
     location: text("location").default("Unknown"),
     device: text("device").default("Unknown"),
     browser: text("browser").default("Unknown"),
     lastLogin: timestamp("last_login"),
     isBanned: boolean("is_banned").default(false),
+    isPrivate: boolean("is_private").default(false),
     createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -87,6 +89,34 @@ export const chatMessages = pgTable("chat_messages", {
     userId: text("user_id").notNull(),
     userName: text("user_name").notNull(),
     message: text("message").notNull(),
+    replyToId: uuid("reply_to_id"),
     channelId: text("channel_id"), // Optional, if we want channel-specific chat
+    createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const messageReactions = pgTable("message_reactions", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    messageId: uuid("message_id").notNull().references(() => chatMessages.id, { onDelete: "cascade" }),
+    userId: text("user_id").notNull(),
+    userName: text("user_name").notNull(),
+    emoji: text("emoji").notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const friendships = pgTable("friendships", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    requesterId: text("requester_id").notNull(),
+    receiverId: text("receiver_id").notNull(),
+    status: text("status").notNull().default("PENDING"), // PENDING, ACCEPTED, BLOCKED
+    createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const directMessages = pgTable("direct_messages", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    senderId: text("sender_id").notNull(),
+    senderName: text("sender_name").notNull(),
+    receiverId: text("receiver_id").notNull(),
+    message: text("message").notNull(),
+    isRead: boolean("is_read").default(false),
     createdAt: timestamp("created_at").defaultNow(),
 });
