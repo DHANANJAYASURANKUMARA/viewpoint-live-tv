@@ -133,7 +133,9 @@ export default function TopBar() {
                     <div className="hidden sm:block h-3 w-[1px] bg-white/10 mx-2" />
                 </div>
 
-                <NotificationCenter />
+                <div className="mx-2 lg:mx-4">
+                    <NotificationCenter />
+                </div>
 
                 <div className="flex flex-col items-end">
                     <div className="flex items-center gap-2">

@@ -10,19 +10,13 @@ export default function LoadingScreen() {
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="fixed inset-0 z-[2000] bg-[#0a0a0f] flex flex-col items-center justify-center overflow-hidden"
+            className="fixed inset-0 z-[2000] bg-vpoint-dark flex flex-col items-center justify-center overflow-hidden"
         >
-            {/* Background Neural Grid */}
-            <div className="absolute inset-0 opacity-10 pointer-events-none">
-                <div className="w-full h-full border-[0.5px] border-white/5 grid grid-cols-12 grid-rows-12">
-                    {[...Array(144)].map((_, i) => (
-                        <div key={i} className="border-[0.5px] border-white/5" />
-                    ))}
-                </div>
+            {/* Background Background & Grid */}
+            <div className="absolute inset-0 z-0">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vw] bg-[radial-gradient(circle_at_50%_50%,_rgba(34,211,238,0.15)_0%,_transparent_70%)] opacity-50" />
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px]" />
             </div>
-
-            {/* Glowing Aura */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-neon-purple/20 blur-[120px] rounded-full animate-pulse" />
 
             <div className="relative z-10 flex flex-col items-center space-y-12">
                 {/* Logo Container */}
@@ -55,7 +49,7 @@ export default function LoadingScreen() {
                             ease: "easeInOut",
                             repeat: Infinity
                         }}
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-neon-purple to-transparent opacity-80"
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-neon-cyan/50 to-transparent opacity-40"
                     />
                     <motion.div
                         initial={{ width: "0%" }}
@@ -66,7 +60,7 @@ export default function LoadingScreen() {
                             repeat: Infinity,
                             repeatDelay: 0.5
                         }}
-                        className="h-full bg-neon-cyan shadow-[0_0_15px_rgba(6,182,212,0.5)]"
+                        className="h-full bg-neon-cyan shadow-[0_0_20px_rgba(6,182,212,0.6)]"
                     />
                 </div>
 

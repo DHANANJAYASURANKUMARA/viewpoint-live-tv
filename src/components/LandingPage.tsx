@@ -93,7 +93,9 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                                 WATCH NOW <ArrowRight size={14} />
                             </button>
 
-                            <NotificationCenter />
+                            <div className="ml-2 lg:ml-0">
+                                <NotificationCenter />
+                            </div>
 
                             <button
                                 className="lg:hidden text-white"
