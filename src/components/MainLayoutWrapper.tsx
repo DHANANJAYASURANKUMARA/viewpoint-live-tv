@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { Shield, ShieldAlert } from "lucide-react";
 import LoadingScreen from "./LoadingScreen";
+import PWAManager from "./PWAManager";
 
 import { useConfig } from "./ConfigContext";
 
@@ -174,6 +175,7 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
 
     return (
         <div className={`flex w-full h-screen overflow-hidden vpoint-bg transition-colors duration-300 ${theme === 'magenta' ? 'theme-magenta' : ''}`}>
+            <PWAManager />
             <AnimatePresence>
                 {isLoading && <LoadingScreen key="loader" />}
             </AnimatePresence>

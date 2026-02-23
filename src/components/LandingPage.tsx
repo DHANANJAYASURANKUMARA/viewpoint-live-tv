@@ -6,7 +6,8 @@ import {
     Tv, Zap, Globe, ShieldCheck, Play, ArrowRight,
     Activity, Layers, Users, Radio, Info, FileText,
     Mail, ExternalLink, Menu, X, ArrowUpRight,
-    Sparkles, Shield, Cpu, Volume2, MessageSquare, Send
+    Sparkles, Shield, Cpu, Volume2, MessageSquare, Send,
+    Download
 } from "lucide-react";
 import Link from "next/link";
 import { useConfig } from "./ConfigContext";
@@ -21,6 +22,7 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [viewerCount, setViewerCount] = useState(12405);
     const [activeSignals, setActiveSignals] = useState(258);
+    const [isInstallable, setIsInstallable] = useState(false);
 
     // Simulate real-time data flow
     useEffect(() => {
@@ -34,11 +36,19 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
         const handleScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener("scroll", handleScroll);
 
+        const handleInstallable = (e: any) => setIsInstallable(e.detail.available);
+        window.addEventListener("vpoint-pwa-installable", handleInstallable as EventListener);
+
         return () => {
             clearInterval(interval);
             window.removeEventListener("scroll", handleScroll);
+            window.removeEventListener("vpoint-pwa-installable", handleInstallable as EventListener);
         };
     }, []);
+
+    const handleInstallTrigger = () => {
+        window.dispatchEvent(new CustomEvent("vpoint-pwa-install-trigger"));
+    };
 
     const navLinks = [
         { name: "Home", href: "#hero" },
@@ -172,6 +182,15 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                                         WATCH NOW <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                     </span>
                                 </button>
+
+                                {isInstallable && (
+                                    <button
+                                        onClick={handleInstallTrigger}
+                                        className="w-full sm:w-auto px-10 py-5 glass border border-neon-cyan/30 text-neon-cyan rounded-full font-bold uppercase tracking-[0.2em] transition-all hover:bg-neon-cyan/10 hover:shadow-[0_0_30px_rgba(6,182,212,0.2)] flex items-center justify-center gap-3"
+                                    >
+                                        <Download size={18} /> INSTALL APP
+                                    </button>
+                                )}
                             </div>
                         </motion.div>
                     </div>
