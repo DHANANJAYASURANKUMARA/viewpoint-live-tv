@@ -37,6 +37,8 @@ import {
     deletePost,
     updatePost
 } from "@/lib/actions";
+import Cropper from "react-easy-crop";
+import { getCroppedImg } from "@/lib/imageUtils";
 
 export default function NexusProfilePage() {
     const router = useRouter();
@@ -55,6 +57,13 @@ export default function NexusProfilePage() {
     const [commentTexts, setCommentTexts] = useState<Record<string, string>>({});
     const [editingPost, setEditingPost] = useState<string | null>(null);
     const [editContent, setEditContent] = useState("");
+
+    // Avatar Cropping State
+    const [imageSrc, setImageSrc] = useState<string | null>(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+    const [showCropper, setShowCropper] = useState(false);
 
     useEffect(() => {
         const session = localStorage.getItem("vpoint-user");
@@ -195,10 +204,28 @@ export default function NexusProfilePage() {
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setUser({ ...user, profilePicture: reader.result as string });
-                setStatus({ type: 'success', msg: 'Neural avatar cached. Commit to save.' });
+                setImageSrc(reader.result as string);
+                setShowCropper(true);
             };
             reader.readAsDataURL(file);
+        }
+    };
+
+    const handleCropComplete = (croppedArea: any, pixels: any) => {
+        setCroppedAreaPixels(pixels);
+    };
+
+    const confirmCrop = async () => {
+        if (!imageSrc || !croppedAreaPixels) return;
+        try {
+            const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
+            setUser({ ...user, profilePicture: croppedImage });
+            setShowCropper(false);
+            setImageSrc(null);
+            setStatus({ type: 'success', msg: 'Avatar optimized. Commit to broadcast.' });
+        } catch (e) {
+            console.error(e);
+            setStatus({ type: 'error', msg: 'Neural processing failed.' });
         }
     };
 
@@ -631,6 +658,68 @@ export default function NexusProfilePage() {
                             >
                                 Confirm Link
                             </button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* Avatar Cropping Modal */}
+            <AnimatePresence>
+                {showCropper && imageSrc && (
+                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="relative w-full max-w-2xl aspect-square glass border border-white/10 rounded-[3rem] overflow-hidden bg-vpoint-dark flex flex-col"
+                        >
+                            <div className="relative flex-1 bg-black">
+                                <Cropper
+                                    image={imageSrc}
+                                    crop={crop}
+                                    zoom={zoom}
+                                    aspect={1}
+                                    onCropChange={setCrop}
+                                    onZoomChange={setZoom}
+                                    onCropComplete={handleCropComplete}
+                                    cropShape="round"
+                                    showGrid={false}
+                                />
+                            </div>
+                            <div className="p-8 space-y-6 bg-vpoint-dark/80 backdrop-blur-md">
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-center">
+                                        <label className="text-[10px] font-black text-white uppercase tracking-widest">Neural Zoom</label>
+                                        <span className="text-[10px] font-black text-neon-cyan">{Math.round(zoom * 100)}%</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min={1}
+                                        max={3}
+                                        step={0.1}
+                                        value={zoom}
+                                        onChange={(e) => setZoom(Number(e.target.value))}
+                                        className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-neon-cyan"
+                                    />
+                                </div>
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={() => {
+                                            setShowCropper(false);
+                                            setImageSrc(null);
+                                        }}
+                                        className="flex-1 py-4 bg-white/5 border border-white/10 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+                                    >
+                                        Abort
+                                    </button>
+                                    <button
+                                        onClick={confirmCrop}
+                                        className="flex-1 py-4 bg-neon-cyan text-black rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-[0_0_30px_rgba(34,211,238,0.3)] hover:scale-[1.02] transition-all"
+                                    >
+                                        Finalize Matrix Avatar
+                                    </button>
+                                </div>
+                            </div>
                         </motion.div>
                     </div>
                 )}
