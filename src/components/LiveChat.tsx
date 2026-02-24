@@ -19,7 +19,8 @@ import {
     sendLiveChatMessage,
     updateLiveChatMessage,
     deleteLiveChatMessage,
-    toggleLiveChatLike
+    toggleLiveChatLike,
+    getUserProfile
 } from "@/lib/actions";
 
 interface LiveChatProps {
@@ -91,13 +92,22 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
         if (res.success) fetchMessages();
     };
 
+    const [selectedProfile, setSelectedProfile] = useState<any | null>(null);
+
+    const handleShowProfile = async (userId: string) => {
+        const profile = await getUserProfile(userId);
+        setSelectedProfile(profile);
+    };
+
     if (isHidden) {
         return (
             <button
                 onClick={() => setIsHidden(false)}
-                className="fixed right-6 bottom-32 w-14 h-14 bg-neon-magenta text-white rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(255,45,85,0.4)] hover:scale-110 transition-all z-50 lg:relative lg:right-0 lg:bottom-0 lg:h-full lg:w-16 lg:rounded-[2rem]"
+                className="fixed right-6 bottom-32 w-10 h-10 bg-white/5 text-white/40 rounded-xl flex items-center justify-center border border-white/10 hover:bg-neon-magenta hover:text-white hover:border-neon-magenta/50 transition-all z-50 lg:relative lg:right-0 lg:bottom-0 lg:h-12 lg:w-12 lg:rounded-2xl group"
+                title="Expand Neural Chat"
             >
-                <MessageCircle size={24} />
+                <div className="absolute inset-0 bg-neon-magenta/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <MessageCircle size={18} className="relative z-10" />
             </button>
         );
     }
@@ -106,7 +116,7 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
         <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex flex-col h-[500px] lg:h-full w-full lg:w-[400px] glass border border-white/10 rounded-[2.5rem] overflow-hidden bg-white/[0.02] backdrop-blur-3xl shrink-0"
+            className="flex flex-col h-[500px] lg:h-full w-full lg:w-[400px] glass border border-white/10 rounded-[2.5rem] overflow-hidden bg-white/[0.02] backdrop-blur-3xl shrink-0 relative"
         >
             {/* Header */}
             <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
@@ -124,9 +134,10 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                 </div>
                 <button
                     onClick={() => setIsHidden(true)}
-                    className="p-2 text-slate-600 hover:text-white transition-colors"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-600 hover:text-white hover:bg-white/5 transition-all"
+                    title="Minimize"
                 >
-                    <X size={16} />
+                    <X size={14} />
                 </button>
             </div>
 
@@ -150,18 +161,24 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                                 </div>
                             )}
                             <div className="flex gap-4">
-                                <div className="w-8 h-8 rounded-lg bg-black/40 border border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
+                                <button
+                                    onClick={() => handleShowProfile(msg.userId)}
+                                    className="w-8 h-8 rounded-lg bg-black/40 border border-white/5 flex items-center justify-center shrink-0 overflow-hidden hover:border-neon-cyan/50 transition-colors"
+                                >
                                     {msg.user?.profilePicture ? (
                                         <img src={msg.user.profilePicture} className="w-full h-full object-cover" />
                                     ) : (
                                         <User size={14} className="text-slate-700" />
                                     )}
-                                </div>
+                                </button>
                                 <div className="space-y-1.5 flex-1 min-w-0">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[10px] font-black text-white uppercase tracking-tight truncate max-w-[120px]">
+                                        <button
+                                            onClick={() => handleShowProfile(msg.userId)}
+                                            className="text-[10px] font-black text-white hover:text-neon-cyan transition-colors uppercase tracking-tight truncate max-w-[120px]"
+                                        >
                                             {msg.user?.displayName || msg.user?.name}
-                                        </span>
+                                        </button>
                                         <span className="text-[7px] text-slate-600 font-black uppercase">
                                             {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
@@ -226,6 +243,72 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                     ))
                 )}
             </div>
+
+            {/* Profile Popup Overlay */}
+            <AnimatePresence>
+                {selectedProfile && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        className="absolute inset-x-6 top-1/4 z-50 glass p-8 rounded-[2rem] border border-white/20 shadow-2xl bg-black/60 backdrop-blur-3xl space-y-6"
+                    >
+                        <button
+                            onClick={() => setSelectedProfile(null)}
+                            className="absolute right-4 top-4 p-2 text-slate-500 hover:text-white"
+                        >
+                            <X size={16} />
+                        </button>
+
+                        <div className="flex flex-col items-center text-center space-y-4">
+                            <div className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-neon-cyan/20 to-neon-magenta/20 p-1">
+                                <div className="w-full h-full rounded-[1.8rem] bg-black border border-white/10 overflow-hidden">
+                                    {selectedProfile.profilePicture ? (
+                                        <img src={selectedProfile.profilePicture} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-slate-700">
+                                            <User size={32} />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="space-y-1">
+                                <h4 className="text-white font-black uppercase tracking-widest text-sm">
+                                    {selectedProfile.displayName || selectedProfile.name}
+                                </h4>
+                                <p className="text-neon-cyan text-[8px] font-black uppercase tracking-[0.3em]">Neural Resident</p>
+                            </div>
+
+                            {selectedProfile.bio ? (
+                                <p className="text-slate-400 text-[10px] leading-relaxed italic px-4">
+                                    "{selectedProfile.bio}"
+                                </p>
+                            ) : (
+                                <p className="text-slate-600 text-[10px] italic">Fragment protocol undefined.</p>
+                            )}
+
+                            <div className="pt-4 border-t border-white/5 w-full">
+                                <div className="flex justify-center gap-6">
+                                    {/* Social Links Summary */}
+                                    {selectedProfile.socialLinks && (
+                                        (() => {
+                                            try {
+                                                const links = JSON.parse(selectedProfile.socialLinks);
+                                                return Object.entries(links).map(([platform, url]: [any, any]) => (
+                                                    <span key={platform} className="text-[9px] font-black text-slate-500 uppercase tracking-widest hover:text-neon-cyan cursor-default">
+                                                        {platform}
+                                                    </span>
+                                                ));
+                                            } catch { return null; }
+                                        })()
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Input Area */}
             <div className="p-6 bg-white/[0.01] border-t border-white/5 space-y-4">
