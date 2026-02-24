@@ -30,7 +30,6 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
     const [isMobile, setIsMobile] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
     const [restorationCountdown, setRestorationCountdown] = useState<number | null>(null);
-    const [wasInMaintenance, setWasInMaintenance] = useState(false);
 
     // Handlers for custom events
     const handleCinemaToggle = useCallback((e: any) => {
@@ -175,18 +174,22 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
     const isMaintenanceActive = config.maintenanceMode && !isAdminSector;
     const maintenanceMessage = config.maintenanceMessage || "The Viewpoint matrix is currently undergoing scheduled structural refinement. Signal stability is being recalibrated for enhanced digital density.";
 
-    // Handle Maintenance -> Restoration transition
+    // Handle Maintenance Handshake (Lockdown & Restoration)
     useEffect(() => {
         if (!isAdminSector) {
-            if (config.maintenanceMode) {
-                setWasInMaintenance(true);
-            } else if (wasInMaintenance) {
-                // Maintenance just turned off
+            const lastKnownMode = sessionStorage.getItem("vpoint-maint-last") === "true";
+
+            if (config.maintenanceMode && !lastKnownMode) {
+                // Lockdown Transition detected (Off -> On)
+                sessionStorage.setItem("vpoint-maint-last", "true");
+                window.location.reload();
+            } else if (!config.maintenanceMode && lastKnownMode) {
+                // Restoration Transition detected (On -> Off)
+                sessionStorage.setItem("vpoint-maint-last", "false");
                 setRestorationCountdown(10);
-                setWasInMaintenance(false);
             }
         }
-    }, [config.maintenanceMode, isAdminSector, wasInMaintenance]);
+    }, [config.maintenanceMode, isAdminSector]);
 
     // Countdown Timer Logic
     useEffect(() => {
