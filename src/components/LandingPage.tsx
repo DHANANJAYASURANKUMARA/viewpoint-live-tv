@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    Tv, Zap, Globe, ShieldCheck, Play, ArrowRight,
+    Zap, Globe, ShieldCheck, Play, ArrowRight,
     Activity, Layers, Users, Radio, Info, FileText,
     Mail, ExternalLink, Menu, X, ArrowUpRight,
     Sparkles, Shield, Cpu, Volume2, MessageSquare, Send,
@@ -402,7 +402,6 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
                         <div className="space-y-10">
                             <div className="flex items-center gap-3">
-                                <Tv size={28} className="text-neon-cyan" />
                                 <span className="text-3xl font-bold text-white tracking-tighter uppercase">{config.brandingText}</span>
                             </div>
                             <p className="text-xs font-semibold text-white/30 leading-loose uppercase tracking-widest">The future of atmospheric live television. Ultra-low latency, global signal coverage.</p>
