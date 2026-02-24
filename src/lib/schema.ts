@@ -120,3 +120,11 @@ export const liveChatLikes = pgTable("live_chat_likes", {
     userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const friendships = pgTable("friendships", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    senderId: uuid("sender_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    receiverId: uuid("receiver_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    status: text("status").notNull().default("pending"), // pending, accepted, blocked
+    createdAt: timestamp("created_at").defaultNow(),
+});

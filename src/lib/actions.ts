@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "./db";
-import { channels, favorites, settings, operators, users, notifications, posts, comments, postLikes, liveChatMessages, liveChatLikes } from "./schema";
-import { eq, and } from "drizzle-orm";
+import { channels, favorites, settings, operators, users, notifications, posts, comments, postLikes, liveChatMessages, liveChatLikes, friendships } from "./schema";
+import { eq, and, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 
@@ -684,5 +684,70 @@ export async function toggleLiveChatLike(messageId: string, userId: string) {
     } catch (error) {
         console.error("Failed to toggle chat like:", error);
         return { success: false };
+    }
+}
+
+// Social Connection Actions
+export async function sendFriendRequest(senderId: string, receiverId: string) {
+    try {
+        // Check if exists
+        const existing = await db.select().from(friendships)
+            .where(and(
+                eq(friendships.senderId, senderId),
+                eq(friendships.receiverId, receiverId)
+            ));
+
+        if (existing.length > 0) return { success: false, message: "Request already in transmission." };
+
+        await db.insert(friendships).values({ senderId, receiverId, status: "pending" });
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to send friend request:", error);
+        return { success: false };
+    }
+}
+
+export async function respondToFriendRequest(requestId: string, status: "accepted" | "blocked") {
+    try {
+        await db.update(friendships).set({ status }).where(eq(friendships.id, requestId));
+        revalidatePath("/nexus");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to respond to friend request:", error);
+        return { success: false };
+    }
+}
+
+export async function getFriendshipStatus(userId1: string, userId2: string) {
+    try {
+        const res = await db.select().from(friendships)
+            .where(or(
+                and(eq(friendships.senderId, userId1), eq(friendships.receiverId, userId2)),
+                and(eq(friendships.senderId, userId2), eq(friendships.receiverId, userId1))
+            ));
+        return res.length > 0 ? res[0] : null;
+    } catch (error) {
+        console.error("Failed to fetch friendship status:", error);
+        return null;
+    }
+}
+
+export async function getFriends(userId: string) {
+    try {
+        const res = await db.select().from(friendships)
+            .where(and(
+                or(eq(friendships.senderId, userId), eq(friendships.receiverId, userId)),
+                eq(friendships.status, "accepted")
+            ));
+
+        const friendIds = res.map(f => f.senderId === userId ? f.receiverId : f.senderId);
+
+        if (friendIds.length === 0) return [];
+
+        const friendProfiles = await Promise.all(friendIds.map(id => getUserProfile(id)));
+        return friendProfiles.filter(p => p !== null);
+    } catch (error) {
+        console.error("Failed to fetch friends:", error);
+        return [];
     }
 }

@@ -14,13 +14,16 @@ import {
     ChevronLeft
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import EmojiPicker, { Theme } from "emoji-picker-react";
 import {
     getLiveChatMessages,
     sendLiveChatMessage,
     updateLiveChatMessage,
     deleteLiveChatMessage,
     toggleLiveChatLike,
-    getUserProfile
+    getUserProfile,
+    sendFriendRequest,
+    getFriendshipStatus
 } from "@/lib/actions";
 
 interface LiveChatProps {
@@ -36,19 +39,20 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editContent, setEditContent] = useState("");
     const [replyTo, setReplyTo] = useState<any | null>(null);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [selectedProfile, setSelectedProfile] = useState<any | null>(null);
+    const [friendshipStatus, setFriendshipStatus] = useState<any | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const fetchMessages = async () => {
         if (!channelId) return;
         const data = await getLiveChatMessages(channelId, currentUser?.id);
-        // Reverse to show latest at bottom if needed, but our action orders by desc(createdAt)
-        // Usually chat shows latest at bottom, so we reverse the desc order
         setMessages(data.reverse());
     };
 
     useEffect(() => {
         fetchMessages();
-        const interval = setInterval(fetchMessages, 4000); // Poll every 4s
+        const interval = setInterval(fetchMessages, 4000);
         return () => clearInterval(interval);
     }, [channelId]);
 
@@ -65,6 +69,7 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
         if (res.success) {
             setInputText("");
             setReplyTo(null);
+            setShowEmojiPicker(false);
             fetchMessages();
         }
         setIsSending(false);
@@ -92,12 +97,32 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
         if (res.success) fetchMessages();
     };
 
-    const [selectedProfile, setSelectedProfile] = useState<any | null>(null);
     const [hearts, setHearts] = useState<{ id: number; x: number; color: string }[]>([]);
 
     const handleShowProfile = async (userId: string) => {
         const profile = await getUserProfile(userId);
         setSelectedProfile(profile);
+        if (currentUser && userId !== currentUser.id) {
+            const status = await getFriendshipStatus(currentUser.id, userId);
+            setFriendshipStatus(status);
+        } else {
+            setFriendshipStatus(null);
+        }
+    };
+
+    const handleFriendRequest = async () => {
+        if (!currentUser || !selectedProfile) return;
+        const res = await sendFriendRequest(currentUser.id, selectedProfile.id);
+        if (res.success) {
+            const status = await getFriendshipStatus(currentUser.id, selectedProfile.id);
+            setFriendshipStatus(status);
+        } else {
+            alert(res.message || "Failed to transmit request.");
+        }
+    };
+
+    const onEmojiClick = (emojiData: any) => {
+        setInputText(prev => prev + emojiData.emoji);
     };
 
     const triggerHearts = () => {
@@ -105,7 +130,7 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
         const colors = ["#00f2ff", "#ff0055", "#7000ff", "#00ff88"];
         const newHeart = {
             id,
-            x: Math.random() * 60 - 30, // Random drift
+            x: Math.random() * 60 - 30,
             color: colors[Math.floor(Math.random() * colors.length)]
         };
         setHearts(prev => [...prev, newHeart]);
@@ -170,7 +195,7 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                     WebkitMaskImage: 'linear-gradient(to top, black 85%, transparent 100%)'
                 }}
             >
-                <div className="flex-1" /> {/* Push messages to bottom */}
+                <div className="flex-1" />
                 {messages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center text-center space-y-2 py-10 opacity-30">
                         <MessageCircle size={30} className="text-slate-500" />
@@ -255,8 +280,28 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
             </div>
 
             {/* Input Area */}
-            <div className="p-4 space-y-3 pointer-events-auto">
+            <div className="p-4 space-y-3 pointer-events-auto relative">
                 <AnimatePresence>
+                    {showEmojiPicker && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 20 }}
+                            className="absolute bottom-full left-0 right-0 z-50 mb-4"
+                        >
+                            <div className="shadow-2xl rounded-2xl overflow-hidden border border-white/10 h-[300px]">
+                                <EmojiPicker
+                                    onEmojiClick={onEmojiClick}
+                                    theme={Theme.DARK}
+                                    width="100%"
+                                    height="300px"
+                                    skinTonesDisabled
+                                    searchDisabled
+                                />
+                            </div>
+                        </motion.div>
+                    )}
+
                     {replyTo && (
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
@@ -274,6 +319,25 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                         </motion.div>
                     )}
                 </AnimatePresence>
+
+                {/* Quick Emoji Bar */}
+                <div className="flex items-center justify-between gap-1 px-2 py-1 bg-white/5 rounded-full">
+                    {["🔥", "😂", "😮", "💯", "🙌", "💀"].map(emoji => (
+                        <button
+                            key={emoji}
+                            onClick={() => setInputText(prev => prev + emoji)}
+                            className="text-[14px] hover:scale-125 transition-transform"
+                        >
+                            {emoji}
+                        </button>
+                    ))}
+                    <button
+                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                        className={`p-1.5 rounded-full transition-colors ${showEmojiPicker ? 'text-neon-cyan bg-white/10' : 'text-slate-500 hover:text-white'}`}
+                    >
+                        <MessageCircle size={14} />
+                    </button>
+                </div>
 
                 <div className="relative group">
                     <div className="absolute inset-0 bg-neon-magenta/5 blur-xl group-focus-within:bg-neon-magenta/10 transition-all rounded-3xl" />
@@ -303,7 +367,7 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                 </div>
             </div>
 
-            {/* Profile Popup Overlay (Refined) */}
+            {/* Profile Popup Overlay (Social Enhanced) */}
             <AnimatePresence>
                 {selectedProfile && (
                     <motion.div
@@ -321,7 +385,7 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
 
                         <div className="flex flex-col items-center text-center space-y-3">
                             <div className="w-16 h-16 rounded-full border-2 border-neon-cyan p-0.5">
-                                <div className="w-full h-full rounded-full bg-black overflow-hidden">
+                                <div className="w-full h-full rounded-full bg-black overflow-hidden relative">
                                     {selectedProfile.profilePicture ? (
                                         <img src={selectedProfile.profilePicture} className="w-full h-full object-cover" />
                                     ) : (
@@ -342,6 +406,32 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                             <p className="text-slate-400 text-[10px] leading-relaxed italic px-2">
                                 {selectedProfile.bio || "Fragment protocol undefined."}
                             </p>
+
+                            {/* Social Actions */}
+                            <div className="flex flex-col gap-2 w-full pt-2">
+                                {currentUser && selectedProfile.id !== currentUser.id && (
+                                    <button
+                                        onClick={handleFriendRequest}
+                                        disabled={friendshipStatus?.status === 'pending' || friendshipStatus?.status === 'accepted'}
+                                        className={`w-full py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${friendshipStatus?.status === 'accepted'
+                                            ? 'bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/30'
+                                            : friendshipStatus?.status === 'pending'
+                                                ? 'bg-white/5 text-slate-500 border border-white/10'
+                                                : 'bg-neon-cyan text-black hover:scale-105 shadow-[0_0_15px_rgba(0,242,255,0.4)]'
+                                            }`}
+                                    >
+                                        {friendshipStatus?.status === 'accepted' ? 'Following' :
+                                            friendshipStatus?.status === 'pending' ? 'Request Sent' : 'Connect'}
+                                    </button>
+                                )}
+
+                                <button
+                                    onClick={() => window.location.href = `/nexus?user=${selectedProfile.id}`}
+                                    className="w-full py-2 rounded-xl bg-white/5 text-white border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+                                >
+                                    View Full Identity
+                                </button>
+                            </div>
 
                             <div className="flex justify-center gap-4 pt-2 border-t border-white/5 w-full">
                                 {selectedProfile.socialLinks && (
