@@ -62,10 +62,10 @@ export default function ShakaPlayer({
                     // Configure player for ultra-smooth playback
                     const config: any = {
                         streaming: {
-                            // Aggressive buffering for zero-lag
-                            bufferingGoal: performanceProfile === 'lowLatency' ? 15 : (performanceProfile === 'balanced' ? 60 : 120),
-                            rebufferingGoal: performanceProfile === 'lowLatency' ? 3 : (performanceProfile === 'balanced' ? 10 : 15),
-                            bufferBehind: 30,
+                            // Aggressive buffering for zero-lag (Hyper-Stability Mode)
+                            bufferingGoal: performanceProfile === 'lowLatency' ? 20 : (performanceProfile === 'balanced' ? 90 : 180),
+                            rebufferingGoal: performanceProfile === 'lowLatency' ? 5 : (performanceProfile === 'balanced' ? 15 : 25),
+                            bufferBehind: 60,
 
                             // Adaptive Recovery logic
                             stallThreshold: isAdaptiveBuffer ? 2 : 5,
