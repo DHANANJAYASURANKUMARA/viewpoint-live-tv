@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "./db";
-import { channels, operators, favorites, settings, users, adminLogs, notifications, chatMessages } from "./schema";
-import { eq, and, sql, desc } from "drizzle-orm";
+import { channels, favorites, settings, operators, users, notifications } from "./schema";
+import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 
@@ -483,33 +483,5 @@ export async function getUserProfile(userId: string) {
     } catch (error) {
         console.error("Failed to fetch user profile:", error);
         return null;
-    }
-}
-
-export async function getChatMessages(channelId?: string) {
-    try {
-        let query = db.select().from(chatMessages);
-        if (channelId) {
-            query = query.where(eq(chatMessages.channelId, channelId)) as any;
-        }
-        return await query.orderBy(desc(chatMessages.createdAt)).limit(50);
-    } catch (error) {
-        console.error("Failed to fetch chat messages:", error);
-        return [];
-    }
-}
-
-export async function sendChatMessage(data: { userId: string; userName: string; message: string; channelId?: string }) {
-    try {
-        await db.insert(chatMessages).values({
-            userId: data.userId,
-            userName: data.userName,
-            message: data.message,
-            channelId: data.channelId || null,
-        });
-        return { success: true };
-    } catch (error) {
-        console.error("Failed to send chat message:", error);
-        return { success: false };
     }
 }

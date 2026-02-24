@@ -39,7 +39,7 @@ interface User {
 const ROLES = ["Operator", "Analyst", "Moderator", "Lead"];
 
 export default function UsersActivityPage() {
-    const [stats, setStats] = useState<{ users: number } | null>(null);
+    const [stats, setStats] = useState<any>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(true);
     const [users, setUsers] = useState<User[]>([]);
@@ -90,10 +90,10 @@ export default function UsersActivityPage() {
     const handlePromote = async (userId: string) => {
         setPromoting(userId);
         setPromoteError("");
-        const session = localStorage.getItem("vpoint-admin-auth");
+        const auth = localStorage.getItem("vpoint-admin-auth");
         let actorName = "Super Admin";
         try {
-            const parsed = JSON.parse(session || "");
+            const parsed = JSON.parse(auth || "");
             actorName = parsed?.name || "Super Admin";
         } catch { }
         const res = await promoteUserToOperator(userId, promoteRole, actorName);

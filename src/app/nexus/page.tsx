@@ -20,18 +20,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { updateUserProfile, getUserProfile } from "@/lib/actions";
 
 export default function NexusProfilePage() {
-    const [user, setUser] = useState<{
-        id: string;
-        displayName?: string | null;
-        name?: string | null;
-        email?: string | null;
-        bio?: string | null;
-        birthday?: Date | string | null;
-        socialLinks?: any; // JSON object
-        profilePicture?: string | null;
-        location?: string | null;
-        country?: string | null;
-    } | null>(null);
+    const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [status, setStatus] = useState<{ type: 'success' | 'error', msg: string } | null>(null);
@@ -215,7 +204,7 @@ export default function NexusProfilePage() {
                                         <input
                                             type="text"
                                             value={user?.displayName || ""}
-                                            onChange={(e) => user && setUser({ ...user, displayName: e.target.value })}
+                                            onChange={(e) => setUser({ ...user, displayName: e.target.value })}
                                             className="w-full bg-black/40 border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-cyan/50 transition-all uppercase"
                                             placeholder="NEXUS_OPERATOR_01"
                                         />
@@ -228,7 +217,7 @@ export default function NexusProfilePage() {
                                         <input
                                             type="date"
                                             value={user?.birthday ? new Date(user.birthday).toISOString().split('T')[0] : ""}
-                                            onChange={(e) => user && setUser({ ...user, birthday: e.target.value })}
+                                            onChange={(e) => setUser({ ...user, birthday: e.target.value })}
                                             className="w-full bg-black/40 border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-cyan/50 transition-all uppercase"
                                         />
                                     </div>
@@ -240,7 +229,7 @@ export default function NexusProfilePage() {
                                 <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2">Neural Bio</label>
                                 <textarea
                                     value={user?.bio || ""}
-                                    onChange={(e) => user && setUser({ ...user, bio: e.target.value })}
+                                    onChange={(e) => setUser({ ...user, bio: e.target.value })}
                                     rows={4}
                                     className="w-full bg-black/40 border border-white/5 rounded-[2rem] p-8 text-[11px] font-medium text-slate-400 focus:outline-none focus:border-neon-cyan/50 transition-all resize-none italic leading-relaxed"
                                     placeholder="Tell the matrix about yourself..."
@@ -300,7 +289,7 @@ export default function NexusProfilePage() {
                                     type="text"
                                     autoFocus
                                     value={user?.socialLinks?.[socialModal] || ""}
-                                    onChange={(e) => user && setUser({
+                                    onChange={(e) => setUser({
                                         ...user,
                                         socialLinks: { ...user.socialLinks, [socialModal]: e.target.value }
                                     })}
