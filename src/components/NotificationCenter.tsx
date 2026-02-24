@@ -20,7 +20,18 @@ export default function NotificationCenter() {
 
     const loadNotifications = async (showLoading = false) => {
         if (showLoading) setIsLoading(true);
-        const data = await getNotifications(true);
+
+        // Retrieve viewer ID from storage
+        let viewerId = null;
+        try {
+            const stored = localStorage.getItem("vpoint-user");
+            if (stored) {
+                const userData = JSON.parse(stored);
+                viewerId = userData.id;
+            }
+        } catch (e) { }
+
+        const data = await getNotifications(viewerId || undefined, true);
 
         // Ghost Sync: Check for new transmissions for Toast
         if (!showLoading && data.length > 0 && lastNotifId && data[0].id !== lastNotifId && !data[0].isRead) {
@@ -54,7 +65,13 @@ export default function NotificationCenter() {
 
     const handleClearAll = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        const res = await clearNotifications();
+        let viewerId = null;
+        try {
+            const stored = localStorage.getItem("vpoint-user");
+            if (stored) viewerId = JSON.parse(stored).id;
+        } catch (e) { }
+
+        const res = await clearNotifications(viewerId || undefined);
         if (res.success) loadNotifications();
     };
 
@@ -69,6 +86,8 @@ export default function NotificationCenter() {
             case "ALERT": return <AlertTriangle className="text-amber-500" size={16} />;
             case "SUCCESS": return <CheckCircle className="text-emerald-500" size={16} />;
             case "WARNING": return <XCircle className="text-rose-500" size={16} />;
+            case "LIKE": return <Heart className="text-neon-magenta fill-neon-magenta/20" size={16} />;
+            case "COMMENT": return <MessageSquare className="text-neon-cyan" size={16} />;
             default: return <Info className="text-neon-cyan" size={16} />;
         }
     };
@@ -154,7 +173,7 @@ export default function NotificationCenter() {
                                         {notifs.map((n) => (
                                             <div
                                                 key={n.id}
-                                                className={`p-5 transition-colors group relative ${n.isRead ? "opacity-60" : "bg-neon-cyan/[0.02] border-l-2 border-neon-cyan"}`}
+                                                className={`p-5 transition-all group relative border-l-2 ${n.isRead ? "opacity-40 border-transparent" : "bg-white/[0.02] border-neon-cyan"}`}
                                             >
                                                 <div className="flex items-start gap-4">
                                                     <div className="mt-1">

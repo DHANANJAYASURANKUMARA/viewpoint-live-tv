@@ -76,9 +76,10 @@ export const adminLogs = pgTable("admin_logs", {
 
 export const notifications = pgTable("notifications", {
     id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }), // Null for Global, UUID for targeted
     title: text("title").notNull(),
     message: text("message").notNull(),
-    type: text("type").notNull().default("INFO"), // INFO, ALERT, SUCCESS, WARNING
+    type: text("type").notNull().default("INFO"), // INFO, ALERT, SUCCESS, WARNING, LIKE, COMMENT
     isRead: boolean("is_read").default(false),
     isActive: boolean("is_active").default(true),
     createdAt: timestamp("created_at").defaultNow(),

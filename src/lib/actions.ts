@@ -2,7 +2,7 @@
 
 import { db } from "./db";
 import { channels, favorites, settings, operators, users, notifications, posts, comments, postLikes } from "./schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 
@@ -359,16 +359,25 @@ export async function getActiveOperatorCount() {
     }
 }
 
-export async function getNotifications(onlyActive: boolean = false) {
+export async function getNotifications(viewerId?: string, onlyActive: boolean = false) {
     try {
-        const { desc } = require("drizzle-orm");
+        const { desc, or, isNull } = require("drizzle-orm");
+
+        // Fetch notifications that are EITHER global (userId is null) OR targeted to the viewer
         let query = db.select().from(notifications);
 
-        if (onlyActive) {
-            query = query.where(eq(notifications.isActive, true)) as any;
+        let conditions = [];
+        if (viewerId) {
+            conditions.push(or(isNull(notifications.userId), eq(notifications.userId, viewerId as any)));
+        } else {
+            conditions.push(isNull(notifications.userId));
         }
 
-        return await query.orderBy(desc(notifications.createdAt));
+        if (onlyActive) {
+            conditions.push(eq(notifications.isActive, true));
+        }
+
+        return await query.where(and(...conditions)).orderBy(desc(notifications.createdAt));
     } catch (error) {
         console.error("Failed to fetch notifications:", error);
         return [];
@@ -427,9 +436,13 @@ export async function updateNotification(id: string, data: any) {
     }
 }
 
-export async function clearNotifications() {
+export async function clearNotifications(userId?: string) {
     try {
-        await db.delete(notifications);
+        if (userId) {
+            await db.delete(notifications).where(eq(notifications.userId, userId as any));
+        } else {
+            await db.delete(notifications).where(isNull(notifications.userId));
+        }
         revalidatePath("/");
         revalidatePath("/admin/notifications");
         return { success: true };
@@ -572,10 +585,24 @@ export async function deletePost(postId: string) {
 export async function toggleLike(postId: string, userId: string) {
     try {
         const existing = await db.select().from(postLikes).where(and(eq(postLikes.postId, postId), eq(postLikes.userId, userId))).limit(1);
+
+        const post = await db.select().from(posts).where(eq(posts.id, postId)).limit(1);
+        const liker = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+
         if (existing.length > 0) {
             await db.delete(postLikes).where(and(eq(postLikes.postId, postId), eq(postLikes.userId, userId)));
         } else {
             await db.insert(postLikes).values({ postId, userId });
+
+            // Create notification for post owner if not the same person
+            if (post[0].userId !== userId) {
+                await db.insert(notifications).values({
+                    userId: post[0].userId,
+                    title: "Pulse Liked",
+                    message: `${liker[0].displayName || liker[0].name} localized and liked your pulse.`,
+                    type: "SUCCESS"
+                });
+            }
         }
         revalidatePath("/nexus");
         return { success: true };
@@ -588,6 +615,20 @@ export async function toggleLike(postId: string, userId: string) {
 export async function addComment(postId: string, userId: string, content: string) {
     try {
         await db.insert(comments).values({ postId, userId, content });
+
+        const post = await db.select().from(posts).where(eq(posts.id, postId)).limit(1);
+        const commenter = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+
+        // Create notification for post owner if not the same person
+        if (post[0].userId !== userId) {
+            await db.insert(notifications).values({
+                userId: post[0].userId,
+                title: "New Comment",
+                message: `${commenter[0].displayName || commenter[0].name} reacted: "${content.substring(0, 30)}${content.length > 30 ? '...' : ''}"`,
+                type: "INFO"
+            });
+        }
+
         revalidatePath("/nexus");
         return { success: true };
     } catch (error) {
