@@ -13,7 +13,7 @@ export default function DMCAPage() {
 
             <div className="max-w-4xl mx-auto space-y-16 relative z-10">
                 {/* Navigation Hub */}
-                <Link href="/#hero" className="group inline-flex items-center gap-3 px-8 py-3.5 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-neon-magenta hover:text-black hover:border-neon-magenta transition-all active:scale-95 shadow-2xl">
+                <Link href="/#hero" className="group inline-flex items-center gap-3 px-8 py-3.5 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-neon-magenta hover:text-black hover:border-neon-magenta transition-all btn-touch shadow-2xl">
                     <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
                     Neural Return
                 </Link>
@@ -75,7 +75,7 @@ export default function DMCAPage() {
                             <p className="text-xs leading-relaxed text-slate-400 uppercase tracking-widest mb-4">
                                 Direct all verified neural takedown payloads to our legal synchronization node:
                             </p>
-                            <a href="mailto:viewpointlivetv@gmail.com" className="text-xl md:text-3xl font-black text-white hover:text-neon-magenta transition-colors italic tracking-tight font-mono">
+                            <a href="mailto:viewpointlivetv@gmail.com" className="text-xl md:text-3xl font-black text-white hover:text-neon-magenta transition-colors italic tracking-tight font-mono btn-touch w-fit block mt-2">
                                 viewpointlivetv@gmail.com
                             </a>
                             <p className="mt-4 text-[9px] font-bold text-white/20 uppercase tracking-[0.4em]">Response Window: 24-48 Neural Cycles</p>
@@ -94,7 +94,7 @@ export default function DMCAPage() {
                         <Link
                             key={href}
                             href={href}
-                            className={`text-[9px] font-black uppercase tracking-[0.3em] py-4 px-6 rounded-xl border transition-all text-center
+                            className={`text-[9px] font-black uppercase tracking-[0.3em] py-4 px-6 rounded-xl border transition-all text-center btn-touch
                                 ${href === "/dmca" ? "bg-neon-magenta/10 border-neon-magenta/30 text-neon-magenta shadow-[0_0_20px_rgba(255,45,85,0.1)]" : "border-white/5 text-white/30 hover:text-white hover:border-white/20"}
                             `}
                         >

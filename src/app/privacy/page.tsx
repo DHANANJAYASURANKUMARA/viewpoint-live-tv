@@ -13,7 +13,7 @@ export default function PrivacyPage() {
 
             <div className="max-w-4xl mx-auto space-y-16 relative z-10">
                 {/* Navigation Hub */}
-                <Link href="/#hero" className="group inline-flex items-center gap-3 px-8 py-3.5 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-neon-purple hover:text-black hover:border-neon-purple transition-all active:scale-95 shadow-2xl">
+                <Link href="/#hero" className="group inline-flex items-center gap-3 px-8 py-3.5 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-neon-purple hover:text-black hover:border-neon-purple transition-all btn-touch shadow-2xl">
                     <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
                     Neural Return
                 </Link>
@@ -108,7 +108,7 @@ export default function PrivacyPage() {
                         <p className="text-xs leading-relaxed text-slate-400 uppercase tracking-widest mb-4">
                             For privacy inquiries or data purge requests, contact:
                         </p>
-                        <a href="mailto:viewpointlivetv@gmail.com" className="text-xl md:text-3xl font-black text-white hover:text-neon-purple transition-colors italic tracking-tight font-mono">
+                        <a href="mailto:viewpointlivetv@gmail.com" className="text-xl md:text-3xl font-black text-white hover:text-neon-purple transition-colors italic tracking-tight font-mono btn-touch block mt-2 w-fit">
                             viewpointlivetv@gmail.com
                         </a>
                     </section>
@@ -125,7 +125,7 @@ export default function PrivacyPage() {
                         <Link
                             key={href}
                             href={href}
-                            className={`text-[9px] font-black uppercase tracking-[0.3em] py-4 px-6 rounded-xl border transition-all text-center
+                            className={`text-[9px] font-black uppercase tracking-[0.3em] py-4 px-6 rounded-xl border transition-all text-center btn-touch
                                 ${href === "/privacy" ? "bg-neon-purple/10 border-neon-purple/30 text-neon-purple shadow-[0_0_20px_rgba(168,85,247,0.1)]" : "border-white/5 text-white/30 hover:text-white hover:border-white/20"}
                             `}
                         >

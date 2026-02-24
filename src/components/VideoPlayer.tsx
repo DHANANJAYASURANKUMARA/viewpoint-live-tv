@@ -216,7 +216,8 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                 The remote server failed to respond or the link has expired. Our systems are attempting to reconnect, or you may try another channel.
                             </p>
                         </div>
-                        <button
+                        <motion.button
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => {
                                 setError(null);
                                 setIsReady(false);
@@ -224,7 +225,7 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                             className="px-8 py-3 bg-white text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-neon-cyan transition-all"
                         >
                             Retry Connection
-                        </button>
+                        </motion.button>
                     </div>
                 </div>
             )}
@@ -425,12 +426,13 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                     <div className="h-6 lg:h-8 w-[1px] bg-white/10 flex-shrink-0" />
 
                                     <div className="flex items-center gap-2 lg:gap-4 group/vol">
-                                        <button
+                                        <motion.button
+                                            whileTap={{ scale: 0.9 }}
                                             onClick={() => setMuted(!muted)}
                                             className="text-white/40 hover:text-white transition-colors flex-shrink-0"
                                         >
                                             {muted || volume === 0 ? <VolumeX size={18} className="lg:w-5 lg:h-5" /> : <Volume2 size={18} className="lg:w-5 lg:h-5" />}
-                                        </button>
+                                        </motion.button>
                                         <input
                                             type="range"
                                             min="0"
@@ -449,7 +451,8 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
 
                                     <div className="flex items-center gap-3 lg:gap-6">
                                         <div className="relative">
-                                            <button
+                                            <motion.button
+                                                whileTap={{ scale: 0.95 }}
                                                 onClick={() => setShowQualityMenu(!showQualityMenu)}
                                                 className={`flex items-center gap-1.5 transition-colors ${showQualityMenu ? "text-neon-cyan" : "text-white/40 hover:text-white"}`}
                                                 title="QUALITY"
@@ -462,7 +465,7 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                                             ? `${qualityLevels[currentQuality].height || qualityLevels[currentQuality].width || 'HD'}p`
                                                             : 'Auto'}
                                                 </span>
-                                            </button>
+                                            </motion.button>
 
                                             <AnimatePresence>
                                                 {showQualityMenu && (
@@ -521,26 +524,29 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                                 <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">ECO</span>
                                             </div>
                                         )}
-                                        <button
+                                        <motion.button
+                                            whileTap={{ scale: 0.9 }}
                                             onClick={toggleCinemaMode}
                                             className={`transition-colors duration-300 ${isCinemaMode ? "text-neon-cyan" : "text-white/40 hover:text-white"}`}
                                             title="CINEMA MODE"
                                         >
                                             <MonitorPlay size={20} />
-                                        </button>
-                                        <button
+                                        </motion.button>
+                                        <motion.button
+                                            whileTap={{ scale: 0.9 }}
                                             onClick={() => setShowTechStats(!showTechStats)}
                                             className={`transition-colors duration-300 ${showTechStats ? "text-neon-magenta" : "text-white/40 hover:text-white"}`}
                                             title="TECH STATS"
                                         >
                                             <Gauge size={20} />
-                                        </button>
-                                        <button
+                                        </motion.button>
+                                        <motion.button
+                                            whileTap={{ scale: 0.9 }}
                                             onClick={handleFullscreen}
                                             className="text-white/40 hover:text-white transition-colors"
                                         >
                                             <Maximize size={20} />
-                                        </button>
+                                        </motion.button>
                                     </div>
                                 </div>
                             )}

@@ -13,7 +13,7 @@ export default function TermsPage() {
 
             <div className="max-w-4xl mx-auto space-y-16 relative z-10">
                 {/* Navigation Hub */}
-                <Link href="/#hero" className="group inline-flex items-center gap-3 px-8 py-3.5 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-neon-cyan hover:text-black hover:border-neon-cyan transition-all active:scale-95 shadow-2xl">
+                <Link href="/#hero" className="group inline-flex items-center gap-3 px-8 py-3.5 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-neon-cyan hover:text-black hover:border-neon-cyan transition-all btn-touch shadow-2xl">
                     <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
                     Neural Return
                 </Link>
@@ -88,7 +88,7 @@ export default function TermsPage() {
                         <Link
                             key={href}
                             href={href}
-                            className={`text-[9px] font-black uppercase tracking-[0.3em] py-4 px-6 rounded-xl border transition-all text-center
+                            className={`text-[9px] font-black uppercase tracking-[0.3em] py-4 px-6 rounded-xl border transition-all text-center btn-touch
                                 ${href === "/terms" ? "bg-neon-cyan/10 border-neon-cyan/30 text-neon-cyan shadow-[0_0_20px_rgba(34,211,238,0.1)]" : "border-white/5 text-white/30 hover:text-white hover:border-white/20"}
                             `}
                         >

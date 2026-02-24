@@ -17,7 +17,7 @@ export default function AboutPage() {
 
             <div className="max-w-4xl mx-auto space-y-20 relative z-10">
                 {/* Back Link */}
-                <Link href="/" className="group inline-flex items-center gap-3 px-8 py-3.5 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-neon-cyan hover:text-black hover:border-neon-cyan transition-all active:scale-95 shadow-2xl">
+                <Link href="/" className="group inline-flex items-center gap-3 px-8 py-3.5 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-neon-cyan hover:text-black hover:border-neon-cyan transition-all btn-touch shadow-2xl">
                     <ArrowRight size={14} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
                     Neural Return
                 </Link>
@@ -98,7 +98,7 @@ export default function AboutPage() {
 
                 {/* Final Call */}
                 <div className="text-center pt-10">
-                    <Link href="/watch" className="group relative inline-flex items-center gap-4 px-12 py-6 bg-neon-cyan text-vpoint-dark rounded-2xl font-black uppercase tracking-[0.4em] text-xs hover:bg-white transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(34,211,238,0.3)]">
+                    <Link href="/watch" className="group relative inline-flex items-center gap-4 px-12 py-6 bg-neon-cyan text-vpoint-dark rounded-2xl font-black uppercase tracking-[0.4em] text-xs hover:bg-white transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(34,211,238,0.3)] btn-touch">
                         Initialize Transmission <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
                     </Link>
                 </div>
@@ -106,7 +106,7 @@ export default function AboutPage() {
                 {/* Institutional Institutional Index */}
                 <div className="pt-20 border-t border-white/5 flex flex-wrap justify-center gap-10">
                     {[["HOME", "/"], ["WATCH LIVE", "/watch"], ["PRIVACY", "/privacy"], ["TERMS", "/terms"], ["CONTACT", "/contact"], ["DMCA", "/dmca"]].map(([label, href]) => (
-                        <Link key={href} href={href} className="text-[9px] font-black uppercase tracking-[0.4em] text-white/20 hover:text-neon-cyan transition-all">
+                        <Link key={href} href={href} className="text-[9px] font-black uppercase tracking-[0.4em] text-white/20 hover:text-neon-cyan transition-all btn-touch">
                             {label}
                         </Link>
                     ))}

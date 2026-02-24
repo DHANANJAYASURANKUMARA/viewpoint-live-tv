@@ -211,7 +211,8 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                         >
                             {/* Avatar with Status Ring */}
                             <div className="relative shrink-0 mb-1">
-                                <button
+                                <motion.button
+                                    whileTap={{ scale: 0.9 }}
                                     onClick={() => handleShowProfile(msg.userId)}
                                     className={`w-7 h-7 rounded-full border border-white/10 p-0.5 overflow-hidden transition-all duration-500 shadow-lg ${msg.userId === currentUser?.id ? 'hover:border-neon-magenta/60' : 'hover:border-neon-cyan/60'}`}
                                 >
@@ -222,7 +223,7 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                                             <User size={10} />
                                         </div>
                                     )}
-                                </button>
+                                </motion.button>
                                 <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-black/80 ${msg.userId === currentUser?.id ? 'bg-neon-magenta' : 'bg-neon-cyan'} shadow-[0_0_8px_rgba(255,255,255,0.1)]`} />
                             </div>
 
@@ -236,33 +237,37 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                                     <div className={`absolute -top-6 ${msg.userId === currentUser?.id ? 'right-0' : 'left-0'} flex items-center gap-2 opacity-0 group-hover/bubble:opacity-100 transition-all z-20`}>
                                         {msg.userId === currentUser?.id ? (
                                             <>
-                                                <button
+                                                <motion.button
+                                                    whileTap={{ scale: 0.8 }}
                                                     onClick={() => { setEditingId(msg.id); setEditContent(msg.content); }}
                                                     className="p-2 bg-black/90 rounded-xl text-slate-300 hover:text-neon-cyan hover:scale-110 border border-white/10 backdrop-blur-xl shadow-2xl transition-all"
                                                 >
                                                     <Edit3 size={15} />
-                                                </button>
-                                                <button
+                                                </motion.button>
+                                                <motion.button
+                                                    whileTap={{ scale: 0.8 }}
                                                     onClick={() => handleDelete(msg.id)}
                                                     className="p-2 bg-black/90 rounded-xl text-slate-300 hover:text-red-500 hover:scale-110 border border-white/10 backdrop-blur-xl shadow-2xl transition-all"
                                                 >
                                                     <Trash2 size={15} />
-                                                </button>
+                                                </motion.button>
                                             </>
                                         ) : (
                                             <>
-                                                <button
+                                                <motion.button
+                                                    whileTap={{ scale: 0.8 }}
                                                     onClick={() => handleToggleLike(msg.id)}
                                                     className={`p-2 bg-black/90 rounded-xl border border-white/10 backdrop-blur-xl shadow-2xl transition-all hover:scale-110 ${msg.likes?.some((l: any) => l.userId === currentUser?.id) ? 'text-neon-magenta border-neon-magenta/40' : 'text-slate-300 hover:text-neon-magenta'}`}
                                                 >
                                                     <Heart size={15} fill={msg.likes?.some((l: any) => l.userId === currentUser?.id) ? "currentColor" : "none"} />
-                                                </button>
-                                                <button
+                                                </motion.button>
+                                                <motion.button
+                                                    whileTap={{ scale: 0.8 }}
                                                     onClick={() => setReplyTo(msg)}
                                                     className="p-2 bg-black/90 rounded-xl text-slate-300 hover:text-neon-cyan hover:scale-110 border border-white/10 backdrop-blur-xl shadow-2xl transition-all"
                                                 >
                                                     <Reply size={15} />
-                                                </button>
+                                                </motion.button>
                                             </>
                                         )}
                                     </div>

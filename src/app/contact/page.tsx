@@ -17,7 +17,7 @@ export default function ContactPage() {
 
             <div className="max-w-4xl mx-auto space-y-16 relative z-10">
                 {/* Tactical Navigation */}
-                <Link href="/" className="group inline-flex items-center gap-3 px-8 py-3.5 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-neon-cyan hover:text-black hover:border-neon-cyan transition-all active:scale-95 shadow-2xl">
+                <Link href="/" className="group inline-flex items-center gap-3 px-8 py-3.5 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-neon-cyan hover:text-black hover:border-neon-cyan transition-all btn-touch shadow-2xl">
                     <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
                     Signal Return
                 </Link>
@@ -88,7 +88,7 @@ export default function ContactPage() {
 
                             <div className="pt-4 flex flex-col gap-2">
                                 <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.3em]">Communication Node</span>
-                                <a href="mailto:viewpointlivetv@gmail.com" className="text-sm font-mono text-white hover:text-neon-cyan transition-colors underline decoration-white/10 underline-offset-4">
+                                <a href="mailto:viewpointlivetv@gmail.com" className="text-sm font-mono text-white hover:text-neon-cyan transition-colors underline decoration-white/10 underline-offset-4 btn-touch w-fit">
                                     viewpointlivetv@gmail.com
                                 </a>
                             </div>
@@ -121,8 +121,8 @@ export default function ContactPage() {
 
                 {/* Institutional Institutional Meta */}
                 <div className="pt-16 border-t border-white/5 flex flex-wrap justify-center gap-x-10 gap-y-6">
-                    {[["WATCH LIVE", "/watch"], ["NEXUS HUB", "/nexus"], ["ABOUT NODE", "/about"], ["PRIVACY SHIELD", "/privacy"], ["ENTRY TERMS", "/terms"], ["DMCA REQUEST", "/dmca"]].map(([label, href]) => (
-                        <Link key={href} href={href} className="text-[9px] font-black uppercase tracking-[0.4em] text-white/30 hover:text-neon-cyan transition-all hover:tracking-[0.6em]">
+                    {[["WATCH LIVE", "/watch"], ["NEXUS HUB", "/nexus"], ["ABOUT NODE", "/about"], ["PRIVACY SHIELD", "/privacy"], ["ENTRY TERMS", "/terms"], ["DMCA REQUEST", "/about"]].map(([label, href]) => (
+                        <Link key={href} href={href} className="text-[9px] font-black uppercase tracking-[0.4em] text-white/30 hover:text-neon-cyan transition-all hover:tracking-[0.6em] btn-touch">
                             {label}
                         </Link>
                     ))}
