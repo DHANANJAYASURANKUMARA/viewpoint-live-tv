@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Bell, BellRing, Info, AlertTriangle, CheckCircle,
-    XCircle, Trash2, Check, ExternalLink, X, Activity
+    XCircle, Trash2, Check, ExternalLink, X, Activity,
+    Heart, MessageSquare
 } from "lucide-react";
 import { getNotifications, markNotificationAsRead, deleteNotification, clearNotifications } from "@/lib/actions";
 import { useConfig } from "@/components/ConfigContext";
