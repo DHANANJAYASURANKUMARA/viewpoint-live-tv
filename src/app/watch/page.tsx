@@ -100,11 +100,11 @@ export default function WatchPage() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
-                                    className="flex flex-col items-center justify-center text-center space-y-8 p-12 glass rounded-[3rem]"
+                                    className="flex flex-col items-center justify-center text-center space-y-8 p-12 bg-white/[0.03] backdrop-blur-3xl rounded-[3rem]"
                                 >
                                     <div className="relative">
-                                        <div className="absolute inset-0 bg-neon-cyan/20 blur-[60px] rounded-full animate-pulse" />
-                                        <div className="relative w-24 h-24 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center shadow-2xl backdrop-blur-2xl">
+                                        <div className="absolute inset-0 bg-neon-cyan/20 blur-[100px] rounded-[3rem] animate-pulse" />
+                                        <div className="relative w-24 h-24 bg-white/5 rounded-3xl flex items-center justify-center shadow-2xl backdrop-blur-2xl">
                                             <Tv size={48} className="text-neon-cyan animate-pulse" />
                                         </div>
                                     </div>

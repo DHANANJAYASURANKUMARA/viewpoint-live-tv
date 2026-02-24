@@ -146,7 +146,7 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
 
     return (
         <div
-            className={`video-container relative w-full overflow-hidden glass shadow-[0_0_100px_rgba(0,0,0,0.6)] group transition-all duration-700 ${isCinemaMode ? "z-[60] scale-105" : "rounded-none"} aspect-video`}
+            className={`video-container relative w-full overflow-hidden bg-vpoint-dark/40 backdrop-blur-2xl shadow-[0_0_100px_rgba(0,0,0,0.6)] group transition-all duration-700 ${isCinemaMode ? "z-[60] scale-105" : "rounded-none"} aspect-video`}
             onMouseMove={handleMouseMove}
             onMouseLeave={() => {
                 setShowControls(false);
@@ -158,16 +158,7 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                 <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-2xl z-30 overflow-hidden">
                     <div className="relative flex items-center justify-center w-64 h-64">
                         {/* Outer Scanning Rings */}
-                        <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                            className="absolute inset-0 border-[1px] border-dashed border-neon-cyan/20 rounded-full"
-                        />
-                        <motion.div
-                            animate={{ rotate: -360 }}
-                            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                            className="absolute inset-4 border-[1px] border-neon-magenta/10 rounded-full border-t-neon-magenta/40"
-                        />
+                        {/* Rings Removed for Cleaner Look */}
 
                         {/* Scanning Bar Animation */}
                         <motion.div
@@ -185,7 +176,7 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                 <motion.div
                                     animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 180, 270, 360] }}
                                     transition={{ duration: 4, repeat: Infinity }}
-                                    className="absolute inset-0 border border-neon-cyan/10 rounded-2xl"
+                                    className="absolute inset-0 border border-neon-cyan/5 rounded-2xl"
                                 />
                                 <div className="w-16 h-16 rounded-2xl bg-neon-cyan/5 flex items-center justify-center border border-neon-cyan/20 backdrop-blur-md">
                                     <Activity className="text-neon-cyan animate-pulse" size={32} />
