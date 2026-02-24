@@ -2,9 +2,10 @@
 
 import React, { useState } from "react";
 import VideoPlayer from "@/components/VideoPlayer";
-import { MousePointer2, Shield } from "lucide-react";
+import { MousePointer2, Shield, MessageSquare, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+import LiveChat from "@/components/LiveChat";
 
 export default function WatchPage() {
     const router = useRouter();
@@ -13,7 +14,9 @@ export default function WatchPage() {
     const [currentSniMask, setCurrentSniMask] = useState("");
     const [currentProxyActive, setCurrentProxyActive] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userId, setUserId] = useState("");
     const [userName, setUserName] = useState("");
+    const [showChat, setShowChat] = useState(false);
 
     React.useEffect(() => {
         // Auth guard: check for user session
@@ -25,6 +28,7 @@ export default function WatchPage() {
         try {
             const user = JSON.parse(session);
             setIsAuthenticated(true);
+            setUserId(user.id);
             setUserName(user.name || "User");
         } catch {
             localStorage.removeItem("vpoint-user");
@@ -55,7 +59,7 @@ export default function WatchPage() {
     }
 
     return (
-        <div className="h-full flex items-center justify-center p-6 md:p-10">
+        <div className="h-full flex items-center justify-center p-6 md:p-10 relative">
             <div className="w-full max-w-5xl mx-auto">
                 <AnimatePresence mode="wait">
                     {currentUrl ? (
@@ -102,6 +106,40 @@ export default function WatchPage() {
                     )}
                 </AnimatePresence>
             </div>
+
+            {/* Live Chat Toggle */}
+            {isAuthenticated && (
+                <div className="fixed bottom-10 right-10 z-[110]">
+                    <button
+                        onClick={() => setShowChat(!showChat)}
+                        className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 group relative ${showChat
+                                ? "bg-neon-magenta text-white rotate-90 shadow-[0_0_30px_rgba(236,72,153,0.5)]"
+                                : "glass-dark border border-white/10 text-neon-cyan hover:border-neon-cyan/50 shadow-2xl"
+                            }`}
+                        title="NEURAL LINK"
+                    >
+                        <div className="absolute inset-0 rounded-full bg-white/10 animate-ping opacity-20 group-hover:block hidden" />
+                        <MessageSquare size={24} className={showChat ? "hidden" : "block"} />
+                        <Zap size={24} className={showChat ? "block" : "hidden"} />
+                    </button>
+
+                    {!showChat && (
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-neon-magenta rounded-full border-2 border-black flex items-center justify-center animate-bounce shadow-[0_0_10px_rgba(236,72,153,0.8)]">
+                            <span className="text-[8px] font-black text-white italic">!</span>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Live Chat Popup */}
+            <AnimatePresence>
+                {showChat && (
+                    <LiveChat
+                        currentUser={{ id: userId, name: userName }}
+                        onClose={() => setShowChat(false)}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 }
