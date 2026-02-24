@@ -9,14 +9,12 @@ import {
     Camera,
     Save,
     Share2,
-    Facebook,
+    Github,
     Twitter,
     Linkedin as LinkedIn,
     Instagram,
     Gift,
-    Sparkles,
-    Lock,
-    Unlock
+    Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { updateUserProfile, getUserProfile } from "@/lib/actions";
@@ -33,8 +31,6 @@ export default function NexusProfilePage() {
         profilePicture?: string | null;
         location?: string | null;
         country?: string | null;
-        isPrivate?: boolean | null;
-        facebook?: string | null;
     } | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -60,7 +56,7 @@ export default function NexusProfilePage() {
         const fullProfile = await getUserProfile(userId);
         if (fullProfile) {
             // Parse social links
-            let socials = { twt: '', fb: '', li: '', ig: '' };
+            let socials = { twt: '', gh: '', li: '', ig: '' };
             try {
                 if (fullProfile.socialLinks) {
                     socials = { ...socials, ...JSON.parse(fullProfile.socialLinks) };
@@ -89,8 +85,6 @@ export default function NexusProfilePage() {
         const res = await updateUserProfile(user.id, {
             displayName: user.displayName,
             bio: user.bio,
-            isPrivate: user.isPrivate,
-            facebook: user.facebook,
             birthday: user.birthday ? new Date(user.birthday) : null,
             socialLinks: JSON.stringify(user.socialLinks || {})
         });
@@ -192,7 +186,7 @@ export default function NexusProfilePage() {
                             <div className="grid grid-cols-2 gap-3">
                                 {[
                                     { id: 'twt', icon: Twitter, color: 'text-blue-400', label: 'Twitter' },
-                                    { id: 'fb', icon: Facebook, color: 'text-blue-500', label: 'Facebook' },
+                                    { id: 'gh', icon: Github, color: 'text-white', label: 'GitHub' },
                                     { id: 'li', icon: LinkedIn, color: 'text-blue-600', label: 'LinkedIn' },
                                     { id: 'ig', icon: Instagram, color: 'text-pink-500', label: 'Instagram' }
                                 ].map(soc => (
@@ -253,23 +247,15 @@ export default function NexusProfilePage() {
                                 />
                             </div>
 
-                            {/* Privacy Control */}
-                            <div className="flex items-center justify-between p-8 bg-black/40 border border-white/5 rounded-[2rem] group hover:border-neon-cyan/30 transition-all">
-                                <div className="flex items-center gap-4">
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${user?.isPrivate ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
-                                        {user?.isPrivate ? <Lock size={24} /> : <Unlock size={24} />}
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-white uppercase tracking-widest">Neural Privacy</p>
-                                        <p className="text-[9px] text-slate-500 font-medium">Toggle whether your profile is public or restricted to the matrix.</p>
-                                    </div>
+                            {/* Automated Hub Info */}
+                            <div className="p-8 bg-neon-cyan/5 border border-neon-cyan/10 rounded-[2rem] flex items-center gap-6">
+                                <div className="w-12 h-12 bg-neon-cyan/20 rounded-2xl flex items-center justify-center text-neon-cyan shrink-0">
+                                    <Sparkles size={24} />
                                 </div>
-                                <button
-                                    onClick={() => setUser(u => u ? { ...u, isPrivate: !u.isPrivate } : null)}
-                                    className={`px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${user?.isPrivate ? 'bg-amber-500 text-black' : 'bg-emerald-500 text-black'}`}
-                                >
-                                    {user?.isPrivate ? "Private" : "Public"}
-                                </button>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black text-white uppercase tracking-widest">Automation Ready</p>
+                                    <p className="text-[9px] text-slate-500 font-medium">Your birthday is used to trigger automated "Nexus Wishes" across the platform.</p>
+                                </div>
                             </div>
                         </div>
 

@@ -77,7 +77,7 @@ export default function TopBar() {
     };
 
     return (
-        <header className="h-14 w-full glass flex items-center justify-between px-4 lg:px-10 z-40 sticky top-0 backdrop-blur-3xl">
+        <header className="h-14 w-full glass border-b border-white/5 flex items-center justify-between px-4 lg:px-10 z-40 sticky top-0 backdrop-blur-3xl">
             <div className="flex items-center gap-3 lg:gap-4 min-w-0">
                 <button
                     onClick={toggleSidebar}

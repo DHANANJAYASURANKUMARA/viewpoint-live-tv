@@ -20,13 +20,7 @@ export default function WatchPage() {
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        const handleResize = () => {
-            const mobile = window.innerWidth < 1024;
-            setIsMobile(mobile);
-            // Default chat state: visible on desktop, hidden on mobile initially for better focus
-            if (mobile) setShowChat(false);
-            else setShowChat(true);
-        };
+        const handleResize = () => setIsMobile(window.innerWidth < 1024);
         handleResize();
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
@@ -67,7 +61,7 @@ export default function WatchPage() {
     if (!isAuthenticated) {
         return (
             <div className="h-full flex items-center justify-center">
-                <div className="w-8 h-8 border-2 border-transparent border-t-neon-cyan rounded-full animate-spin" />
+                <div className="w-8 h-8 border-2 border-neon-cyan/30 border-t-neon-cyan rounded-full animate-spin" />
             </div>
         );
     }
@@ -100,11 +94,11 @@ export default function WatchPage() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
-                                    className="flex flex-col items-center justify-center text-center space-y-8 p-12 bg-white/[0.03] backdrop-blur-3xl rounded-[3rem]"
+                                    className="flex flex-col items-center justify-center text-center space-y-8 p-12 glass rounded-[3rem] border border-white/10"
                                 >
                                     <div className="relative">
-
-                                        <div className="relative w-24 h-24 bg-white/5 rounded-3xl flex items-center justify-center shadow-2xl backdrop-blur-2xl">
+                                        <div className="absolute inset-0 bg-neon-cyan/20 blur-[60px] rounded-full animate-pulse" />
+                                        <div className="relative w-24 h-24 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center shadow-2xl backdrop-blur-2xl">
                                             <Tv size={48} className="text-neon-cyan animate-pulse" />
                                         </div>
                                     </div>
@@ -118,7 +112,7 @@ export default function WatchPage() {
                                         </p>
                                     </div>
 
-                                    <div className="flex items-center gap-2 px-6 py-3 bg-white/5 rounded-full">
+                                    <div className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/5 rounded-full">
                                         <MousePointer2 size={14} className="text-neon-magenta animate-bounce" />
                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                                             Awaiting Input Signal
@@ -130,17 +124,13 @@ export default function WatchPage() {
                     </div>
                 </div>
 
-                {/* Sub-Header / Chat Toggle (All Devices) */}
-                {currentUrl && (
+                {/* Sub-Header / Chat Toggle (Mobile/Tablet Only) */}
+                {!isMobile && currentUrl && (
                     <button
                         onClick={() => setShowChat(!showChat)}
-                        className={`fixed z-[70] p-4 glass rounded-2xl border transition-all duration-500 
-                            ${isMobile
-                                ? `bottom-6 right-6 ${showChat ? 'border-neon-cyan/50 text-neon-cyan' : 'border-white/10 text-slate-500'}`
-                                : `bottom-10 ${showChat ? 'right-[420px] border-neon-cyan/50 text-neon-cyan' : 'right-10 border-white/10 text-slate-500 hover:text-white'}`
-                            }`}
+                        className={`fixed bottom-10 z-[70] p-4 glass rounded-2xl border transition-all duration-500 ${showChat ? 'right-[420px] border-neon-cyan/50 text-neon-cyan' : 'right-10 border-white/10 text-slate-500 hover:text-white'}`}
                     >
-                        {showChat ? (isMobile ? <X size={20} /> : <ChevronRight size={20} />) : <MessageCircle size={20} />}
+                        {showChat ? <ChevronRight size={20} /> : <MessageCircle size={20} />}
                     </button>
                 )}
             </div>
@@ -159,20 +149,12 @@ export default function WatchPage() {
                 )}
             </AnimatePresence>
 
-            {/* Mobile Chat Overlay / Section */}
-            <AnimatePresence>
-                {isMobile && showChat && currentUrl && (
-                    <motion.div
-                        initial={{ y: "100%" }}
-                        animate={{ y: 0 }}
-                        exit={{ y: "100%" }}
-                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        className="fixed inset-x-0 bottom-0 h-[60vh] z-[65] border-t border-white/10 shadow-2xl"
-                    >
-                        <LiveChat userName={userName} userId={userId} channelId={currentTitle} />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/* Mobile Chat Overlay / Section (Optional, keeping it simple for now as a bottom segment if mobile) */}
+            {isMobile && currentUrl && (
+                <div className="h-[400px] w-full flex-shrink-0 border-t border-white/5">
+                    <LiveChat userName={userName} userId={userId} channelId={currentTitle} />
+                </div>
+            )}
         </div>
     );
 }

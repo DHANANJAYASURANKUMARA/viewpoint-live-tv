@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "./db";
-import { channels, operators, favorites, settings, users, adminLogs, notifications, chatMessages, messageReactions, friendships, directMessages } from "./schema";
-import { eq, and, sql, desc, lt, or } from "drizzle-orm";
+import { channels, operators, favorites, settings, users, adminLogs, notifications, chatMessages } from "./schema";
+import { eq, and, sql, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 
@@ -14,7 +14,7 @@ export async function getChannels() {
 
         // Auto-activation logic: If a channel is "Scheduled" and its scheduledAt time has passed,
         // we update it to "Live" in the database and return the updated state.
-        const processedChannels = await Promise.all(allChannels.map(async (channel: any) => {
+        const processedChannels = await Promise.all(allChannels.map(async (channel) => {
             if (channel.status === 'Scheduled' && channel.scheduledAt) {
                 const scheduledDate = new Date(channel.scheduledAt);
                 if (scheduledDate <= now) {
@@ -78,7 +78,7 @@ export async function toggleFavorite(channelId: string, userId: string = "defaul
 export async function getSettings(userId: string = "default_user") {
     try {
         const data = await db.select().from(settings).where(eq(settings.userId, userId));
-        return data.reduce((acc: any, curr: any) => {
+        return data.reduce((acc, curr) => {
             acc[curr.key] = curr.value;
             return acc;
         }, {} as Record<string, string>);
@@ -318,8 +318,6 @@ export async function getUsers() {
             birthday: users.birthday,
             lastLogin: users.lastLogin,
             isBanned: users.isBanned,
-            isPrivate: users.isPrivate,
-            facebook: users.facebook,
             createdAt: users.createdAt,
         }).from(users).orderBy(users.createdAt);
     } catch (error: any) {
@@ -490,140 +488,28 @@ export async function getUserProfile(userId: string) {
 
 export async function getChatMessages(channelId?: string) {
     try {
-        // Auto-cleanup: remove messages older than 24 hours
-        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        await db.delete(chatMessages).where(lt(chatMessages.createdAt, twentyFourHoursAgo));
-
         let query = db.select().from(chatMessages);
         if (channelId) {
             query = query.where(eq(chatMessages.channelId, channelId)) as any;
         }
-        return await query.orderBy(desc(chatMessages.createdAt)).limit(100);
+        return await query.orderBy(desc(chatMessages.createdAt)).limit(50);
     } catch (error) {
         console.error("Failed to fetch chat messages:", error);
         return [];
     }
 }
 
-export async function sendChatMessage(data: { userId: string; userName: string; message: string; channelId?: string; replyToId?: string }) {
+export async function sendChatMessage(data: { userId: string; userName: string; message: string; channelId?: string }) {
     try {
         await db.insert(chatMessages).values({
             userId: data.userId,
             userName: data.userName,
             message: data.message,
             channelId: data.channelId || null,
-            replyToId: data.replyToId || null,
         });
         return { success: true };
     } catch (error) {
         console.error("Failed to send chat message:", error);
-        return { success: false };
-    }
-}
-
-export async function addMessageReaction(messageId: string, userId: string, userName: string, emoji: string) {
-    try {
-        await db.insert(messageReactions).values({
-            messageId,
-            userId,
-            userName,
-            emoji
-        });
-        return { success: true };
-    } catch (error) {
-        console.error("Failed to add reaction:", error);
-        return { success: false };
-    }
-}
-
-export async function getMessageReactions(messageId: string) {
-    try {
-        return await db.select().from(messageReactions).where(eq(messageReactions.messageId, messageId));
-    } catch (error) {
-        return [];
-    }
-}
-
-// Social Networking: Friendships
-export async function sendFriendRequest(requesterId: string, receiverId: string) {
-    try {
-        const existing = await db.select().from(friendships).where(
-            or(
-                and(eq(friendships.requesterId, requesterId), eq(friendships.receiverId, receiverId)),
-                and(eq(friendships.requesterId, receiverId), eq(friendships.receiverId, requesterId))
-            )
-        );
-
-        if (existing.length > 0) return { success: false, error: "Relationship already exists" };
-
-        await db.insert(friendships).values({ requesterId, receiverId });
-        return { success: true };
-    } catch (error) {
-        return { success: false };
-    }
-}
-
-export async function handleFriendRequest(requestId: string, status: "ACCEPTED" | "REJECTED") {
-    try {
-        if (status === "REJECTED") {
-            await db.delete(friendships).where(eq(friendships.id, requestId));
-        } else {
-            await db.update(friendships).set({ status }).where(eq(friendships.id, requestId));
-        }
-        return { success: true };
-    } catch (error) {
-        return { success: false };
-    }
-}
-
-export async function getFriends(userId: string) {
-    try {
-        const friends = await db.select().from(friendships).where(
-            and(
-                or(eq(friendships.requesterId, userId), eq(friendships.receiverId, userId)),
-                eq(friendships.status, "ACCEPTED")
-            )
-        );
-        return friends;
-    } catch (error) {
-        return [];
-    }
-}
-
-// Direct Messaging
-export async function sendDirectMessage(senderId: string, senderName: string, receiverId: string, message: string) {
-    try {
-        await db.insert(directMessages).values({
-            senderId,
-            senderName,
-            receiverId,
-            message
-        });
-        return { success: true };
-    } catch (error) {
-        return { success: false };
-    }
-}
-
-export async function getDirectMessages(userId: string, targetId: string) {
-    try {
-        return await db.select().from(directMessages).where(
-            or(
-                and(eq(directMessages.senderId, userId), eq(directMessages.receiverId, targetId)),
-                and(eq(directMessages.senderId, targetId), eq(directMessages.receiverId, userId))
-            )
-        ).orderBy(desc(directMessages.createdAt)).limit(50);
-    } catch (error) {
-        return [];
-    }
-}
-
-export async function updatePrivacySettings(userId: string, isPrivate: boolean) {
-    try {
-        await db.update(users).set({ isPrivate }).where(eq(users.id, userId));
-        revalidatePath("/nexus");
-        return { success: true };
-    } catch (error) {
         return { success: false };
     }
 }

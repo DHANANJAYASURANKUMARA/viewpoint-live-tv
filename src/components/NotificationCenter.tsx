@@ -79,7 +79,7 @@ export default function NotificationCenter() {
         <div className="relative">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative p-2.5 glass rounded-xl hover:bg-white/5 transition-all group"
+                className="relative p-2.5 glass border border-white/5 rounded-xl hover:bg-white/5 transition-all group"
             >
                 {unreadCount > 0 ? (
                     <BellRing className="text-neon-cyan animate-pulse" size={20} />
@@ -109,7 +109,7 @@ export default function NotificationCenter() {
                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                            className="fixed lg:absolute top-24 lg:top-auto lg:right-0 lg:mt-4 inset-x-4 lg:inset-x-auto lg:w-96 z-[110] glass-dark rounded-3xl lg:rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden backdrop-blur-3xl"
+                            className="fixed lg:absolute top-24 lg:top-auto lg:right-0 lg:mt-4 inset-x-4 lg:inset-x-auto lg:w-96 z-[110] glass-dark border border-white/10 rounded-3xl lg:rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden backdrop-blur-3xl"
                         >
                             <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
                                 <div className="flex items-center gap-2">

@@ -40,7 +40,7 @@ export default function LoadingScreen() {
                 </motion.div>
 
                 {/* Animated Loading Bar */}
-                <div className="w-64 h-1.5 bg-white/5 rounded-full overflow-hidden relative">
+                <div className="w-64 h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/10 relative">
                     <motion.div
                         initial={{ x: "-100%" }}
                         animate={{ x: "0%" }}
