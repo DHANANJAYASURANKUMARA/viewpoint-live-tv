@@ -146,7 +146,7 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
 
     return (
         <div
-            className={`video-container relative w-full overflow-hidden glass shadow-[0_0_100px_rgba(0,0,0,0.6)] group border border-white/5 transition-all duration-700 ${isCinemaMode ? "z-[60] scale-105" : "rounded-none"} aspect-video`}
+            className={`video-container relative w-full overflow-hidden glass shadow-[0_0_100px_rgba(0,0,0,0.6)] group transition-all duration-700 ${isCinemaMode ? "z-[60] scale-105" : "rounded-none"} aspect-video`}
             onMouseMove={handleMouseMove}
             onMouseLeave={() => {
                 setShowControls(false);
@@ -185,7 +185,7 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                 <motion.div
                                     animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 180, 270, 360] }}
                                     transition={{ duration: 4, repeat: Infinity }}
-                                    className="absolute inset-0 border-2 border-neon-cyan/30 rounded-2xl"
+                                    className="absolute inset-0 border border-neon-cyan/10 rounded-2xl"
                                 />
                                 <div className="w-16 h-16 rounded-2xl bg-neon-cyan/5 flex items-center justify-center border border-neon-cyan/20 backdrop-blur-md">
                                     <Activity className="text-neon-cyan animate-pulse" size={32} />

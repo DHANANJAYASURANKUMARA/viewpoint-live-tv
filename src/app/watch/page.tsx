@@ -67,7 +67,7 @@ export default function WatchPage() {
     if (!isAuthenticated) {
         return (
             <div className="h-full flex items-center justify-center">
-                <div className="w-8 h-8 border-2 border-neon-cyan/30 border-t-neon-cyan rounded-full animate-spin" />
+                <div className="w-8 h-8 border-2 border-transparent border-t-neon-cyan rounded-full animate-spin" />
             </div>
         );
     }
@@ -100,7 +100,7 @@ export default function WatchPage() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
-                                    className="flex flex-col items-center justify-center text-center space-y-8 p-12 glass rounded-[3rem] border border-white/10"
+                                    className="flex flex-col items-center justify-center text-center space-y-8 p-12 glass rounded-[3rem]"
                                 >
                                     <div className="relative">
                                         <div className="absolute inset-0 bg-neon-cyan/20 blur-[60px] rounded-full animate-pulse" />
@@ -118,7 +118,7 @@ export default function WatchPage() {
                                         </p>
                                     </div>
 
-                                    <div className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/5 rounded-full">
+                                    <div className="flex items-center gap-2 px-6 py-3 bg-white/5 rounded-full">
                                         <MousePointer2 size={14} className="text-neon-magenta animate-bounce" />
                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                                             Awaiting Input Signal
