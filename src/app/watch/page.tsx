@@ -5,6 +5,8 @@ import VideoPlayer from "@/components/VideoPlayer";
 import { Tv, MousePointer2, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+import LiveChat from "@/components/LiveChat";
+import { getUserProfile } from "@/lib/actions";
 
 export default function WatchPage() {
     const router = useRouter();
@@ -14,6 +16,12 @@ export default function WatchPage() {
     const [currentProxyActive, setCurrentProxyActive] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userName, setUserName] = useState("");
+    const [fullUser, setFullUser] = useState<any>(null);
+
+    const loadFullUser = async (id: string) => {
+        const profile = await getUserProfile(id);
+        setFullUser(profile);
+    };
 
     React.useEffect(() => {
         // Auth guard: check for user session
@@ -26,6 +34,7 @@ export default function WatchPage() {
             const user = JSON.parse(session);
             setIsAuthenticated(true);
             setUserName(user.name || "User");
+            loadFullUser(user.id);
         } catch {
             localStorage.removeItem("vpoint-user");
             router.push("/login");
@@ -55,8 +64,8 @@ export default function WatchPage() {
     }
 
     return (
-        <div className="h-full flex items-center justify-center p-6 md:p-10">
-            <div className="w-full max-w-5xl mx-auto">
+        <div className="h-full w-full flex flex-col lg:flex-row items-center justify-center p-4 lg:p-10 gap-8 overflow-hidden">
+            <div className="w-full flex-1 flex items-center justify-center min-w-0">
                 <AnimatePresence mode="wait">
                     {currentUrl ? (
                         <motion.div
@@ -65,6 +74,7 @@ export default function WatchPage() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 1.02 }}
                             transition={{ duration: 0.5, ease: "easeOut" }}
+                            className="w-full"
                         >
                             <VideoPlayer
                                 url={currentUrl}
@@ -107,6 +117,13 @@ export default function WatchPage() {
                     )}
                 </AnimatePresence>
             </div>
+
+            {currentUrl && (
+                <LiveChat
+                    channelId={currentUrl}
+                    currentUser={fullUser}
+                />
+            )}
         </div>
     );
 }

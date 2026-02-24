@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "./db";
-import { channels, favorites, settings, operators, users, notifications, posts, comments, postLikes } from "./schema";
+import { channels, favorites, settings, operators, users, notifications, posts, comments, postLikes, liveChatMessages, liveChatLikes } from "./schema";
 import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
@@ -603,6 +603,86 @@ export async function deleteComment(commentId: string) {
         return { success: true };
     } catch (error) {
         console.error("Failed to delete comment:", error);
+        return { success: false };
+    }
+}
+
+// Live Chat Actions
+export async function getLiveChatMessages(channelId: string, viewerId?: string) {
+    try {
+        const { desc } = require("drizzle-orm");
+        const allMessages = await db.select()
+            .from(liveChatMessages)
+            .where(eq(liveChatMessages.channelId, channelId))
+            .orderBy(desc(liveChatMessages.createdAt));
+
+        const enriched = await Promise.all(allMessages.map(async (msg) => {
+            const user = await db.select({ name: users.name, displayName: users.displayName, profilePicture: users.profilePicture })
+                .from(users).where(eq(users.id, msg.userId)).limit(1);
+
+            const likesCount = await db.select().from(liveChatLikes).where(eq(liveChatLikes.messageId, msg.id));
+            const userHasLiked = viewerId ? (await db.select().from(liveChatLikes).where(and(eq(liveChatLikes.messageId, msg.id), eq(liveChatLikes.userId, viewerId)))).length > 0 : false;
+
+            return {
+                ...msg,
+                user: user[0],
+                likes: likesCount.length,
+                hasLiked: userHasLiked
+            };
+        }));
+
+        return enriched;
+    } catch (error) {
+        console.error("Failed to fetch chat messages:", error);
+        return [];
+    }
+}
+
+export async function sendLiveChatMessage(channelId: string, userId: string, content: string, parentId?: string) {
+    try {
+        await db.insert(liveChatMessages).values({ channelId, userId, content, parentId });
+        revalidatePath("/watch");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to send chat message:", error);
+        return { success: false };
+    }
+}
+
+export async function updateLiveChatMessage(id: string, content: string) {
+    try {
+        await db.update(liveChatMessages).set({ content }).where(eq(liveChatMessages.id, id));
+        revalidatePath("/watch");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update chat message:", error);
+        return { success: false };
+    }
+}
+
+export async function deleteLiveChatMessage(id: string) {
+    try {
+        await db.delete(liveChatMessages).where(eq(liveChatMessages.id, id));
+        revalidatePath("/watch");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete chat message:", error);
+        return { success: false };
+    }
+}
+
+export async function toggleLiveChatLike(messageId: string, userId: string) {
+    try {
+        const existing = await db.select().from(liveChatLikes).where(and(eq(liveChatLikes.messageId, messageId), eq(liveChatLikes.userId, userId))).limit(1);
+        if (existing.length > 0) {
+            await db.delete(liveChatLikes).where(and(eq(liveChatLikes.messageId, messageId), eq(liveChatLikes.userId, userId)));
+        } else {
+            await db.insert(liveChatLikes).values({ messageId, userId });
+        }
+        revalidatePath("/watch");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to toggle chat like:", error);
         return { success: false };
     }
 }

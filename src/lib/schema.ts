@@ -105,3 +105,18 @@ export const postLikes = pgTable("post_likes", {
     userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").defaultNow(),
 });
+export const liveChatMessages = pgTable("live_chat_messages", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    channelId: text("channel_id").notNull(),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    parentId: uuid("parent_id"), // For replies
+    createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const liveChatLikes = pgTable("live_chat_likes", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    messageId: uuid("message_id").notNull().references(() => liveChatMessages.id, { onDelete: "cascade" }),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow(),
+});
