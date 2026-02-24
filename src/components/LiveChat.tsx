@@ -181,8 +181,8 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                 ref={scrollRef}
                 className="flex-1 overflow-y-auto px-4 space-y-2 flex flex-col custom-scrollbar pointer-events-auto"
                 style={{
-                    maskImage: 'linear-gradient(to top, black 70%, transparent 100%)',
-                    WebkitMaskImage: 'linear-gradient(to top, black 70%, transparent 100%)'
+                    maskImage: 'linear-gradient(to top, black 85%, transparent 100%)',
+                    WebkitMaskImage: 'linear-gradient(to top, black 85%, transparent 100%)'
                 }}
             >
                 <div className="flex-1" />
@@ -200,7 +200,7 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                                 opacity: idx < messages.length - 5 ? 0.3 : 1,
                                 transition: { duration: 0.5 }
                             }}
-                            className="flex items-start gap-2 group"
+                            className={`flex items-start gap-2 group ${msg.userId === currentUser?.id ? 'flex-row-reverse' : 'flex-row'}`}
                         >
                             <button
                                 onClick={() => handleShowProfile(msg.userId)}
@@ -215,17 +215,89 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                                 )}
                             </button>
 
-                            <div className="flex flex-col gap-1 max-w-[85%]">
-                                <div className="bg-black/20 backdrop-blur-sm rounded-xl p-2 relative">
-                                    <p className="text-[10px] leading-tight">
-                                        <button
-                                            onClick={() => handleShowProfile(msg.userId)}
-                                            className="font-black text-neon-cyan mr-1.5 capitalize hover:text-white transition-colors active:scale-95"
-                                        >
-                                            {msg.user?.displayName || msg.user?.name}
-                                        </button>
-                                        <span className="text-slate-100/90 font-medium break-words">{msg.content}</span>
-                                    </p>
+                            <div className={`flex flex-col gap-1 max-w-[85%] ${msg.userId === currentUser?.id ? 'items-end' : 'items-start'}`}>
+                                <div className={`group/bubble relative ${msg.userId === currentUser?.id ? 'bg-neon-magenta/10 border border-neon-magenta/20' : 'bg-black/20'} backdrop-blur-sm rounded-2xl p-3 pb-2 transition-all hover:bg-white/5`}>
+                                    {/* Action Matrix - Visible on Hover/Active */}
+                                    <div className={`absolute -top-4 ${msg.userId === currentUser?.id ? 'right-0' : 'left-0'} flex items-center gap-1.5 opacity-0 group-hover/bubble:opacity-100 group-active/bubble:opacity-100 transition-opacity z-10 scale-90 sm:scale-100`}>
+                                        {msg.userId === currentUser?.id ? (
+                                            <>
+                                                <button
+                                                    onClick={() => { setEditingId(msg.id); setEditContent(msg.content); }}
+                                                    className="p-1.5 bg-black/80 rounded-lg text-slate-400 hover:text-neon-cyan border border-white/10"
+                                                >
+                                                    <Edit3 size={14} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(msg.id)}
+                                                    className="p-1.5 bg-black/80 rounded-lg text-slate-400 hover:text-red-500 border border-white/10"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    onClick={() => handleToggleLike(msg.id)}
+                                                    className={`p-1.5 bg-black/80 rounded-lg border border-white/10 transition-colors ${msg.likes?.some((l: any) => l.userId === currentUser?.id) ? 'text-neon-magenta' : 'text-slate-400 hover:text-neon-magenta'}`}
+                                                >
+                                                    <Heart size={14} fill={msg.likes?.some((l: any) => l.userId === currentUser?.id) ? "currentColor" : "none"} />
+                                                </button>
+                                                <button
+                                                    onClick={() => setReplyTo(msg)}
+                                                    className="p-1.5 bg-black/80 rounded-lg text-slate-400 hover:text-neon-cyan border border-white/10"
+                                                >
+                                                    <Reply size={14} />
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+
+                                    {editingId === msg.id ? (
+                                        <div className="space-y-2 min-w-[150px]">
+                                            <textarea
+                                                value={editContent}
+                                                onChange={(e) => setEditContent(e.target.value)}
+                                                className="w-full bg-black/50 border border-neon-cyan/30 rounded-lg p-2 text-[10px] text-white focus:outline-none"
+                                                rows={2}
+                                                autoFocus
+                                            />
+                                            <div className="flex justify-end gap-2">
+                                                <button onClick={() => setEditingId(null)} className="text-[8px] font-black uppercase tracking-widest text-slate-500 hover:text-white">Cancel</button>
+                                                <button onClick={() => handleUpdate(msg.id)} className="text-[8px] font-black uppercase tracking-widest text-neon-cyan">Save</button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            {msg.replyTo && (
+                                                <div className="mb-1.5 px-2 py-1 bg-white/5 border-l-2 border-neon-cyan/40 rounded italic opacity-60 flex items-center gap-1.5">
+                                                    <Reply size={10} className="text-neon-cyan" />
+                                                    <span className="text-[8px] font-black uppercase tracking-wider text-neon-cyan truncate max-w-[100px]">
+                                                        {msg.replyTo.user?.displayName || msg.replyTo.user?.name}
+                                                    </span>
+                                                    <span className="text-[8px] text-slate-400 truncate max-w-[150px]">
+                                                        {msg.replyTo.content}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            <p className="text-[10px] sm:text-[11px] leading-tight">
+                                                <button
+                                                    onClick={() => handleShowProfile(msg.userId)}
+                                                    className="font-black text-neon-cyan mr-1.5 capitalize hover:text-white transition-colors active:scale-95"
+                                                >
+                                                    {msg.user?.displayName || msg.user?.name}
+                                                </button>
+                                                <span className="text-slate-100/90 font-medium break-words">{msg.content}</span>
+                                            </p>
+                                        </>
+                                    )}
+
+                                    {/* Like Count Signal */}
+                                    {msg._count?.likes > 0 && (
+                                        <div className="mt-1 flex items-center gap-1 opacity-50">
+                                            <Heart size={8} className="text-neon-magenta fill-neon-magenta" />
+                                            <span className="text-[8px] font-black text-neon-magenta">{msg._count.likes}</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>
@@ -234,31 +306,56 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
             </div>
 
             {/* Input Area (Refined Row) */}
-            <div className="p-4 flex items-center gap-2 pointer-events-auto">
-                <button
-                    onClick={() => triggerHearts()}
-                    className="p-3 bg-white/10 text-white rounded-full hover:bg-neon-magenta/40 transition-colors shadow-[0_0_15px_rgba(255,45,85,0.2)]"
-                >
-                    <Heart size={20} />
-                </button>
-                <div className="flex-1 relative">
-                    <input
-                        type="text"
-                        value={inputText}
-                        onChange={(e) => setInputText(e.target.value)}
-                        placeholder="Add comment..."
-                        className="w-full bg-black/40 backdrop-blur-xl border border-white/10 rounded-full py-2.5 px-4 text-[12px] text-white focus:outline-none focus:border-neon-magenta/30 transition-all"
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter") handleSend();
-                        }}
-                    />
-                    <button
-                        onClick={handleSend}
-                        disabled={!inputText.trim() || isSending}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-neon-magenta hover:scale-110 transition-transform disabled:opacity-0 active:scale-90"
+            <div className="p-4 pt-1 flex flex-col gap-2 pointer-events-auto">
+                <AnimatePresence>
+                    {replyTo && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            className="bg-white/5 border border-white/10 rounded-xl p-2.5 flex items-center justify-between mb-1"
+                        >
+                            <div className="flex items-center gap-2 overflow-hidden">
+                                <Reply size={14} className="text-neon-cyan shrink-0" />
+                                <div className="flex flex-col overflow-hidden">
+                                    <span className="text-[8px] font-black uppercase text-neon-cyan tracking-widest">Replying to {replyTo.user?.displayName || replyTo.user?.name}</span>
+                                    <span className="text-[10px] text-slate-400 truncate italic">"{replyTo.content}"</span>
+                                </div>
+                            </div>
+                            <button onClick={() => setReplyTo(null)} className="p-1.5 hover:bg-white/5 rounded-lg text-slate-500 hover:text-white transition-colors">
+                                <X size={14} />
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                <div className="flex items-center gap-2">
+                    <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => triggerHearts()}
+                        className="p-3 bg-white/10 text-white rounded-full hover:bg-neon-magenta/40 transition-colors shadow-[0_0_15px_rgba(255,45,85,0.2)] active:shadow-none"
                     >
-                        <Send size={18} />
-                    </button>
+                        <Heart size={20} className={hearts.length > 0 ? "animate-pulse" : ""} />
+                    </motion.button>
+                    <div className="flex-1 relative">
+                        <input
+                            type="text"
+                            value={inputText}
+                            onChange={(e) => setInputText(e.target.value)}
+                            placeholder={replyTo ? "Transmit reply..." : "Add comment..."}
+                            className="w-full bg-black/40 backdrop-blur-xl border border-white/10 rounded-full py-2.5 px-4 text-[12px] text-white focus:outline-none focus:border-neon-magenta/30 transition-all font-medium"
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") handleSend();
+                            }}
+                        />
+                        <button
+                            onClick={handleSend}
+                            disabled={!inputText.trim() || isSending}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-neon-magenta hover:scale-110 transition-transform disabled:opacity-0 active:scale-90"
+                        >
+                            <Send size={18} />
+                        </button>
+                    </div>
                 </div>
             </div>
 

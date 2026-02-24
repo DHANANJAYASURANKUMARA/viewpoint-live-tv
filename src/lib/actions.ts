@@ -623,11 +623,28 @@ export async function getLiveChatMessages(channelId: string, viewerId?: string) 
             const likesCount = await db.select().from(liveChatLikes).where(eq(liveChatLikes.messageId, msg.id));
             const userHasLiked = viewerId ? (await db.select().from(liveChatLikes).where(and(eq(liveChatLikes.messageId, msg.id), eq(liveChatLikes.userId, viewerId)))).length > 0 : false;
 
+            let parentMessage = null;
+            if (msg.parentId) {
+                const parent = await db.select().from(liveChatMessages).where(eq(liveChatMessages.id, msg.parentId)).limit(1);
+                if (parent.length > 0) {
+                    const parentUser = await db.select({ name: users.name, displayName: users.displayName })
+                        .from(users).where(eq(users.id, parent[0].userId)).limit(1);
+                    parentMessage = {
+                        ...parent[0],
+                        user: parentUser[0]
+                    };
+                }
+            }
+
             return {
                 ...msg,
                 user: user[0],
-                likes: likesCount.length,
-                hasLiked: userHasLiked
+                likes: likesCount.length, // Keep for legacy if needed
+                hasLiked: userHasLiked,
+                replyTo: parentMessage,
+                _count: {
+                    likes: likesCount.length
+                }
             };
         }));
 
