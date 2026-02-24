@@ -151,21 +151,41 @@ export default function NexusProfilePage() {
         setSaving(true);
         setStatus(null);
 
+        // Sanitize birthday to avoid Invalid Date
+        let bday: Date | null = null;
+        if (user.birthday) {
+            const dateObj = new Date(user.birthday);
+            if (!isNaN(dateObj.getTime())) {
+                bday = dateObj;
+            }
+        }
+
         const res = await updateUserProfile(user.id, {
             displayName: user.displayName,
             bio: user.bio,
             hobbies: user.hobbies,
             hideProfile: user.hideProfile,
-            profilePicture: user.profilePicture, // Include this
-            birthday: user.birthday ? new Date(user.birthday) : null,
+            profilePicture: user.profilePicture,
+            birthday: bday,
             socialLinks: JSON.stringify(user.socialLinks || {})
         });
 
         if (res.success) {
             setStatus({ type: 'success', msg: 'Neural profile synchronized.' });
-            localStorage.setItem("vpoint-user", JSON.stringify({ ...user, profilePicture: user.profilePicture }));
+            // Only store essential session data to avoid QuotaExceededError (5MB limit)
+            const sessionData = {
+                id: user.id,
+                name: user.name,
+                displayName: user.displayName,
+                email: user.email
+            };
+            try {
+                localStorage.setItem("vpoint-user", JSON.stringify(sessionData));
+            } catch (e) {
+                console.warn("Session cache quota exceeded, but DB updated.");
+            }
         } else {
-            setStatus({ type: 'error', msg: 'Synch failed: ' + res.error });
+            setStatus({ type: 'error', msg: 'Sync failed: ' + (res.error || 'Server rejected the update.') });
         }
         setSaving(false);
     };

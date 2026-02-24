@@ -453,13 +453,24 @@ export async function bulkUpdateChannelMasks(mask: string) {
 
 export async function updateUserProfile(userId: string, data: any) {
     try {
-        await db.update(users).set(data).where(eq(users.id, userId));
+        // Explicit mapping to ensure Drizzle columns are correctly targeted
+        await db.update(users).set({
+            displayName: data.displayName,
+            bio: data.bio,
+            hobbies: data.hobbies,
+            hideProfile: data.hideProfile,
+            profilePicture: data.profilePicture,
+            birthday: data.birthday,
+            socialLinks: data.socialLinks
+        }).where(eq(users.id, userId));
+
         revalidatePath("/nexus");
         revalidatePath("/admin/users");
         return { success: true };
     } catch (error: any) {
         console.error("Failed to update user profile:", error);
-        return { success: false, error: error?.message };
+        // Check for specific payload size issues (implicitly handled by Next.js, but good to log)
+        return { success: false, error: error?.message || "Internal Matrix Error" };
     }
 }
 
