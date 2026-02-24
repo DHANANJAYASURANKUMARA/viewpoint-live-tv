@@ -95,6 +95,11 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         };
 
         initializeConfig();
+
+        // Establish real-time sync polling (every 10 seconds)
+        const pollInterval = setInterval(initializeConfig, 10000);
+
+        return () => clearInterval(pollInterval);
     }, []);
 
     useEffect(() => {

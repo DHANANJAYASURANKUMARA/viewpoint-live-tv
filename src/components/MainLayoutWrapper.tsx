@@ -29,6 +29,8 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
     const [theme, setTheme] = useState('cyan');
     const [isMobile, setIsMobile] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
+    const [restorationCountdown, setRestorationCountdown] = useState<number | null>(null);
+    const [wasInMaintenance, setWasInMaintenance] = useState(false);
 
     // Handlers for custom events
     const handleCinemaToggle = useCallback((e: any) => {
@@ -169,9 +171,36 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
         };
     }, [isMounted, handleCinemaToggle, handleSettingsChange, handleOpenSettings, handleSidebarToggle, handleChannelSelectSync]);
 
-    // Maintenance Mode Overlay
+    // Maintenance Mode Logic
     const isMaintenanceActive = config.maintenanceMode && !isAdminSector;
     const maintenanceMessage = config.maintenanceMessage || "The Viewpoint matrix is currently undergoing scheduled structural refinement. Signal stability is being recalibrated for enhanced digital density.";
+
+    // Handle Maintenance -> Restoration transition
+    useEffect(() => {
+        if (!isAdminSector) {
+            if (config.maintenanceMode) {
+                setWasInMaintenance(true);
+            } else if (wasInMaintenance) {
+                // Maintenance just turned off
+                setRestorationCountdown(10);
+                setWasInMaintenance(false);
+            }
+        }
+    }, [config.maintenanceMode, isAdminSector, wasInMaintenance]);
+
+    // Countdown Timer Logic
+    useEffect(() => {
+        if (restorationCountdown !== null) {
+            if (restorationCountdown > 0) {
+                const timer = setTimeout(() => setRestorationCountdown(prev => (prev !== null ? prev - 1 : 0)), 1000);
+                return () => clearTimeout(timer);
+            } else {
+                // Countdown reached zero, reload to re-establish clean signal
+                window.location.reload();
+            }
+        }
+    }, [restorationCountdown]);
+
     const [showBirthdayGreeting, setShowBirthdayGreeting] = useState(false);
 
     useEffect(() => {
@@ -246,6 +275,7 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
                         className="fixed inset-0 z-[1000] bg-vpoint-dark flex items-center justify-center p-10 overflow-hidden"
                     >
                         {/* Maintenance Background */}
@@ -284,6 +314,46 @@ export default function MainLayoutWrapper({ children }: { children: React.ReactN
                                     <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest italic tracking-[0.3em]">Institutional Integrity ACTIVE</span>
                                 </div>
                             </div>
+                        </div>
+                    </motion.div>
+                )}
+
+                {restorationCountdown !== null && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[1000] bg-black/90 backdrop-blur-3xl flex items-center justify-center p-10 overflow-hidden"
+                    >
+                        <div className="relative z-10 max-w-md w-full text-center space-y-8">
+                            <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 10, ease: "linear", repeat: Infinity }}
+                                className="w-20 h-20 mx-auto border-2 border-neon-cyan/20 border-t-neon-cyan rounded-full flex items-center justify-center"
+                            >
+                                <ShieldAlert size={24} className="text-neon-cyan animate-pulse" />
+                            </motion.div>
+
+                            <div className="space-y-2">
+                                <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Signal <span className="text-neon-cyan text-glow">Restoration</span></h2>
+                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Stabilizing Matrix Entry</p>
+                            </div>
+
+                            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+                                We will be back in <span className="text-neon-cyan text-xl px-2">{restorationCountdown}</span> seconds
+                            </p>
+
+                            {/* Tactical Progress Bar */}
+                            <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                                <motion.div
+                                    initial={{ width: "100%" }}
+                                    animate={{ width: "0%" }}
+                                    transition={{ duration: 10, ease: "linear" }}
+                                    className="h-full bg-neon-cyan shadow-[0_0_15px_rgba(34,211,238,0.5)]"
+                                />
+                            </div>
+
+                            <p className="text-[9px] font-black text-neon-cyan/40 uppercase tracking-[0.3em] animate-pulse">Syncing Encrypted Packets...</p>
                         </div>
                     </motion.div>
                 )}
