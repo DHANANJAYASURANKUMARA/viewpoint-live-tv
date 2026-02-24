@@ -379,6 +379,16 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                     onReady={() => {
                         setIsReady(true);
                         dispatchStatus(playing ? "Playing" : "Paused");
+
+                        // Sync initial quality levels immediately
+                        const internal = playerRef.current?.getInternalPlayer?.();
+                        if (internal?.hls) {
+                            setQualityLevels(internal.hls.levels || []);
+                            setCurrentQuality(internal.hls.currentLevel);
+                        } else if (internal?.dash) {
+                            setQualityLevels(internal.dash.getBitrateInfoListFor('video') || []);
+                            setCurrentQuality(internal.dash.getQualityFor('video'));
+                        }
                     }}
                     onError={(e: any) => {
                         console.error("Player Error:", e);
@@ -513,9 +523,9 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                         </div>
 
                         {/* Control Interface (Bottom - Glass Floating) */}
-                        <div className="absolute bottom-6 lg:bottom-10 left-4 lg:left-10 right-4 lg:right-10 flex items-center justify-center pointer-events-auto">
+                        <div className="absolute bottom-6 lg:bottom-10 left-4 lg:left-10 right-4 lg:left-10 flex items-center justify-center pointer-events-auto">
                             {useReactPlayer && (
-                                <div className="glass-dark border border-white/10 rounded-2xl lg:rounded-[3rem] p-2 lg:p-3 pr-4 lg:pr-8 flex items-center gap-3 lg:gap-6 shadow-[0_30px_60px_rgba(0,0,0,0.8)] max-w-full overflow-hidden">
+                                <div className="glass-dark border border-white/10 rounded-2xl lg:rounded-[3rem] p-2 lg:p-3 pr-4 lg:pr-8 flex items-center gap-3 lg:gap-6 shadow-[0_30px_60px_rgba(0,0,0,0.8)] max-w-full">
                                     <button
                                         onClick={() => setPlaying(!playing)}
                                         className="w-10 h-10 lg:w-14 lg:h-14 rounded-full bg-white flex items-center justify-center text-black hover:bg-neon-cyan hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-500 transform active:scale-90 flex-shrink-0"
