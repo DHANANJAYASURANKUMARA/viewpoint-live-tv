@@ -82,79 +82,22 @@ export default function TopBar() {
             <div className="flex items-center gap-3 lg:gap-4 min-w-0">
                 <button
                     onClick={toggleSidebar}
-                    className="lg:hidden p-2 -ml-2 text-slate-400 hover:text-white transition-all transform active:scale-90"
+                    className="lg:hidden p-3 -ml-2 text-slate-400 hover:text-white transition-all transform active:scale-90"
                     aria-label="Toggle Sidebar"
                 >
-                    <Menu size={20} />
+                    <Menu size={22} />
                 </button>
                 <div className="flex flex-col gap-0.5 min-w-0">
-                    <h1 className="text-xs lg:text-base font-black text-white tracking-tight lg:tracking-widest uppercase leading-none truncate max-w-[140px] lg:max-w-none">
+                    <h1 className="text-sm lg:text-lg font-black text-white tracking-widest uppercase leading-none truncate max-w-[200px] lg:max-w-none">
                         {channelTitle}
                     </h1>
-                    <div className="flex items-center gap-1.5 lg:gap-2">
-                        <span className="text-[7px] lg:text-[8px] font-black text-neon-cyan uppercase tracking-widest leading-none">
-                            {channelCategory}
-                        </span>
-                        <span className="text-slate-700 font-bold leading-none select-none">•</span>
-                        <span className="text-[7px] lg:text-[8px] font-bold text-slate-600 uppercase tracking-widest leading-none whitespace-nowrap">
-                            {formatUptime(uptime)}
-                        </span>
-                    </div>
                 </div>
             </div>
 
-            <div className="flex items-center gap-4 lg:gap-8">
-                <div className="flex items-center gap-2 lg:gap-3">
-                    <div className="flex items-center gap-2">
-                        <div className="flex items-end gap-0.5 h-2.5">
-                            {[1, 2, 3, 4].map((bar) => {
-                                const isActive =
-                                    (networkType === "2G" && bar === 1) ||
-                                    (networkType === "3G" && bar <= 2) ||
-                                    (networkType === "4G" && bar <= 3) ||
-                                    (networkType === "5G" && bar <= 4);
-
-                                return (
-                                    <div
-                                        key={bar}
-                                        className={`w-0.5 lg:w-0.75 rounded-full transition-all duration-700 ${isActive ? (
-                                            networkType === "2G" ? "bg-amber-500" :
-                                                (networkType === "3G" || networkType === "4G") ? "bg-emerald-500" : "bg-neon-magenta shadow-[0_0_8px_rgba(255,45,85,0.4)]"
-                                        ) : "bg-white/10"
-                                            }`}
-                                        style={{ height: `${bar * 25}%` }}
-                                    />
-                                );
-                            })}
-                        </div>
-                        <span className={`text-[9px] lg:text-[10px] font-black tracking-widest uppercase ${networkColors[networkType] || "text-neon-magenta"}`}>
-                            {networkType}
-                        </span>
-                    </div>
-                    <div className="hidden sm:block h-3 w-[1px] bg-white/10 mx-2" />
-                </div>
-
-                <div className="flex items-center gap-2 lg:gap-4">
-                    <NotificationCenter />
-                    <div className="h-6 w-[1px] bg-white/10 hidden sm:block" />
-                    <ProfileDropdown />
-                </div>
-
-                <div className="flex flex-col items-end">
-                    <div className="flex items-center gap-2">
-                        <div className={`w-1 h-1 lg:w-1.5 lg:h-1.5 rounded-full ${playerStatus === "Standby" ? "bg-slate-800" : "animate-pulse"} ${playerStatus === "Playing" ? "bg-neon-cyan" :
-                            playerStatus === "Paused" ? "bg-amber-500" :
-                                playerStatus === "Error" ? "bg-red-500" :
-                                    playerStatus === "Standby" ? "bg-slate-800" : "bg-neon-magenta"
-                            }`} />
-                        <span className={`text-xs lg:text-sm font-black tracking-widest uppercase ${statusColors[playerStatus]}`}>
-                            {playerStatus}
-                        </span>
-                    </div>
-                    <span className="hidden lg:block text-[7px] font-bold text-slate-700 uppercase tracking-[0.2em] mt-0.5">
-                        Transmission Status
-                    </span>
-                </div>
+            <div className="flex items-center gap-4 lg:gap-6">
+                <NotificationCenter />
+                <div className="h-6 w-[1px] bg-white/10 hidden sm:block" />
+                <ProfileDropdown />
             </div>
         </header>
     );

@@ -154,9 +154,9 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
                 </Link>
                 <button
                     onClick={onClose}
-                    className="lg:hidden p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                    className="lg:hidden p-3 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-90"
                 >
-                    <X size={20} />
+                    <X size={24} />
                 </button>
             </div>
 
@@ -189,7 +189,7 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
                             <button
                                 key={cat}
                                 onClick={() => setActiveCategory(cat)}
-                                className={`flex items-center gap-2.5 p-3 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${activeCategory === cat
+                                className={`flex items-center gap-2.5 p-4 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border active:scale-95 ${activeCategory === cat
                                     ? "bg-neon-cyan/10 border-neon-cyan/30 text-neon-cyan shadow-[0_0_20px_rgba(34,211,238,0.1)]"
                                     : "bg-white/[0.02] border-white/5 text-slate-500 hover:text-white hover:border-white/10"
                                     }`}
@@ -332,15 +332,6 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
                         </button>
                     </motion.form>
                 )}
-
-                <button
-                    onClick={() => window.dispatchEvent(new CustomEvent("vpoint-open-settings"))}
-                    className="w-full py-4 glass-dark border border-white/5 rounded-2xl flex items-center justify-center gap-3 text-slate-500 hover:text-neon-cyan hover:border-neon-cyan/30 transition-all text-[9px] font-black uppercase tracking-[0.2em]"
-                >
-                    <Settings size={14} />
-                    Advanced Settings
-                </button>
-
 
                 <div className="px-2 flex items-center justify-between text-slate-800">
                     <span className="text-[7px] font-black uppercase tracking-widest">{config.brandingText} MODULE v{config.version}</span>
