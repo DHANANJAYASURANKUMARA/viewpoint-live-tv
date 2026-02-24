@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import {
     User,
     Calendar,
+    Mail,
     Globe,
     Camera,
     Save,
@@ -28,7 +29,7 @@ export default function NexusProfilePage() {
         email?: string | null;
         bio?: string | null;
         birthday?: Date | string | null;
-        socialLinks?: Record<string, string> | null;
+        socialLinks?: any; // JSON object
         profilePicture?: string | null;
         location?: string | null;
         country?: string | null;
@@ -40,6 +41,20 @@ export default function NexusProfilePage() {
     const [status, setStatus] = useState<{ type: 'success' | 'error', msg: string } | null>(null);
     const [isBirthday, setIsBirthday] = useState(false);
     const [socialModal, setSocialModal] = useState<string | null>(null);
+
+    useEffect(() => {
+        const session = localStorage.getItem("vpoint-user");
+        if (session) {
+            try {
+                const sessionUser = JSON.parse(session);
+                loadProfile(sessionUser.id);
+            } catch {
+                setLoading(false);
+            }
+        } else {
+            setLoading(false);
+        }
+    }, []);
 
     const loadProfile = async (userId: string) => {
         const fullProfile = await getUserProfile(userId);
@@ -65,20 +80,6 @@ export default function NexusProfilePage() {
         }
         setLoading(false);
     };
-
-    useEffect(() => {
-        const session = localStorage.getItem("vpoint-user");
-        if (session) {
-            try {
-                const sessionUser = JSON.parse(session);
-                Promise.resolve().then(() => loadProfile(sessionUser.id));
-            } catch {
-                setLoading(false);
-            }
-        } else {
-            setLoading(false);
-        }
-    }, []);
 
     const handleSave = async () => {
         if (!user?.id) return;

@@ -9,15 +9,12 @@ const categories = ["All", "Entertainment", "Sports", "News", "Movies", "Tech", 
 
 interface ChannelGridProps {
     onChannelSelect: (url: string, title: string) => void;
-    channels: Record<string, unknown>[]; // Added channels prop
-    isFavoritesOnly?: boolean; // Added isFavoritesOnly prop
 }
 
-export default function ChannelGrid({ onChannelSelect, channels: initialChannels, isFavoritesOnly }: ChannelGridProps) {
+export default function ChannelGrid({ onChannelSelect }: ChannelGridProps) {
     const [activeCategory, setActiveCategory] = useState("All");
-    const [channels, setChannels] = useState<Record<string, unknown>[]>([]); // Changed type from any[] to Record<string, unknown>[]
+    const [channels, setChannels] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [favorites, setFavorites] = useState<string[]>([]); // Added favorites state
 
     useEffect(() => {
         const loadChannels = async () => {
@@ -71,7 +68,7 @@ export default function ChannelGrid({ onChannelSelect, channels: initialChannels
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        onClick={() => onChannelSelect((channel as any).url, (channel as any).name)}
+                        onClick={() => onChannelSelect(channel.url, channel.name)}
                         className="group relative h-40 lg:h-48 rounded-2xl overflow-hidden glass hover:border-neon-cyan/50 transition-all duration-300 text-left"
                     >
                         <div className="absolute inset-0 bg-gradient-to-t from-vpoint-dark via-vpoint-dark/20 to-transparent z-10 opacity-60 group-hover:opacity-80 transition-opacity" />
@@ -90,7 +87,7 @@ export default function ChannelGrid({ onChannelSelect, channels: initialChannels
                         </div>
 
                         <div className="absolute top-3 right-3 lg:top-4 lg:right-4 z-20">
-                            {(channel as any).trending && (
+                            {channel.trending && (
                                 <div className="flex items-center gap-1.5 px-2 py-1 bg-neon-purple/20 border border-neon-purple/30 rounded-full">
                                     <span className="relative flex h-1.5 w-1.5 lg:h-2 lg:w-2">
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-purple opacity-75"></span>
@@ -108,12 +105,12 @@ export default function ChannelGrid({ onChannelSelect, channels: initialChannels
                         </div>
 
                         <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-5 z-20">
-                            <div className="text-2xl lg:text-3xl mb-1 group-hover:scale-110 transition-transform origin-left duration-500">{(channel as any).logo}</div>
-                            <p className="text-[7px] lg:text-[8px] font-black text-neon-cyan uppercase tracking-widest mb-1">{(channel as any).category}</p>
-                            <h4 className="text-xs lg:text-sm font-black truncate leading-tight uppercase tracking-wide group-hover:text-neon-cyan transition-colors">{(channel as any).name}</h4>
+                            <div className="text-2xl lg:text-3xl mb-1 group-hover:scale-110 transition-transform origin-left duration-500">{channel.logo}</div>
+                            <p className="text-[7px] lg:text-[8px] font-black text-neon-cyan uppercase tracking-widest mb-1">{channel.category}</p>
+                            <h4 className="text-xs lg:text-sm font-black truncate leading-tight uppercase tracking-wide group-hover:text-neon-cyan transition-colors">{channel.name}</h4>
                             <p className="text-slate-400 text-[7px] lg:text-[8px] mt-1 lg:mt-1.5 flex items-center gap-1.5 uppercase font-black tracking-widest">
-                                <span className={`w-1 h-1 lg:w-1.5 lg:h-1.5 rounded-full ${(channel as any).id === 'apple-event' ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'}`} />
-                                {(channel as any).viewers} Viewers
+                                <span className={`w-1 h-1 lg:w-1.5 lg:h-1.5 rounded-full ${channel.id === 'apple-event' ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'}`} />
+                                {channel.viewers} Viewers
                             </p>
                         </div>
                     </motion.button>

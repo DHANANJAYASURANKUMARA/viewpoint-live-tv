@@ -12,6 +12,7 @@ import {
     ChevronRight,
     RefreshCw,
     Search,
+    Filter,
     Radio,
     Settings as SettingsIcon,
     Save,
@@ -23,26 +24,13 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { getNotifications, getChannels, getSettings, updateSetting } from "@/lib/actions";
 
-interface SystemLog {
-    id: string;
-    timestamp: Date | string;
-    type: string;
-    source: string;
-    event: string;
-    message?: string;
-    status: string;
-    severity: string;
-    icon: React.ElementType;
-    iconColor: string;
-}
-
 export default function MasterLogsPage() {
-    const [logs, setLogs] = useState<SystemLog[]>([]);
+    const [logs, setLogs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("ALL");
     const [searchTerm, setSearchTerm] = useState("");
     const [activeTab, setActiveTab] = useState<"LOGS" | "CONTROL">("LOGS");
-    const [config, setConfig] = useState<Record<string, string> | null>(null);
+    const [config, setConfig] = useState<any>(null);
     const [saving, setSaving] = useState(false);
 
     const loadLogs = async () => {
@@ -54,7 +42,7 @@ export default function MasterLogsPage() {
             ]);
 
             // Transform into unified log format
-            const notifLogs: SystemLog[] = notifs.map(n => ({
+            const notifLogs = notifs.map(n => ({
                 id: n.id,
                 timestamp: n.createdAt || new Date(),
                 type: "ALERT",
@@ -62,12 +50,11 @@ export default function MasterLogsPage() {
                 event: n.title,
                 message: n.message,
                 severity: "INFO",
-                status: "Processed",
                 icon: AlertCircle,
                 iconColor: "text-amber-500"
             }));
 
-            const channelLogs: SystemLog[] = channelsData.map(c => ({
+            const channelLogs = channelsData.map(c => ({
                 id: c.id,
                 timestamp: c.createdAt || new Date(),
                 type: "SIGNAL",
@@ -75,16 +62,15 @@ export default function MasterLogsPage() {
                 event: `Signal Modulation: ${c.name}`,
                 message: `Status: ${c.status} | Category: ${c.category}`,
                 severity: c.status === "Live" ? "OPTIMAL" : "WARN",
-                status: c.status || "Unknown",
                 icon: Radio,
                 iconColor: c.status === "Live" ? "text-emerald-500" : "text-amber-500"
             }));
 
             // Static System Logs for depth
-            const systemLogs: SystemLog[] = [
-                { id: 's1', timestamp: new Date(Date.now() - 1000 * 60 * 5), type: "CORE", source: "Kernel", event: "Handshake Successful", message: "Asian Edge Node Cluster synchronized.", severity: "INFO", status: "Nominal", icon: Shield, iconColor: "text-neon-cyan" },
-                { id: 's2', timestamp: new Date(Date.now() - 1000 * 60 * 15), type: "SECURITY", source: "Shield v2.0", event: "Intrusion Prevention", message: "Blocked anomalous request from IP 192.168.1.104", severity: "WARN", status: "Intercepted", icon: Zap, iconColor: "text-neon-magenta" },
-                { id: 's3', timestamp: new Date(Date.now() - 1000 * 60 * 45), type: "DB", source: "Neon Matrix", event: "Index Maintenance", message: "Vacuuming signal_nodes table complete.", severity: "INFO", status: "Complete", icon: Database, iconColor: "text-emerald-500" }
+            const systemLogs = [
+                { id: 's1', timestamp: new Date(Date.now() - 1000 * 60 * 5), type: "CORE", source: "Kernel", event: "Handshake Successful", message: "Asian Edge Node Cluster synchronized.", severity: "INFO", icon: Shield, iconColor: "text-neon-cyan" },
+                { id: 's2', timestamp: new Date(Date.now() - 1000 * 60 * 15), type: "SECURITY", source: "Shield v2.0", event: "Intrusion Prevention", message: "Blocked anomalous request from IP 192.168.1.104", severity: "WARN", icon: Zap, iconColor: "text-neon-magenta" },
+                { id: 's3', timestamp: new Date(Date.now() - 1000 * 60 * 45), type: "DB", source: "Neon Matrix", event: "Index Maintenance", message: "Vacuuming signal_nodes table complete.", severity: "INFO", icon: Database, iconColor: "text-emerald-500" }
             ];
 
             const combined = [...notifLogs, ...channelLogs, ...systemLogs].sort((a, b) =>
@@ -114,17 +100,15 @@ export default function MasterLogsPage() {
     };
 
     useEffect(() => {
-        Promise.resolve().then(() => {
-            loadLogs();
-            loadConfig();
-        });
+        loadLogs();
+        loadConfig();
         const interval = setInterval(loadLogs, 15000); // Poll every 15s
         return () => clearInterval(interval);
     }, []);
 
     const filteredLogs = logs.filter(log => {
         if (filter !== "ALL" && log.type !== filter) return false;
-        if (searchTerm && !log.event.toLowerCase().includes(searchTerm.toLowerCase()) && !(log.message || "").toLowerCase().includes(searchTerm.toLowerCase())) return false;
+        if (searchTerm && !log.event.toLowerCase().includes(searchTerm.toLowerCase()) && !log.message.toLowerCase().includes(searchTerm.toLowerCase())) return false;
         return true;
     });
 
@@ -263,12 +247,12 @@ export default function MasterLogsPage() {
                                     <input
                                         type="text"
                                         value={config?.version || ""}
-                                        onChange={(e) => setConfig(prev => prev ? { ...prev, version: e.target.value } : null)}
+                                        onChange={(e) => setConfig({ ...config, version: e.target.value })}
                                         placeholder="v2.1.0"
                                         className="flex-1 bg-black/40 border border-white/10 rounded-xl py-4 px-6 text-sm font-mono font-black text-emerald-400 focus:outline-none focus:border-emerald-500/50 transition-all"
                                     />
                                     <button
-                                        onClick={() => config && handleUpdateSetting("version", config.version)}
+                                        onClick={() => handleUpdateSetting("version", config.version)}
                                         disabled={saving}
                                         className="px-8 py-4 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-400 transition-all flex items-center gap-2 disabled:opacity-50"
                                     >

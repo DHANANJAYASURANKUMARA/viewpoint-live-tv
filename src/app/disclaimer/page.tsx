@@ -32,7 +32,7 @@ export default function DisclaimerPage() {
                             <span className="w-8 h-[1px] bg-emerald-500/30" /> 01. No Transmission Warranties
                         </h2>
                         <p className="text-xs leading-relaxed text-slate-400 uppercase tracking-widest">
-                            The signals provided via VIEWPOINT are transmitted &quot;as is&quot; and &quot;as available&quot;. We make no warranties, expressed or implied, regarding the stability, quality, or continuous availability of any third-party broadcast feed. Expect atmospheric interference during neural peak times.
+                            The signals provided via VIEWPOINT are transmitted "as is" and "as available". We make no warranties, expressed or implied, regarding the stability, quality, or continuous availability of any third-party broadcast feed. Expect atmospheric interference during neural peak times.
                         </p>
                     </section>
 
@@ -74,7 +74,7 @@ export default function DisclaimerPage() {
 
                 {/* Footer Seal */}
                 <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 opacity-30">
-                    <span className="text-[8px] font-black uppercase tracking-[0.5em]">&copy; 2026 Viewpoint Neural Systems • All Hands Cautioned</span>
+                    <span className="text-[8px] font-black uppercase tracking-[0.5em]">© 2026 Viewpoint Neural Systems • All Hands Cautioned</span>
                     <Activity size={20} className="text-emerald-500" />
                 </div>
             </div>

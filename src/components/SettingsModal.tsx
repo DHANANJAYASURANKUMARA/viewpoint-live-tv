@@ -53,7 +53,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 1024);
-        Promise.resolve().then(() => handleResize());
+        handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
@@ -65,12 +65,10 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
-                Promise.resolve().then(() => {
-                    setSettings(prev => ({
-                        ...prev,
-                        ...parsed
-                    }));
-                });
+                setSettings(prev => ({
+                    ...prev,
+                    ...parsed
+                }));
             } catch { /* ignore */ }
         }
     }, [isOpen]);

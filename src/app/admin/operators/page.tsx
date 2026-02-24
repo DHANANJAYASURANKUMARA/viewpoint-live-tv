@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import {
-    Users, UserPlus, ShieldCheck, Trash2,
-    Search, Eye, EyeOff, Key, Copy, Check, Star, Ban,
-    ShieldAlert, AlertTriangle
+    Users, UserPlus, Shield, ShieldAlert, ShieldCheck, Trash2,
+    Search, Eye, EyeOff, RefreshCw, Lock, AlertTriangle, Star,
+    Ban, Activity, Key, Copy, Check
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    getOperators
+    getOperators,
+    manageOperator
 } from "@/lib/actions";
 import {
     manageOperatorFull,
@@ -52,23 +53,20 @@ export default function OperatorManagementPage() {
     const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
 
+    useEffect(() => {
+        const auth = localStorage.getItem("vpoint-admin-auth");
+        if (auth) {
+            try { setCurrentActor(JSON.parse(auth)); } catch { }
+        }
+        loadOperators();
+    }, []);
+
     const loadOperators = async () => {
         setLoading(true);
         const data = await getOperators();
         setOperators(data as Operator[]);
         setLoading(false);
     };
-
-    useEffect(() => {
-        const auth = localStorage.getItem("vpoint-admin-auth");
-        if (auth) {
-            try {
-                const parsed = JSON.parse(auth);
-                Promise.resolve().then(() => setCurrentActor(parsed));
-            } catch { }
-        }
-        Promise.resolve().then(() => loadOperators());
-    }, []);
 
     const openAddModal = () => {
         setEditOp({ id: "", name: "", loginId: "", password: "", role: "Operator", status: "Active" });

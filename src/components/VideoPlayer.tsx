@@ -67,10 +67,8 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
     useEffect(() => {
         // Use functional updates or refs if these need to be sync but avoid cascading if possible
         // These are fine as they only run when URL changes
-        Promise.resolve().then(() => {
-            setError(null);
-            setIsReady(false);
-        });
+        setError(null);
+        setIsReady(false);
         return () => {
             if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
         };
@@ -101,18 +99,16 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                 const parsed = JSON.parse(saved);
                 // We use a slight delay or conditional to avoid the "cascading render" warning if it's considered heavy
                 // but for small settings objects it's usually acceptable although frowned upon by newer lint rules.
-                Promise.resolve().then(() => {
-                    setSettings(prev => ({
-                        ...prev,
-                        lowLatency: parsed.lowLatency ?? prev.lowLatency,
-                        maxBufferLength: parsed.maxBufferLength ?? prev.maxBufferLength,
-                        dataSaver: parsed.dataSaver ?? prev.dataSaver,
-                        performanceProfile: (parsed.performanceProfile as "lowLatency" | "balanced" | "highQuality") ?? prev.performanceProfile
-                    }));
-                    if (parsed.neuralHud !== undefined) {
-                        setShowTechStats(parsed.neuralHud);
-                    }
-                });
+                setSettings(prev => ({
+                    ...prev,
+                    lowLatency: parsed.lowLatency ?? prev.lowLatency,
+                    maxBufferLength: parsed.maxBufferLength ?? prev.maxBufferLength,
+                    dataSaver: parsed.dataSaver ?? prev.dataSaver,
+                    performanceProfile: (parsed.performanceProfile as "lowLatency" | "balanced" | "highQuality") ?? prev.performanceProfile
+                }));
+                if (parsed.neuralHud !== undefined) {
+                    setShowTechStats(parsed.neuralHud);
+                }
             } catch { /* ignore parse error */ }
         }
 

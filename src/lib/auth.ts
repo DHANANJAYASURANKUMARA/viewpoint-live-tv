@@ -23,10 +23,9 @@ export async function registerUser(name: string, email: string, password: string
             success: true,
             user: { id: result[0].id, name: result[0].name, email: result[0].email }
         };
-    } catch (error: unknown) {
-        const e = error as Error;
-        console.error("Registration failed:", e);
-        return { success: false, error: e?.message || "Registration failed." };
+    } catch (error: any) {
+        console.error("Registration failed:", error);
+        return { success: false, error: error?.message || "Registration failed." };
     }
 }
 
@@ -61,9 +60,8 @@ export async function loginUser(email: string, password: string, device?: string
             success: true,
             user: { id: user.id, name: user.name, email: user.email }
         };
-    } catch (error: unknown) {
-        const e = error as Error;
-        console.error("Login failed:", e);
-        return { success: false, error: e?.message || "Login failed." };
+    } catch (error: any) {
+        console.error("Login failed:", error);
+        return { success: false, error: error?.message || "Login failed." };
     }
 }

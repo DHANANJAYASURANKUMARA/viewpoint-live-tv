@@ -24,7 +24,7 @@ export default function ContactPage() {
                     </div>
                     <h1 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter">Get In <span className="text-neon-cyan">Touch</span></h1>
                     <p className="text-sm text-slate-400 leading-relaxed">
-                        Have questions about our free live TV streaming service? Want to report an issue, request a channel, or partner with us? We&apos;d love to hear from you.
+                        Have questions about our free live TV streaming service? Want to report an issue, request a channel, or partner with us? We'd love to hear from you.
                     </p>
                 </div>
 
@@ -77,7 +77,7 @@ export default function ContactPage() {
                             { q: "Is VIEWPOINT really free?", a: "Yes! VIEWPOINT is a completely free live TV streaming platform. No subscription, no credit card, no registration required to watch live channels." },
                             { q: "Can I watch T20 World Cup live for free?", a: "Yes, we stream major cricket tournaments including the T20 World Cup, IPL, and other international cricket series for free in HD." },
                             { q: "Which devices support VIEWPOINT?", a: "VIEWPOINT works on any device with a web browser — smartphone, tablet, laptop, PC, or smart TV. We also have an Android app available." },
-                            { q: "How do I report a broken channel?", a: "Email us at supportviewpointlivetv@gmail.com with the channel name and we&apos;ll fix it within 24 hours." },
+                            { q: "How do I report a broken channel?", a: "Email us at supportviewpointlivetv@gmail.com with the channel name and we'll fix it within 24 hours." },
                         ].map(({ q, a }) => (
                             <div key={q} className="border-b border-white/5 pb-4">
                                 <h3 className="text-xs font-black text-white mb-2 uppercase tracking-wide">{q}</h3>

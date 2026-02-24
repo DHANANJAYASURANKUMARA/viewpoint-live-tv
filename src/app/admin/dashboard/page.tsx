@@ -20,21 +20,15 @@ import {
     Database
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getChannels, getOperators, getNotifications, getSettings, createChannel, getDbStats, updateChannel, deleteChannel } from "@/lib/actions";
-import { getAdminLogs } from "@/lib/adminAuth";
+import { getDbStats, getChannels, updateChannel, deleteChannel, addChannel } from "@/lib/actions";
 import { useConfig } from "@/components/ConfigContext";
 
 export default function AdminDashboard() {
     const router = useRouter();
     const [isMounted, setIsMounted] = useState(false);
 
-    const [dbStats, setDbStats] = useState<{
-        channels: number;
-        operators: number;
-        favorites: number;
-        settings: number;
-    } | null>(null);
-    const [channels, setChannels] = useState<any[]>([]); // Keep any[] for complex Drizzle rows if needed, or refine
+    const [dbStats, setDbStats] = useState<any>(null);
+    const [channels, setChannels] = useState<any[]>([]);
     const { config, updateConfig } = useConfig();
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -62,7 +56,8 @@ export default function AdminDashboard() {
         if (!auth) {
             router.push("/admin/login");
         }
-        Promise.resolve().then(() => loadData());
+
+        loadData();
     }, [router]);
 
     const handleUpdateSignal = async () => {
@@ -89,9 +84,9 @@ export default function AdminDashboard() {
             url: newSignal.url,
             category: newSignal.category,
             status: newSignal.status,
-            scheduledAt: newSignal.status === 'Scheduled' ? new Date(newSignal.scheduledAt) : null
+            scheduledAt: newSignal.status === 'Scheduled' ? new Date(newSignal.scheduledAt).toISOString() : null
         };
-        const res = await createChannel(payload);
+        const res = await addChannel(payload);
         if (res.success) {
             setIsAddModalOpen(false);
             setNewSignal({ name: "", url: "", category: "Entertainment", status: "Live", scheduledAt: "" });

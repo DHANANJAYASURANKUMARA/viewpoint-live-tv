@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { X, User, Facebook, Twitter, Linkedin, Instagram, MapPin, UserPlus, MessageSquare, Shield, ShieldAlert, Globe } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { getUserProfile, sendFriendRequest, handleFriendRequest, getFriends } from "@/lib/actions";
 
 interface ProfileModalProps {
@@ -13,15 +13,21 @@ interface ProfileModalProps {
 }
 
 export default function ProfileModal({ userId, currentUser, isOpen, onClose }: ProfileModalProps) {
-    const [profile, setProfile] = useState<Record<string, any> | null>(null);
+    const [profile, setProfile] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [friendshipStatus, setFriendshipStatus] = useState<string | null>(null);
-    const [friendshipRelation, setFriendshipRelation] = useState<Record<string, any> | null>(null);
+    const [friendshipRelation, setFriendshipRelation] = useState<any>(null);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    const loadProfile = React.useCallback(async () => {
+    useEffect(() => {
+        if (isOpen && userId) {
+            loadProfile();
+        }
+    }, [isOpen, userId]);
+
+    const loadProfile = async () => {
         setLoading(true);
-        const data = await getUserProfile(userId) as Record<string, any>;
+        const data = await getUserProfile(userId) as any;
         if (data) {
             // Parse social links
             try {
@@ -35,17 +41,11 @@ export default function ProfileModal({ userId, currentUser, isOpen, onClose }: P
             // Check friendship
             const friends = await getFriends(currentUser.id);
             const relation = friends.find(f => f.requesterId === userId || f.receiverId === userId);
-            setFriendshipRelation(relation || null);
+            setFriendshipRelation(relation);
             setFriendshipStatus(relation ? relation.status : null);
         }
         setLoading(false);
-    }, [userId, currentUser.id]);
-
-    useEffect(() => {
-        if (isOpen && userId) {
-            Promise.resolve().then(() => loadProfile());
-        }
-    }, [isOpen, userId, loadProfile]);
+    };
 
     const handleAddFriend = async () => {
         setIsProcessing(true);

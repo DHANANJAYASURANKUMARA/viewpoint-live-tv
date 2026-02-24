@@ -19,28 +19,17 @@ export default function WatchPage() {
     const [showChat, setShowChat] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
 
-    const handleResize = React.useCallback(() => {
-        const mobile = window.innerWidth < 1024;
-        setIsMobile(mobile);
-        // Default chat state: visible on desktop, hidden on mobile initially for better focus
-        if (mobile) setShowChat(false);
-        else setShowChat(true);
-    }, []);
-
     useEffect(() => {
-        Promise.resolve().then(() => handleResize());
+        const handleResize = () => {
+            const mobile = window.innerWidth < 1024;
+            setIsMobile(mobile);
+            // Default chat state: visible on desktop, hidden on mobile initially for better focus
+            if (mobile) setShowChat(false);
+            else setShowChat(true);
+        };
+        handleResize();
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
-    }, [handleResize]);
-
-    const handleChannelSelect = React.useCallback((e: Event) => {
-        const detail = (e as CustomEvent).detail;
-        if (detail?.url) {
-            setCurrentUrl(detail.url);
-            setCurrentTitle(detail.name || "Custom Stream");
-            setCurrentSniMask(detail.sniMask || "");
-            setCurrentProxyActive(!!detail.proxyActive);
-        }
     }, []);
 
     useEffect(() => {
@@ -52,20 +41,28 @@ export default function WatchPage() {
         }
         try {
             const user = JSON.parse(session);
-            Promise.resolve().then(() => {
-                setIsAuthenticated(true);
-                setUserName(user.displayName || user.name || "User");
-                setUserId(user.id);
-            });
+            setIsAuthenticated(true);
+            setUserName(user.displayName || user.name || "User");
+            setUserId(user.id);
         } catch {
             localStorage.removeItem("vpoint-user");
             router.push("/login");
             return;
         }
 
+        const handleChannelSelect = (e: any) => {
+            const detail = (e as CustomEvent).detail;
+            if (detail?.url) {
+                setCurrentUrl(detail.url);
+                setCurrentTitle(detail.name || "Custom Stream");
+                setCurrentSniMask(detail.sniMask || "");
+                setCurrentProxyActive(!!detail.proxyActive);
+            }
+        };
+
         window.addEventListener("vpoint-channel-select", handleChannelSelect);
         return () => window.removeEventListener("vpoint-channel-select", handleChannelSelect);
-    }, [router, handleChannelSelect]);
+    }, [router]);
 
     if (!isAuthenticated) {
         return (

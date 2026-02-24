@@ -10,6 +10,8 @@ import {
     ShieldAlert,
     Link as LinkIcon,
     Calendar,
+    ChevronRight,
+    Play,
     Eye,
     EyeOff,
     RefreshCw,
@@ -21,7 +23,7 @@ import {
     Zap
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getChannels, createChannel, updateChannel, deleteChannel, seedChannels, bulkMaskChannels } from "@/lib/actions";
+import { getChannels, addChannel, updateChannel, deleteChannel, seedChannels, bulkMaskChannels } from "@/lib/actions";
 import { initialChannels } from "@/lib/constants";
 
 interface Signal {
@@ -56,16 +58,16 @@ export default function SignalControlPage() {
         scheduledAt: ""
     });
 
+    useEffect(() => {
+        loadSignals();
+    }, []);
+
     const loadSignals = async () => {
         setLoading(true);
         const data = await getChannels();
         setSignals(data as Signal[]);
         setLoading(false);
     };
-
-    useEffect(() => {
-        Promise.resolve().then(() => loadSignals());
-    }, []);
 
     const handleBulkSync = async () => {
         setSyncing(true);
@@ -75,12 +77,12 @@ export default function SignalControlPage() {
         if (res.success) {
             alert(`Institutional Signal Sync Complete. ${res.count} new nodes established.`);
         } else {
-            alert(`Signal Sync Failed: ${(res as { error?: string }).error || 'Unknown error'}`);
+            alert(`Signal Sync Failed: ${(res as any).error || 'Unknown error'}`);
         }
     };
 
     const handleAddSignal = async () => {
-        const newChannel = {
+        const payload = {
             id: Date.now().toString(),
             name: newSignal.name.toUpperCase(),
             url: newSignal.url,
@@ -88,9 +90,9 @@ export default function SignalControlPage() {
             sniMask: newSignal.sniMask,
             proxyActive: newSignal.proxyActive,
             status: newSignal.status,
-            scheduledAt: newSignal.status === 'Scheduled' ? new Date(newSignal.scheduledAt) : null
+            scheduledAt: newSignal.status === 'Scheduled' ? new Date(newSignal.scheduledAt).toISOString() : null
         };
-        const res = await createChannel(newChannel);
+        const res = await addChannel(payload);
         if (res.success) {
             setIsAddModalOpen(false);
             setNewSignal({ name: "", url: "", category: "Entertainment", sniMask: "", proxyActive: false, status: "Live", scheduledAt: "" });
@@ -102,11 +104,10 @@ export default function SignalControlPage() {
 
     const handleUpdateSignal = async () => {
         if (!editingSignal) return;
-        const payload = {
-            ...editingSignal,
-            status: "Operational",
-            scheduledAt: editingSignal.scheduledAt ? new Date(editingSignal.scheduledAt) : null
-        } as any; // Cast as any to satisfy the complex Partial mismatch while maintaining data integrity
+        const payload = { ...editingSignal };
+        if (payload.status === 'Scheduled' && payload.scheduledAt) {
+            payload.scheduledAt = new Date(payload.scheduledAt).toISOString();
+        }
         const res = await updateChannel(editingSignal.id, payload);
         if (res.success) {
             setIsEditModalOpen(false);
