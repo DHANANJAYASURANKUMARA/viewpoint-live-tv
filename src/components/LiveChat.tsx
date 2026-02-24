@@ -93,93 +93,120 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
     };
 
     const [selectedProfile, setSelectedProfile] = useState<any | null>(null);
+    const [hearts, setHearts] = useState<{ id: number; x: number; color: string }[]>([]);
 
     const handleShowProfile = async (userId: string) => {
         const profile = await getUserProfile(userId);
         setSelectedProfile(profile);
     };
 
+    const triggerHearts = () => {
+        const id = Date.now();
+        const colors = ["#00f2ff", "#ff0055", "#7000ff", "#00ff88"];
+        const newHeart = {
+            id,
+            x: Math.random() * 60 - 30, // Random drift
+            color: colors[Math.floor(Math.random() * colors.length)]
+        };
+        setHearts(prev => [...prev, newHeart]);
+        setTimeout(() => {
+            setHearts(prev => prev.filter(h => h.id !== id));
+        }, 3000);
+    };
+
     if (isHidden) {
         return (
             <button
                 onClick={() => setIsHidden(false)}
-                className="fixed right-6 bottom-32 w-10 h-10 bg-white/5 text-white/40 rounded-xl flex items-center justify-center border border-white/10 hover:bg-neon-magenta hover:text-white hover:border-neon-magenta/50 transition-all z-50 lg:relative lg:right-0 lg:bottom-0 lg:h-12 lg:w-12 lg:rounded-2xl group"
-                title="Expand Neural Chat"
+                className="fixed right-6 bottom-32 w-12 h-12 bg-white/5 text-neon-magenta rounded-full flex items-center justify-center border border-neon-magenta/30 hover:bg-neon-magenta hover:text-white transition-all z-50 lg:relative lg:right-0 lg:bottom-0 group"
+                title="Open Matrix Chat"
             >
                 <div className="absolute inset-0 bg-neon-magenta/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                <MessageCircle size={18} className="relative z-10" />
+                <MessageCircle size={20} className="relative z-10" />
             </button>
         );
     }
 
     return (
-        <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex flex-col h-[500px] lg:h-full w-full lg:w-[400px] glass border border-white/10 rounded-[2.5rem] overflow-hidden bg-white/[0.02] backdrop-blur-3xl shrink-0 relative"
-        >
-            {/* Header */}
-            <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-neon-magenta/20 flex items-center justify-center text-neon-magenta border border-neon-magenta/20">
-                        <MessageCircle size={16} />
-                    </div>
-                    <div>
-                        <h3 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">Neural Chat</h3>
-                        <p className="text-[8px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5">
-                            <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                            Live Transmission
-                        </p>
-                    </div>
+        <div className="flex flex-col h-[400px] lg:h-[70%] w-full lg:w-[350px] shrink-0 relative lg:absolute lg:right-10 lg:bottom-10 z-40">
+            {/* Heart Burst Container */}
+            <div className="absolute right-4 bottom-24 w-20 h-64 pointer-events-none overflow-hidden z-20">
+                <AnimatePresence>
+                    {hearts.map(heart => (
+                        <motion.div
+                            key={heart.id}
+                            initial={{ y: 0, opacity: 1, x: heart.x, scale: 0.5 }}
+                            animate={{ y: -300, opacity: 0, x: heart.x + (Math.random() * 40 - 20), scale: 1.5 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 2.5, ease: "easeOut" }}
+                            className="absolute bottom-0 left-1/2 -translate-x-1/2"
+                        >
+                            <Heart size={24} color={heart.color} fill={heart.color} className="drop-shadow-[0_0_10px_rgba(0,255,255,0.5)]" />
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
+            </div>
+
+            {/* Header (Compact) */}
+            <div className="p-4 flex items-center justify-between pointer-events-auto">
+                <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-neon-magenta animate-pulse" />
+                    <span className="text-[10px] font-black text-white uppercase tracking-[0.2em] drop-shadow-lg">Neural Stream Chat</span>
                 </div>
                 <button
                     onClick={() => setIsHidden(true)}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-600 hover:text-white hover:bg-white/5 transition-all"
-                    title="Minimize"
+                    className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 text-white/40 hover:text-white transition-all border border-white/10"
                 >
-                    <X size={14} />
+                    <X size={12} />
                 </button>
             </div>
 
-            {/* Messages Area */}
+            {/* Messages Area (TikTok Style) */}
             <div
                 ref={scrollRef}
-                className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar"
+                className="flex-1 overflow-y-auto px-4 space-y-3 flex flex-col custom-scrollbar pointer-events-auto mask-fade-top"
+                style={{
+                    maskImage: 'linear-gradient(to top, black 85%, transparent 100%)',
+                    WebkitMaskImage: 'linear-gradient(to top, black 85%, transparent 100%)'
+                }}
             >
+                <div className="flex-1" /> {/* Push messages to bottom */}
                 {messages.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-center space-y-3 opacity-20">
-                        <MessageCircle size={40} className="text-slate-500" />
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Awaiting signal fragments...</p>
+                    <div className="flex flex-col items-center justify-center text-center space-y-2 py-10 opacity-30">
+                        <MessageCircle size={30} className="text-slate-500" />
+                        <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Awaiting signal fragments...</p>
                     </div>
                 ) : (
                     messages.map((msg) => (
-                        <div key={msg.id} className="space-y-2 group">
-                            {msg.parentId && (
-                                <div className="ml-4 pl-4 border-l border-white/10 text-[9px] text-slate-500 italic mb-1 flex items-center gap-2">
-                                    <Reply size={10} className="rotate-180" />
-                                    Replying to a thought
-                                </div>
-                            )}
-                            <div className="flex gap-4">
-                                <button
-                                    onClick={() => handleShowProfile(msg.userId)}
-                                    className="w-8 h-8 rounded-lg bg-black/40 border border-white/5 flex items-center justify-center shrink-0 overflow-hidden hover:border-neon-cyan/50 transition-colors"
-                                >
-                                    {msg.user?.profilePicture ? (
-                                        <img src={msg.user.profilePicture} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <User size={14} className="text-slate-700" />
-                                    )}
-                                </button>
-                                <div className="space-y-1.5 flex-1 min-w-0">
-                                    <div className="flex items-center justify-between">
+                        <motion.div
+                            key={msg.id}
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            className="flex items-start gap-3 group"
+                        >
+                            <button
+                                onClick={() => handleShowProfile(msg.userId)}
+                                className="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden shrink-0 hover:border-neon-cyan transition-colors"
+                            >
+                                {msg.user?.profilePicture ? (
+                                    <img src={msg.user.profilePicture} className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="w-full h-full bg-white/5 flex items-center justify-center text-slate-600">
+                                        <User size={14} />
+                                    </div>
+                                )}
+                            </button>
+
+                            <div className="flex flex-col gap-1 max-w-[85%]">
+                                <div className="bg-black/40 backdrop-blur-md border border-white/5 rounded-2xl rounded-tl-none p-3 relative group">
+                                    <div className="flex items-center gap-2 mb-1">
                                         <button
                                             onClick={() => handleShowProfile(msg.userId)}
-                                            className="text-[10px] font-black text-white hover:text-neon-cyan transition-colors uppercase tracking-tight truncate max-w-[120px]"
+                                            className="text-[10px] font-black text-neon-cyan uppercase tracking-tighter"
                                         >
                                             {msg.user?.displayName || msg.user?.name}
                                         </button>
-                                        <span className="text-[7px] text-slate-600 font-black uppercase">
+                                        <span className="text-[7px] text-slate-600 font-bold">
                                             {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                     </div>
@@ -189,172 +216,151 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                                             <textarea
                                                 value={editContent}
                                                 onChange={(e) => setEditContent(e.target.value)}
-                                                className="w-full bg-black/40 border border-neon-cyan/30 rounded-xl p-3 text-[11px] text-white focus:outline-none"
+                                                className="w-full bg-black/40 border border-neon-cyan/30 rounded-xl p-2 text-[11px] text-white focus:outline-none"
                                             />
                                             <div className="flex gap-2">
-                                                <button onClick={() => handleUpdate(msg.id)} className="px-3 py-1 bg-neon-cyan text-black rounded-lg text-[8px] font-black uppercase">Sync</button>
-                                                <button onClick={() => setEditingId(null)} className="px-3 py-1 bg-white/5 text-white rounded-lg text-[8px] font-black uppercase">Abort</button>
+                                                <button onClick={() => handleUpdate(msg.id)} className="px-2 py-0.5 bg-neon-cyan text-black rounded text-[8px] font-black uppercase">Sync</button>
+                                                <button onClick={() => setEditingId(null)} className="px-2 py-0.5 bg-white/5 text-white rounded text-[8px] font-black uppercase">Abort</button>
                                             </div>
                                         </div>
                                     ) : (
-                                        <p className="text-[12px] text-slate-400 leading-relaxed break-words font-medium">
+                                        <p className="text-[11px] text-slate-100/90 leading-snug font-medium break-words">
                                             {msg.content}
                                         </p>
                                     )}
 
-                                    <div className="flex items-center gap-4 pt-1 transition-opacity">
+                                    {/* Quick Actions (Hover) */}
+                                    <div className="absolute -right-2 top-0 flex flex-col gap-2 translate-x-full opacity-0 group-hover:opacity-100 transition-opacity pl-2">
                                         <button
-                                            onClick={() => handleToggleLike(msg.id)}
-                                            className={`flex items-center gap-1 text-[8px] font-black uppercase tracking-widest ${msg.hasLiked ? 'text-neon-magenta' : 'text-slate-600 hover:text-slate-400'}`}
+                                            onClick={() => {
+                                                handleToggleLike(msg.id);
+                                                if (!msg.hasLiked) triggerHearts();
+                                            }}
+                                            className={`p-1.5 rounded-full bg-black/60 border border-white/10 transition-colors ${msg.hasLiked ? 'text-neon-magenta border-neon-magenta/30' : 'text-slate-400 hover:text-white'}`}
                                         >
-                                            <Heart size={10} className={msg.hasLiked ? 'fill-neon-magenta' : ''} />
-                                            {msg.likes}
+                                            <Heart size={12} fill={msg.hasLiked ? "currentColor" : "none"} />
                                         </button>
                                         <button
                                             onClick={() => setReplyTo(msg)}
-                                            className="text-[8px] font-black text-slate-600 hover:text-white uppercase tracking-widest flex items-center gap-1"
+                                            className="p-1.5 rounded-full bg-black/60 border border-white/10 text-slate-400 hover:text-white"
                                         >
-                                            <Reply size={10} />
-                                            Reply
+                                            <Reply size={12} />
                                         </button>
-                                        {msg.userId === currentUser?.id && !editingId && (
-                                            <>
-                                                <button
-                                                    onClick={() => {
-                                                        setEditingId(msg.id);
-                                                        setEditContent(msg.content);
-                                                    }}
-                                                    className="text-[8px] font-black text-slate-600 hover:text-neon-cyan uppercase tracking-widest"
-                                                >
-                                                    <Edit3 size={10} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(msg.id)}
-                                                    className="text-[8px] font-black text-slate-600 hover:text-red-500 uppercase tracking-widest"
-                                                >
-                                                    <Trash2 size={10} />
-                                                </button>
-                                            </>
-                                        )}
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
                     ))
                 )}
             </div>
 
-            {/* Profile Popup Overlay */}
-            <AnimatePresence>
-                {selectedProfile && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        className="absolute inset-x-6 top-1/4 z-50 glass p-8 rounded-[2rem] border border-white/20 shadow-2xl bg-black/60 backdrop-blur-3xl space-y-6"
-                    >
-                        <button
-                            onClick={() => setSelectedProfile(null)}
-                            className="absolute right-4 top-4 p-2 text-slate-500 hover:text-white"
-                        >
-                            <X size={16} />
-                        </button>
-
-                        <div className="flex flex-col items-center text-center space-y-4">
-                            <div className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-neon-cyan/20 to-neon-magenta/20 p-1">
-                                <div className="w-full h-full rounded-[1.8rem] bg-black border border-white/10 overflow-hidden">
-                                    {selectedProfile.profilePicture ? (
-                                        <img src={selectedProfile.profilePicture} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-slate-700">
-                                            <User size={32} />
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="space-y-1">
-                                <h4 className="text-white font-black uppercase tracking-widest text-sm">
-                                    {selectedProfile.displayName || selectedProfile.name}
-                                </h4>
-                                <p className="text-neon-cyan text-[8px] font-black uppercase tracking-[0.3em]">Neural Resident</p>
-                            </div>
-
-                            {selectedProfile.bio ? (
-                                <p className="text-slate-400 text-[10px] leading-relaxed italic px-4">
-                                    "{selectedProfile.bio}"
-                                </p>
-                            ) : (
-                                <p className="text-slate-600 text-[10px] italic">Fragment protocol undefined.</p>
-                            )}
-
-                            <div className="pt-4 border-t border-white/5 w-full">
-                                <div className="flex justify-center gap-6">
-                                    {/* Social Links Summary */}
-                                    {selectedProfile.socialLinks && (
-                                        (() => {
-                                            try {
-                                                const links = JSON.parse(selectedProfile.socialLinks);
-                                                return Object.entries(links).map(([platform, url]: [any, any]) => (
-                                                    <span key={platform} className="text-[9px] font-black text-slate-500 uppercase tracking-widest hover:text-neon-cyan cursor-default">
-                                                        {platform}
-                                                    </span>
-                                                ));
-                                            } catch { return null; }
-                                        })()
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
             {/* Input Area */}
-            <div className="p-6 bg-white/[0.01] border-t border-white/5 space-y-4">
+            <div className="p-4 space-y-3 pointer-events-auto">
                 <AnimatePresence>
                     {replyTo && (
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
-                            className="p-3 bg-neon-magenta/5 border border-neon-magenta/10 rounded-2xl flex items-center justify-between"
+                            className="bg-black/60 backdrop-blur-xl border border-white/10 rounded-xl p-2 flex items-center justify-between"
                         >
-                            <div className="flex items-center gap-2">
-                                <Reply size={12} className="text-neon-magenta" rotate={180} />
-                                <span className="text-[9px] text-slate-500 font-black uppercase">
-                                    Replying to <span className="text-white">{replyTo.user?.displayName || replyTo.user?.name}</span>
-                                </span>
-                            </div>
-                            <button onClick={() => setReplyTo(null)} className="text-slate-600 hover:text-white">
-                                <X size={12} />
+                            <span className="text-[8px] text-slate-500 font-black uppercase flex items-center gap-2 px-2">
+                                <Reply size={10} className="text-neon-magenta" rotate={180} />
+                                Replying to <span className="text-neon-cyan">{replyTo.user?.displayName || replyTo.user?.name}</span>
+                            </span>
+                            <button onClick={() => setReplyTo(null)} className="p-1 text-slate-600 hover:text-white">
+                                <X size={10} />
                             </button>
                         </motion.div>
                     )}
                 </AnimatePresence>
 
-                <div className="relative">
+                <div className="relative group">
+                    <div className="absolute inset-0 bg-neon-magenta/5 blur-xl group-focus-within:bg-neon-magenta/10 transition-all rounded-3xl" />
                     <textarea
                         value={inputText}
                         onChange={(e) => setInputText(e.target.value)}
-                        placeholder="Injet thought into matrix..."
-                        className="w-full bg-black/40 border border-white/5 rounded-2xl py-4 pl-5 pr-14 text-[11px] text-white focus:outline-none focus:border-neon-magenta/30 transition-all resize-none h-14 custom-scrollbar"
+                        placeholder="Say something..."
+                        className="w-full bg-black/60 backdrop-blur-2xl border border-white/10 rounded-2xl py-3 pl-4 pr-12 text-[12px] text-white focus:outline-none focus:border-neon-magenta/50 transition-all resize-none h-12 custom-scrollbar relative z-10"
                         onKeyDown={(e) => {
                             if (e.key === "Enter" && !e.shiftKey) {
                                 e.preventDefault();
                                 handleSend();
+                                triggerHearts();
                             }
                         }}
                     />
                     <button
-                        onClick={handleSend}
+                        onClick={() => {
+                            handleSend();
+                            triggerHearts();
+                        }}
                         disabled={!inputText.trim() || isSending}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-neon-magenta text-white rounded-xl hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,45,85,0.3)] disabled:opacity-30 disabled:hover:scale-100"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-neon-magenta text-white rounded-xl hover:scale-105 active:scale-95 transition-all shadow-[0_0_15px_rgba(255,45,85,0.4)] disabled:opacity-20 z-20"
                     >
-                        <Send size={16} />
+                        <Heart size={14} fill="currentColor" />
                     </button>
                 </div>
             </div>
-        </motion.div>
+
+            {/* Profile Popup Overlay (Refined) */}
+            <AnimatePresence>
+                {selectedProfile && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        className="absolute inset-x-4 bottom-20 z-50 glass p-6 rounded-[2rem] border border-white/10 bg-black/80 backdrop-blur-3xl shadow-2xl"
+                    >
+                        <button
+                            onClick={() => setSelectedProfile(null)}
+                            className="absolute right-4 top-4 p-1 text-slate-500 hover:text-white"
+                        >
+                            <X size={14} />
+                        </button>
+
+                        <div className="flex flex-col items-center text-center space-y-3">
+                            <div className="w-16 h-16 rounded-full border-2 border-neon-cyan p-0.5">
+                                <div className="w-full h-full rounded-full bg-black overflow-hidden">
+                                    {selectedProfile.profilePicture ? (
+                                        <img src={selectedProfile.profilePicture} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-slate-700">
+                                            <User size={24} />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="space-y-1">
+                                <h4 className="text-white font-black uppercase tracking-widest text-[12px]">
+                                    {selectedProfile.displayName || selectedProfile.name}
+                                </h4>
+                                <p className="text-neon-magenta text-[7px] font-black uppercase tracking-[0.3em]">Matrix Citizen</p>
+                            </div>
+
+                            <p className="text-slate-400 text-[10px] leading-relaxed italic px-2">
+                                {selectedProfile.bio || "Fragment protocol undefined."}
+                            </p>
+
+                            <div className="flex justify-center gap-4 pt-2 border-t border-white/5 w-full">
+                                {selectedProfile.socialLinks && (
+                                    (() => {
+                                        try {
+                                            const links = JSON.parse(selectedProfile.socialLinks);
+                                            return Object.entries(links).map(([platform, url]: [any, any]) => (
+                                                <span key={platform} className="text-[8px] font-black text-neon-cyan uppercase tracking-widest">
+                                                    {platform}
+                                                </span>
+                                            ));
+                                        } catch { return null; }
+                                    })()
+                                )}
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
     );
 }
