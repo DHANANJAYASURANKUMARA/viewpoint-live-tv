@@ -22,7 +22,8 @@ import {
     Minus,
     Sun,
     Contrast,
-    RotateCcw
+    RotateCcw,
+    X
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -87,6 +88,9 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
         // These are fine as they only run when URL changes
         setError(null);
         setIsReady(false);
+        setQualityLevels([]);
+        setCurrentQuality(-1);
+        setShowQualityMenu(false);
         return () => {
             if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
         };
@@ -646,6 +650,19 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                 )}
             </AnimatePresence>
 
+            {/* Settings Sidebar Backdrop */}
+            <AnimatePresence>
+                {showSettings && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowSettings(false)}
+                        className="absolute inset-0 bg-black/40 backdrop-blur-sm z-[90]"
+                    />
+                )}
+            </AnimatePresence>
+
             {/* Settings Sidebar */}
             <AnimatePresence>
                 {showSettings && (
@@ -668,8 +685,8 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
 
                             <div className="flex items-center justify-between">
                                 <h3 className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Neural Config</h3>
-                                <button onClick={() => setShowSettings(false)} className="text-white/30 hover:text-white transition-colors">
-                                    <RotateCcw size={16} />
+                                <button onClick={() => setShowSettings(false)} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all">
+                                    <X size={16} />
                                 </button>
                             </div>
 
