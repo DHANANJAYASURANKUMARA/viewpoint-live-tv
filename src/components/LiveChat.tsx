@@ -218,7 +218,12 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                             <div className="flex flex-col gap-1 max-w-[85%]">
                                 <div className="bg-black/20 backdrop-blur-sm rounded-xl p-2 relative">
                                     <p className="text-[10px] leading-tight">
-                                        <span className="font-black text-neon-cyan mr-1.5 capitalize">{msg.user?.displayName || msg.user?.name}</span>
+                                        <button
+                                            onClick={() => handleShowProfile(msg.userId)}
+                                            className="font-black text-neon-cyan mr-1.5 capitalize hover:text-white transition-colors active:scale-95"
+                                        >
+                                            {msg.user?.displayName || msg.user?.name}
+                                        </button>
                                         <span className="text-slate-100/90 font-medium break-words">{msg.content}</span>
                                     </p>
                                 </div>
