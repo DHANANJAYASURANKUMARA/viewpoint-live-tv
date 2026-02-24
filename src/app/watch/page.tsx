@@ -64,8 +64,8 @@ export default function WatchPage() {
     }
 
     return (
-        <div className="h-full w-full relative flex flex-col items-center justify-center p-4 overflow-hidden">
-            <div className="w-full flex-1 flex items-center justify-center min-w-0">
+        <div className="h-full w-full relative flex flex-col lg:flex-row items-stretch gap-4 p-4 lg:p-6 overflow-hidden">
+            <div className="flex-1 flex flex-col items-center justify-center min-w-0 bg-black/20 rounded-[2rem] lg:rounded-[3rem] border border-white/5 overflow-hidden">
                 <AnimatePresence mode="wait">
                     {currentUrl ? (
                         <motion.div

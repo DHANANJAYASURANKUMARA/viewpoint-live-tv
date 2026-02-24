@@ -158,7 +158,7 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
     };
 
     return (
-        <div className="flex flex-col h-[450px] lg:h-[70%] w-full lg:w-[340px] shrink-0 relative lg:absolute lg:right-6 lg:bottom-6 z-40 pointer-events-none">
+        <div className="flex flex-col h-[450px] lg:h-full w-full lg:w-[350px] shrink-0 relative lg:relative z-40">
             {/* Heart Burst Container */}
             <div className="absolute right-4 bottom-32 w-24 h-80 pointer-events-none overflow-hidden z-20">
                 <AnimatePresence mode="popLayout">
