@@ -29,9 +29,10 @@ interface VideoPlayerProps {
     title?: string;
     sniMask?: string;
     proxyActive?: boolean;
+    isPanel?: boolean;
 }
 
-export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxyActive }: VideoPlayerProps) {
+export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxyActive, isPanel }: VideoPlayerProps) {
     const [playing, setPlaying] = useState(true);
     const [volume, setVolume] = useState(0.8);
     const [muted, setMuted] = useState(true);
@@ -146,7 +147,7 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
 
     return (
         <div
-            className={`video-container relative w-full overflow-hidden glass shadow-[0_0_100px_rgba(0,0,0,0.6)] group border border-white/5 transition-all duration-700 ${isCinemaMode ? "z-[60] scale-105" : "rounded-none"} aspect-video`}
+            className={`video-container relative w-full overflow-hidden group transition-all duration-700 ${isCinemaMode ? "z-[60] scale-105" : (isPanel ? "rounded-none" : "glass shadow-[0_0_100px_rgba(0,0,0,0.6)] border border-white/5")} aspect-video`}
             onMouseMove={handleMouseMove}
             onMouseLeave={() => {
                 setShowControls(false);

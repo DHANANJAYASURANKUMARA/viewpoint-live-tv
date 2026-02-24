@@ -29,9 +29,10 @@ import {
 interface LiveChatProps {
     channelId: string;
     currentUser: any;
+    isPanel?: boolean;
 }
 
-export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
+export default function LiveChat({ channelId, currentUser, isPanel }: LiveChatProps) {
     const [messages, setMessages] = useState<any[]>([]);
     const [inputText, setInputText] = useState("");
     const [isSending, setIsSending] = useState(false);
@@ -134,6 +135,19 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
         }, 3000);
     };
 
+    if (isHidden) {
+        return (
+            <button
+                onClick={() => setIsHidden(false)}
+                className="fixed right-6 bottom-32 w-12 h-12 bg-white/5 text-neon-magenta rounded-full flex items-center justify-center border border-neon-magenta/30 hover:bg-neon-magenta hover:text-white transition-all z-50 lg:absolute lg:right-10 lg:bottom-10 group"
+                title="Open Matrix Chat"
+            >
+                <div className="absolute inset-0 bg-neon-magenta/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <MessageCircle size={20} className="relative z-10" />
+            </button>
+        );
+    }
+
     const [isDMAnimate, setIsDMAnimate] = useState(false);
 
     const handleDMTouch = () => {
@@ -145,7 +159,7 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
     };
 
     return (
-        <div className="flex flex-col h-full w-full bg-black/40 backdrop-blur-3xl rounded-[2rem] lg:rounded-[3rem] border border-white/5 shadow-2xl overflow-hidden relative z-40">
+        <div className={`flex flex-col h-full w-full shrink-0 relative z-40 ${isPanel ? "" : "lg:absolute lg:right-6 lg:bottom-6 lg:w-[340px] lg:h-[70%] pointer-events-none"}`}>
             {/* Heart Burst Container */}
             <div className="absolute right-4 bottom-32 w-24 h-80 pointer-events-none overflow-hidden z-20">
                 <AnimatePresence mode="popLayout">
