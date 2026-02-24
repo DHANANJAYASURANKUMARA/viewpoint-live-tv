@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import VideoPlayer from "@/components/VideoPlayer";
-import { Tv, MousePointer2, Shield } from "lucide-react";
+import { MousePointer2, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 
@@ -81,12 +81,7 @@ export default function WatchPage() {
                             exit={{ opacity: 0, scale: 0.95 }}
                             className="flex flex-col items-center justify-center text-center space-y-8 p-12 glass rounded-[3rem] border border-white/10"
                         >
-                            <div className="relative">
-                                <div className="absolute inset-0 bg-neon-cyan/20 blur-[60px] rounded-full animate-pulse" />
-                                <div className="relative w-24 h-24 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center shadow-2xl backdrop-blur-2xl">
-                                    <Tv size={48} className="text-neon-cyan animate-pulse" />
-                                </div>
-                            </div>
+                            <div className="relative h-12" />
 
                             <div className="space-y-3">
                                 <h2 className="text-3xl font-black text-white tracking-[0.1em] uppercase">
