@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "./db";
-import { channels, favorites, settings, operators, users, notifications } from "./schema";
+import { channels, favorites, settings, operators, users, notifications, posts, comments, postLikes } from "./schema";
 import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
@@ -485,5 +485,113 @@ export async function getUserProfile(userId: string) {
     } catch (error) {
         console.error("Failed to fetch user profile:", error);
         return null;
+    }
+}
+
+// Social Feed Actions
+export async function createPost(userId: string, content: string) {
+    try {
+        await db.insert(posts).values({ userId, content });
+        revalidatePath("/nexus");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to create post:", error);
+        return { success: false };
+    }
+}
+
+export async function getPosts(viewerId?: string) {
+    try {
+        const { desc } = require("drizzle-orm");
+        const allPosts = await db.select().from(posts).orderBy(desc(posts.createdAt));
+
+        // Enrich posts with user info, likes, and comments
+        const enrichedPosts = await Promise.all(allPosts.map(async (post) => {
+            const user = await db.select({ name: users.name, displayName: users.displayName, profilePicture: users.profilePicture })
+                .from(users).where(eq(users.id, post.userId)).limit(1);
+
+            const likesCount = await db.select().from(postLikes).where(eq(postLikes.postId, post.id));
+            const userHasLiked = viewerId ? (await db.select().from(postLikes).where(and(eq(postLikes.postId, post.id), eq(postLikes.userId, viewerId)))).length > 0 : false;
+
+            const postComments = await db.select().from(comments).where(eq(comments.postId, post.id)).orderBy(desc(comments.createdAt));
+            const enrichedComments = await Promise.all(postComments.map(async (comment) => {
+                const commentUser = await db.select({ name: users.name, displayName: users.displayName, profilePicture: users.profilePicture })
+                    .from(users).where(eq(users.id, comment.userId)).limit(1);
+                return { ...comment, user: commentUser[0] };
+            }));
+
+            return {
+                ...post,
+                user: user[0],
+                likes: likesCount.length,
+                hasLiked: userHasLiked,
+                comments: enrichedComments
+            };
+        }));
+
+        return enrichedPosts;
+    } catch (error) {
+        console.error("Failed to fetch posts:", error);
+        return [];
+    }
+}
+
+export async function updatePost(postId: string, content: string) {
+    try {
+        await db.update(posts).set({ content }).where(eq(posts.id, postId));
+        revalidatePath("/nexus");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update post:", error);
+        return { success: false };
+    }
+}
+
+export async function deletePost(postId: string) {
+    try {
+        await db.delete(posts).where(eq(posts.id, postId));
+        revalidatePath("/nexus");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete post:", error);
+        return { success: false };
+    }
+}
+
+export async function toggleLike(postId: string, userId: string) {
+    try {
+        const existing = await db.select().from(postLikes).where(and(eq(postLikes.postId, postId), eq(postLikes.userId, userId))).limit(1);
+        if (existing.length > 0) {
+            await db.delete(postLikes).where(and(eq(postLikes.postId, postId), eq(postLikes.userId, userId)));
+        } else {
+            await db.insert(postLikes).values({ postId, userId });
+        }
+        revalidatePath("/nexus");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to toggle like:", error);
+        return { success: false };
+    }
+}
+
+export async function addComment(postId: string, userId: string, content: string) {
+    try {
+        await db.insert(comments).values({ postId, userId, content });
+        revalidatePath("/nexus");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to add comment:", error);
+        return { success: false };
+    }
+}
+
+export async function deleteComment(commentId: string) {
+    try {
+        await db.delete(comments).where(eq(comments.id, commentId));
+        revalidatePath("/nexus");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete comment:", error);
+        return { success: false };
     }
 }

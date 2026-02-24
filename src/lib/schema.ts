@@ -83,3 +83,25 @@ export const notifications = pgTable("notifications", {
     isActive: boolean("is_active").default(true),
     createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const posts = pgTable("posts", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const comments = pgTable("comments", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    postId: uuid("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const postLikes = pgTable("post_likes", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    postId: uuid("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow(),
+});

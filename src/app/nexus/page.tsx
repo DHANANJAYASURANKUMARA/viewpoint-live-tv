@@ -18,11 +18,25 @@ import {
     Eye,
     EyeOff,
     Heart,
-    X
+    X,
+    MessageSquare,
+    ThumbsUp,
+    Trash2,
+    Edit3,
+    Send
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { updateUserProfile, getUserProfile } from "@/lib/actions";
+import {
+    updateUserProfile,
+    getUserProfile,
+    createPost,
+    getPosts,
+    toggleLike,
+    addComment,
+    deletePost,
+    updatePost
+} from "@/lib/actions";
 
 export default function NexusProfilePage() {
     const router = useRouter();
@@ -32,6 +46,15 @@ export default function NexusProfilePage() {
     const [status, setStatus] = useState<{ type: 'success' | 'error', msg: string } | null>(null);
     const [isBirthday, setIsBirthday] = useState(false);
     const [socialModal, setSocialModal] = useState<string | null>(null);
+
+    // Feed State
+    const [posts, setPosts] = useState<any[]>([]);
+    const [newPost, setNewPost] = useState("");
+    const [isPosting, setIsPosting] = useState(false);
+    const [activeTab, setActiveTab] = useState<'profile' | 'feed'>('profile');
+    const [commentTexts, setCommentTexts] = useState<Record<string, string>>({});
+    const [editingPost, setEditingPost] = useState<string | null>(null);
+    const [editContent, setEditContent] = useState("");
 
     useEffect(() => {
         const session = localStorage.getItem("vpoint-user");
@@ -68,8 +91,59 @@ export default function NexusProfilePage() {
                     setIsBirthday(true);
                 }
             }
+
+            // Fetch Feed
+            fetchFeed(userId);
         }
         setLoading(false);
+    };
+
+    const fetchFeed = async (userId: string) => {
+        const socialPosts = await getPosts(userId);
+        setPosts(socialPosts);
+    };
+
+    const handleCreatePost = async () => {
+        if (!newPost.trim() || !user) return;
+        setIsPosting(true);
+        const res = await createPost(user.id, newPost);
+        if (res.success) {
+            setNewPost("");
+            fetchFeed(user.id);
+        }
+        setIsPosting(false);
+    };
+
+    const handleToggleLike = async (postId: string) => {
+        if (!user) return;
+        const res = await toggleLike(postId, user.id);
+        if (res.success) fetchFeed(user.id);
+    };
+
+    const handleAddComment = async (postId: string) => {
+        const text = commentTexts[postId];
+        if (!text?.trim() || !user) return;
+        const res = await addComment(postId, user.id, text);
+        if (res.success) {
+            setCommentTexts({ ...commentTexts, [postId]: "" });
+            fetchFeed(user.id);
+        }
+    };
+
+    const handleDeletePost = async (postId: string) => {
+        if (confirm("De-materialize this thought?")) {
+            const res = await deletePost(postId);
+            if (res.success) fetchFeed(user.id);
+        }
+    };
+
+    const handleUpdatePost = async (postId: string) => {
+        if (!editContent.trim()) return;
+        const res = await updatePost(postId, editContent);
+        if (res.success) {
+            setEditingPost(null);
+            fetchFeed(user.id);
+        }
     };
 
     const handleSave = async () => {
@@ -176,154 +250,326 @@ export default function NexusProfilePage() {
                     </motion.div>
                 )}
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                    {/* Left: Avatar & Identity */}
-                    <div className="space-y-8">
-                        <div className="glass border border-white/10 rounded-[3rem] p-10 bg-white/[0.02] text-center space-y-6">
-                            <div className="relative inline-block group">
-                                <div className="w-32 h-32 rounded-[2.5rem] bg-black/40 border-2 border-dashed border-white/10 flex items-center justify-center text-slate-700 overflow-hidden">
-                                    {user?.profilePicture ? (
-                                        <img src={user.profilePicture} alt="Avatar" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <User size={48} />
-                                    )}
-                                </div>
-                                <input
-                                    type="file"
-                                    id="profile-upload"
-                                    className="hidden"
-                                    accept="image/*"
-                                    onChange={handleImageUpload}
-                                />
-                                <button
-                                    onClick={() => document.getElementById('profile-upload')?.click()}
-                                    className="absolute -bottom-2 -right-2 p-3 bg-white text-black rounded-2xl shadow-xl hover:scale-110 transition-transform z-10"
-                                >
-                                    <Camera size={16} />
-                                </button>
-                            </div>
-                            <div className="space-y-1 text-center w-full">
-                                <h3 className="text-xl font-black text-white uppercase truncate px-4">{user?.displayName || user?.name}</h3>
-                                <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest block text-center line-clamp-1 break-all px-2 overflow-hidden">{user?.email}</p>
-                            </div>
-                        </div>
-
-                        {/* Social Links Grid */}
-                        <div className="glass border border-white/10 rounded-[3rem] p-8 bg-white/[0.02] space-y-6">
-                            <h4 className="text-[10px] font-black text-white uppercase tracking-widest text-center">Social Interlinks</h4>
-                            <div className="grid grid-cols-2 gap-3">
-                                {[
-                                    { id: 'twt', icon: Twitter, color: 'text-blue-400', label: 'Twitter' },
-                                    { id: 'fb', icon: Facebook, color: 'text-blue-600', label: 'Facebook' },
-                                    { id: 'li', icon: LinkedIn, color: 'text-blue-700', label: 'LinkedIn' },
-                                    { id: 'ig', icon: Instagram, color: 'text-pink-500', label: 'Instagram' }
-                                ].map(soc => (
-                                    <div
-                                        key={soc.id}
-                                        onClick={() => setSocialModal(soc.id)}
-                                        className={`p-4 glass-dark border rounded-2xl flex flex-col items-center justify-center gap-2 group transition-all cursor-pointer ${user?.socialLinks?.[soc.id] ? 'border-neon-cyan/40 bg-neon-cyan/5' : 'border-white/5 hover:border-white/20'}`}
-                                    >
-                                        <soc.icon size={20} className={`${soc.color} group-hover:scale-110 transition-transform`} />
-                                        <span className="text-[7px] font-black uppercase tracking-widest text-slate-500">{soc.label}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Right: Data Entry */}
-                    <div className="lg:col-span-2 space-y-10">
-                        <div className="glass border border-white/10 rounded-[3rem] p-10 bg-white/[0.02] space-y-10">
-                            {/* Core Info */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-3">
-                                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2">Display Identification</label>
-                                    <div className="relative">
-                                        <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={16} />
-                                        <input
-                                            type="text"
-                                            value={user?.displayName || ""}
-                                            onChange={(e) => setUser({ ...user, displayName: e.target.value })}
-                                            className="w-full bg-black/40 border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-cyan/50 transition-all uppercase"
-                                            placeholder="NEXUS_OPERATOR_01"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="space-y-3">
-                                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2">Solar Iteration (Birthday)</label>
-                                    <div className="relative">
-                                        <Calendar className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={16} />
-                                        <input
-                                            type="date"
-                                            value={user?.birthday ? new Date(user.birthday).toISOString().split('T')[0] : ""}
-                                            onChange={(e) => setUser({ ...user, birthday: e.target.value })}
-                                            className="w-full bg-black/40 border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-cyan/50 transition-all uppercase"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Bio */}
-                            <div className="space-y-3">
-                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2">Neural Bio</label>
-                                <textarea
-                                    value={user?.bio || ""}
-                                    onChange={(e) => setUser({ ...user, bio: e.target.value })}
-                                    rows={4}
-                                    className="w-full bg-black/40 border border-white/5 rounded-[2rem] p-8 text-[11px] font-medium text-slate-400 focus:outline-none focus:border-neon-cyan/50 transition-all resize-none italic leading-relaxed"
-                                    placeholder="Tell the matrix about yourself..."
-                                />
-                            </div>
-
-                            {/* Hobbies & Interests */}
-                            <div className="space-y-3">
-                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2 flex items-center gap-2">
-                                    <Heart size={10} className="text-neon-magenta" /> Neural Interests & Hobbies
-                                </label>
-                                <input
-                                    type="text"
-                                    value={user?.hobbies || ""}
-                                    onChange={(e) => setUser({ ...user, hobbies: e.target.value })}
-                                    className="w-full bg-black/40 border border-white/5 rounded-2xl py-5 px-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-magenta/50 transition-all uppercase"
-                                    placeholder="CRICKET, CODING, CINEMATOGRAPHY..."
-                                />
-                            </div>
-
-                            {/* Privacy Control */}
-                            <div className="p-8 bg-white/[0.02] border border-white/10 rounded-[2rem] flex items-center justify-between group">
-                                <div className="flex items-center gap-6">
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${user?.hideProfile ? 'bg-amber-500/20 text-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.2)]' : 'bg-emerald-500/20 text-emerald-500'}`}>
-                                        {user?.hideProfile ? <EyeOff size={24} /> : <Eye size={24} />}
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-white uppercase tracking-widest">Privacy Protocol</p>
-                                        <p className="text-[9px] text-slate-500 font-medium">Currently {user?.hideProfile ? "INCÖGNITO (Hidden from Grid)" : "PUBLIC (Visible to Matrix)"}</p>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => setUser({ ...user, hideProfile: !user.hideProfile })}
-                                    className={`px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${user?.hideProfile ? 'bg-amber-500 text-vpoint-dark border-amber-500' : 'bg-white/5 border-white/10 text-slate-500 hover:text-white'}`}
-                                >
-                                    {user?.hideProfile ? "ENABLE PUBLIC" : "GO STEALTH"}
-                                </button>
-                            </div>
-
-                        </div>
-
-                        {/* Network Intel */}
-                        <div className="glass border border-white/10 rounded-[3rem] p-10 bg-white/[0.02] flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <Globe size={24} className="text-slate-700" />
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-white uppercase tracking-widest">Network Location</p>
-                                    <p className="text-[9px] text-slate-500 uppercase font-black">{user?.location || user?.country || "HIDDEN_VECTOR"}</p>
-                                </div>
-                            </div>
-                            <Share2 size={18} className="text-slate-700 hover:text-white transition-colors cursor-pointer" />
-                        </div>
-                    </div>
+                {/* Tab Navigation */}
+                <div className="flex items-center gap-6 border-b border-white/5 pb-6">
+                    <button
+                        onClick={() => setActiveTab('profile')}
+                        className={`text-[11px] font-black uppercase tracking-[0.3em] transition-all ${activeTab === 'profile' ? 'text-neon-cyan active-link' : 'text-slate-500 hover:text-white'}`}
+                    >
+                        Nexus Indentity
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('feed')}
+                        className={`text-[11px] font-black uppercase tracking-[0.3em] transition-all flex items-center gap-2 ${activeTab === 'feed' ? 'text-neon-magenta active-link' : 'text-slate-500 hover:text-white'}`}
+                    >
+                        Neural Feed <span className="px-2 py-0.5 bg-neon-magenta/20 text-neon-magenta rounded-full text-[8px]">{posts.length}</span>
+                    </button>
                 </div>
+
+                {activeTab === 'profile' ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                        {/* Left: Avatar & Identity */}
+                        <div className="space-y-8">
+                            <div className="glass border border-white/10 rounded-[3rem] p-10 bg-white/[0.02] text-center space-y-6">
+                                <div className="relative inline-block group">
+                                    <div className="w-32 h-32 rounded-[2.5rem] bg-black/40 border-2 border-dashed border-white/10 flex items-center justify-center text-slate-700 overflow-hidden">
+                                        {user?.profilePicture ? (
+                                            <img src={user.profilePicture} alt="Avatar" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <User size={48} />
+                                        )}
+                                    </div>
+                                    <input
+                                        type="file"
+                                        id="profile-upload"
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                    />
+                                    <button
+                                        onClick={() => document.getElementById('profile-upload')?.click()}
+                                        className="absolute -bottom-2 -right-2 p-3 bg-white text-black rounded-2xl shadow-xl hover:scale-110 transition-transform z-10"
+                                    >
+                                        <Camera size={16} />
+                                    </button>
+                                </div>
+                                <div className="space-y-1 text-center w-full">
+                                    <h3 className="text-xl font-black text-white uppercase truncate px-4">{user?.displayName || user?.name}</h3>
+                                    <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest block text-center line-clamp-1 break-all px-2 overflow-hidden">{user?.email}</p>
+                                </div>
+                            </div>
+
+                            {/* Social Links Grid */}
+                            <div className="glass border border-white/10 rounded-[3rem] p-8 bg-white/[0.02] space-y-6">
+                                <h4 className="text-[10px] font-black text-white uppercase tracking-widest text-center">Social Interlinks</h4>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {[
+                                        { id: 'twt', icon: Twitter, color: 'text-blue-400', label: 'Twitter' },
+                                        { id: 'fb', icon: Facebook, color: 'text-blue-600', label: 'Facebook' },
+                                        { id: 'li', icon: LinkedIn, color: 'text-blue-700', label: 'LinkedIn' },
+                                        { id: 'ig', icon: Instagram, color: 'text-pink-500', label: 'Instagram' }
+                                    ].map(soc => (
+                                        <div
+                                            key={soc.id}
+                                            onClick={() => setSocialModal(soc.id)}
+                                            className={`p-4 glass-dark border rounded-2xl flex flex-col items-center justify-center gap-2 group transition-all cursor-pointer ${user?.socialLinks?.[soc.id] ? 'border-neon-cyan/40 bg-neon-cyan/5' : 'border-white/5 hover:border-white/20'}`}
+                                        >
+                                            <soc.icon size={20} className={`${soc.color} group-hover:scale-110 transition-transform`} />
+                                            <span className="text-[7px] font-black uppercase tracking-widest text-slate-500">{soc.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right: Data Entry */}
+                        <div className="lg:col-span-2 space-y-10">
+                            <div className="glass border border-white/10 rounded-[3rem] p-10 bg-white/[0.02] space-y-10">
+                                {/* Core Info */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-3">
+                                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2">Display Identification</label>
+                                        <div className="relative">
+                                            <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={16} />
+                                            <input
+                                                type="text"
+                                                value={user?.displayName || ""}
+                                                onChange={(e) => setUser({ ...user, displayName: e.target.value })}
+                                                className="w-full bg-black/40 border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-cyan/50 transition-all uppercase"
+                                                placeholder="NEXUS_OPERATOR_01"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2">Solar Iteration (Birthday)</label>
+                                        <div className="relative">
+                                            <Calendar className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={16} />
+                                            <input
+                                                type="date"
+                                                value={user?.birthday ? new Date(user.birthday).toISOString().split('T')[0] : ""}
+                                                onChange={(e) => setUser({ ...user, birthday: e.target.value })}
+                                                className="w-full bg-black/40 border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-cyan/50 transition-all uppercase"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Bio */}
+                                <div className="space-y-3">
+                                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2">Neural Bio</label>
+                                    <textarea
+                                        value={user?.bio || ""}
+                                        onChange={(e) => setUser({ ...user, bio: e.target.value })}
+                                        rows={4}
+                                        className="w-full bg-black/40 border border-white/5 rounded-[2rem] p-8 text-[11px] font-medium text-slate-400 focus:outline-none focus:border-neon-cyan/50 transition-all resize-none italic leading-relaxed"
+                                        placeholder="Tell the matrix about yourself..."
+                                    />
+                                </div>
+
+                                {/* Hobbies & Interests */}
+                                <div className="space-y-3">
+                                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2 flex items-center gap-2">
+                                        <Heart size={10} className="text-neon-magenta" /> Neural Interests & Hobbies
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={user?.hobbies || ""}
+                                        onChange={(e) => setUser({ ...user, hobbies: e.target.value })}
+                                        className="w-full bg-black/40 border border-white/5 rounded-2xl py-5 px-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-magenta/50 transition-all uppercase"
+                                        placeholder="CRICKET, CODING, CINEMATOGRAPHY..."
+                                    />
+                                </div>
+
+                                {/* Privacy Control */}
+                                <div className="p-8 bg-white/[0.02] border border-white/10 rounded-[2rem] flex items-center justify-between group">
+                                    <div className="flex items-center gap-6">
+                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${user?.hideProfile ? 'bg-amber-500/20 text-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.2)]' : 'bg-emerald-500/20 text-emerald-500'}`}>
+                                            {user?.hideProfile ? <EyeOff size={24} /> : <Eye size={24} />}
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-[10px] font-black text-white uppercase tracking-widest">Privacy Protocol</p>
+                                            <p className="text-[9px] text-slate-500 font-medium">Currently {user?.hideProfile ? "INCÖGNITO (Hidden from Grid)" : "PUBLIC (Visible to Matrix)"}</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setUser({ ...user, hideProfile: !user.hideProfile })}
+                                        className={`px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${user?.hideProfile ? 'bg-amber-500 text-vpoint-dark border-amber-500' : 'bg-white/5 border-white/10 text-slate-500 hover:text-white'}`}
+                                    >
+                                        {user?.hideProfile ? "ENABLE PUBLIC" : "GO STEALTH"}
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            {/* Network Intel */}
+                            <div className="glass border border-white/10 rounded-[3rem] p-10 bg-white/[0.02] flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <Globe size={24} className="text-slate-700" />
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black text-white uppercase tracking-widest">Network Location</p>
+                                        <p className="text-[9px] text-slate-500 uppercase font-black">{user?.location || user?.country || "HIDDEN_VECTOR"}</p>
+                                    </div>
+                                </div>
+                                <Share2 size={18} className="text-slate-700 hover:text-white transition-colors cursor-pointer" />
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="max-w-2xl mx-auto space-y-12">
+                        {/* Post Composer */}
+                        <div className="glass border border-white/10 rounded-[3rem] p-8 bg-white/[0.02] space-y-6">
+                            <div className="flex gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-black/40 border border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
+                                    {user?.profilePicture ? <img src={user.profilePicture} className="w-full h-full object-cover" /> : <User size={20} className="text-slate-700" />}
+                                </div>
+                                <textarea
+                                    value={newPost}
+                                    onChange={(e) => setNewPost(e.target.value)}
+                                    placeholder="Broadcast your thoughts to the matrix..."
+                                    className="w-full bg-transparent border-none text-[13px] text-white focus:outline-none resize-none pt-2 h-24 placeholder:text-slate-600"
+                                />
+                            </div>
+                            <div className="flex justify-between items-center pt-4 border-t border-white/5">
+                                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Signal Strength: 100%</p>
+                                <button
+                                    onClick={handleCreatePost}
+                                    disabled={isPosting || !newPost.trim()}
+                                    className="px-8 py-3 bg-neon-magenta text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:scale-[1.02] transition-all disabled:opacity-50"
+                                >
+                                    <Send size={14} /> {isPosting ? "Broadcasting..." : "Broadcast"}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Posts List */}
+                        <div className="space-y-8 pb-32">
+                            {posts.length === 0 ? (
+                                <div className="text-center py-20 space-y-4">
+                                    <Sparkles className="mx-auto text-slate-800" size={48} />
+                                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em]">Silence in the matrix</p>
+                                </div>
+                            ) : (
+                                posts.map(post => (
+                                    <motion.div
+                                        key={post.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="glass border border-white/10 rounded-[2.5rem] p-8 bg-white/[0.02] space-y-6 group"
+                                    >
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex gap-4">
+                                                <div className="w-10 h-10 rounded-xl bg-black/40 border border-white/5 flex items-center justify-center overflow-hidden">
+                                                    {post.user?.profilePicture ? <img src={post.user.profilePicture} className="w-full h-full object-cover" /> : <User size={16} className="text-slate-700" />}
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-[11px] font-black text-white uppercase tracking-tight">{post.user?.displayName || post.user?.name}</h4>
+                                                    <p className="text-[9px] text-slate-600 font-bold uppercase">{new Date(post.createdAt).toLocaleDateString()}</p>
+                                                </div>
+                                            </div>
+                                            {post.userId === user?.id && (
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => {
+                                                            setEditingPost(post.id);
+                                                            setEditContent(post.content);
+                                                        }}
+                                                        className="p-2 text-slate-700 hover:text-neon-cyan transition-colors opacity-0 group-hover:opacity-100"
+                                                    >
+                                                        <Edit3 size={16} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeletePost(post.id)}
+                                                        className="p-2 text-slate-700 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {editingPost === post.id ? (
+                                            <div className="space-y-4">
+                                                <textarea
+                                                    value={editContent}
+                                                    onChange={(e) => setEditContent(e.target.value)}
+                                                    className="w-full bg-black/40 border border-neon-cyan/30 rounded-2xl p-6 text-[13px] text-white focus:outline-none"
+                                                />
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => handleUpdatePost(post.id)}
+                                                        className="px-6 py-2 bg-neon-cyan text-black rounded-xl text-[9px] font-black uppercase"
+                                                    >
+                                                        Save
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setEditingPost(null)}
+                                                        className="px-6 py-2 bg-white/5 text-white rounded-xl text-[9px] font-black uppercase"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <p className="text-[13px] text-slate-300 leading-relaxed font-medium">
+                                                {post.content}
+                                            </p>
+                                        )}
+
+                                        <div className="flex items-center gap-6 pt-4 border-t border-white/5">
+                                            <button
+                                                onClick={() => handleToggleLike(post.id)}
+                                                className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all ${post.hasLiked ? 'text-neon-magenta' : 'text-slate-500 hover:text-white'}`}
+                                            >
+                                                <ThumbsUp size={14} className={post.hasLiked ? 'fill-neon-magenta' : ''} />
+                                                {post.likes} <span className="hidden md:inline">Neural Upvotes</span>
+                                            </button>
+                                            <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                                <MessageSquare size={14} />
+                                                {post.comments?.length || 0} <span className="hidden md:inline">Comments</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Comments */}
+                                        <div className="space-y-4 pt-4">
+                                            {post.comments?.map((comment: any) => (
+                                                <div key={comment.id} className="flex gap-3 bg-black/20 p-4 rounded-2xl border border-white/5">
+                                                    <div className="w-6 h-6 rounded-lg bg-black/40 border border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
+                                                        {comment.user?.profilePicture ? <img src={comment.user.profilePicture} className="w-full h-full object-cover" /> : <User size={12} className="text-slate-700" />}
+                                                    </div>
+                                                    <div className="space-y-1 w-full">
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="text-[9px] font-black text-white uppercase italic">{comment.user?.displayName || comment.user?.name}</span>
+                                                            <span className="text-[8px] text-slate-700 font-black">{new Date(comment.createdAt).toLocaleDateString()}</span>
+                                                        </div>
+                                                        <p className="text-[11px] text-slate-400 font-medium">{comment.content}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            <div className="flex gap-3 pt-2">
+                                                <input
+                                                    type="text"
+                                                    value={commentTexts[post.id] || ""}
+                                                    onChange={(e) => setCommentTexts({ ...commentTexts, [post.id]: e.target.value })}
+                                                    placeholder="Inject a neural response..."
+                                                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-2 text-[10px] text-white focus:outline-none focus:border-neon-magenta/50"
+                                                    onKeyDown={(e) => e.key === 'Enter' && handleAddComment(post.id)}
+                                                />
+                                                <button
+                                                    onClick={() => handleAddComment(post.id)}
+                                                    className="p-2 text-neon-magenta hover:scale-110 transition-transform"
+                                                >
+                                                    <Send size={16} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
+
             {/* Social Link Edit Modal */}
             <AnimatePresence>
                 {socialModal && (
