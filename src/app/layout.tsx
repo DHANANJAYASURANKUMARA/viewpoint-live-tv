@@ -15,64 +15,72 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VIEWPOINT - Premium Live TV | Watch Free T20 World Cup & Cricket Live",
-  description: "Access high-fidelity live TV transmissions. Watch T20 World Cup, IPL, Cricket, Football, and global news fragments free. HD fidelity, zero-cost access. No registration required.",
+  title: "VIEWPOINT - Watch Live TV Free | Cricket, T20 World Cup, Football Live Streaming",
+  description: "Watch live TV channels free online. Stream T20 World Cup, cricket live match, football, news, entertainment 24/7. Free live streaming with HD quality. No subscription needed.",
   keywords: [
-    "watch live tv free",
-    "premium live tv streaming",
-    "T20 World Cup live transmission",
-    "cricket live match free HD",
+    "live tv free",
+    "watch live tv online",
+    "live cricket streaming",
+    "T20 World Cup live",
+    "free live match",
+    "cricket live match today",
+    "watch T20 live free",
+    "live football streaming",
+    "free live tv channels",
+    "HD live streaming",
+    "IPL live streaming free",
+    "live sports streaming",
     "watch live cricket online free",
-    "free live football streaming",
-    "live news fragments",
-    "HD signal multiplexer",
-    "VIEWPOINT neural live",
-    "IPL live stream free"
+    "free online tv",
+    "live news streaming",
+    "entertainment live channels",
+    "live match today free",
+    "streaming live tv",
+    "watch live match without subscription",
+    "VIEWPOINT live TV"
   ],
-  authors: [{ name: "VIEWPOINT Neural Systems", url: "https://viewpointlivetv.com" }],
-  creator: "VIEWPOINT M-CORE",
-  publisher: "VIEWPOINT Systems",
-  category: "Sports & Entertainment",
+  authors: [{ name: "VIEWPOINT Systems", url: "https://viewpoint-live.vercel.app" }],
+  creator: "VIEWPOINT Systems",
+  publisher: "VIEWPOINT",
+  category: "Entertainment",
   openGraph: {
-    title: "VIEWPOINT - Universal Live TV Synchronization | T20 & Cricket",
-    description: "Military-grade live TV streaming. Watch T20 World Cup, Football, and News fragments free. Zero-cost synchronization.",
+    title: "VIEWPOINT - Watch Live TV Free | Cricket, T20, Football Live",
+    description: "Free live TV streaming — T20 World Cup, cricket, football, news & entertainment. HD quality, no subscription required.",
     type: "website",
-    url: "https://viewpointlivetv.com",
-    siteName: "VIEWPOINT Neural Nexus",
+    url: "https://viewpoint-live.vercel.app",
+    siteName: "VIEWPOINT Live TV",
     locale: "en_US",
     images: [
       {
-        url: "https://viewpointlivetv.com/og-image.jpg",
+        url: "https://viewpoint-live.vercel.app/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "VIEWPOINT Neural Nexus - Global Transmission"
+        alt: "VIEWPOINT - Free Live TV Streaming"
       }
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "VIEWPOINT - Global Live TV Signal | Cricket & T20 free",
-    description: "High-fidelity HD streaming — Cricket, T20 World Cup, and Entertainment. Initialize transmission now.",
-    images: ["https://viewpointlivetv.com/og-image.jpg"],
-    creator: "@viewpointnexus",
+    title: "VIEWPOINT - Watch Live TV Free | Cricket & T20 World Cup",
+    description: "Free HD live streaming — Cricket, T20 World Cup, Football, News & Entertainment. Watch free live TV now.",
+    images: ["https://viewpoint-live.vercel.app/og-image.jpg"],
+    creator: "@viewpointlive",
   },
   alternates: {
-    canonical: "https://viewpointlivetv.com",
+    canonical: "https://viewpoint-live.vercel.app",
   },
   robots: {
     index: true,
     follow: true,
-    nocache: false,
     googleBot: {
       index: true,
       follow: true,
       "max-image-preview": "large",
       "max-snippet": -1,
-      "max-video-preview": -1,
     },
   },
   verification: {
-    google: "viewpoint-google-verification-token",
+    google: "viewpoint-google-verify",
   },
 };
 

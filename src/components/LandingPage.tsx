@@ -86,25 +86,23 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
 
                         {/* CTAs */}
                         <div className="flex items-center gap-4">
-                            <motion.button
-                                whileTap={{ scale: 0.95 }}
+                            <button
                                 onClick={onLaunch}
-                                className="hidden sm:flex items-center gap-2 px-6 py-2.5 glass border border-white/20 text-white rounded-full font-bold text-[11px] uppercase tracking-widest hover:bg-white/10 hover:border-white/40 transition-all shadow-xl active:shadow-inner"
+                                className="hidden sm:flex items-center gap-2 px-6 py-2.5 glass border border-white/20 text-white rounded-full font-bold text-[11px] uppercase tracking-widest hover:bg-white/10 hover:border-white/40 transition-all"
                             >
                                 WATCH NOW <ArrowRight size={14} />
-                            </motion.button>
+                            </button>
 
                             <div className="ml-2 lg:ml-0">
                                 <NotificationCenter />
                             </div>
 
-                            <motion.button
-                                whileTap={{ scale: 0.9 }}
-                                className="lg:hidden text-white p-2"
+                            <button
+                                className="lg:hidden text-white"
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             >
                                 {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                            </motion.button>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -129,13 +127,12 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                                 {link.name}
                             </a>
                         ))}
-                        <motion.button
-                            whileTap={{ scale: 0.95 }}
+                        <button
                             onClick={onLaunch}
-                            className="w-full mt-10 px-10 py-5 bg-white text-vpoint-dark rounded-full font-black uppercase tracking-[0.2em] shadow-[0_20px_40px_rgba(255,255,255,0.1)]"
+                            className="w-full mt-10 px-10 py-5 bg-white text-vpoint-dark rounded-full font-black uppercase tracking-[0.2em]"
                         >
                             Start Transmission
-                        </motion.button>
+                        </button>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -183,24 +180,22 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                             </p>
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
-                                <motion.button
-                                    whileTap={{ scale: 0.95 }}
+                                <button
                                     onClick={onLaunch}
                                     className="group relative w-full sm:w-auto px-10 py-5 glass border border-white/20 text-white rounded-full font-bold uppercase tracking-[0.2em] transition-all hover:bg-white/10 hover:border-white/40 hover:shadow-[0_0_50px_rgba(255,255,255,0.05)] overflow-hidden"
                                 >
                                     <span className="relative z-10 flex items-center justify-center gap-2">
                                         WATCH NOW <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                     </span>
-                                </motion.button>
+                                </button>
 
                                 {isInstallable && (
-                                    <motion.button
-                                        whileTap={{ scale: 0.95 }}
+                                    <button
                                         onClick={handleInstallTrigger}
                                         className="w-full sm:w-auto px-10 py-5 glass border border-neon-cyan/30 text-neon-cyan rounded-full font-bold uppercase tracking-[0.2em] transition-all hover:bg-neon-cyan/10 hover:shadow-[0_0_30px_rgba(6,182,212,0.2)] flex items-center justify-center gap-3"
                                     >
                                         <Download size={18} /> INSTALL APP
-                                    </motion.button>
+                                    </button>
                                 )}
                             </div>
                         </motion.div>
@@ -393,12 +388,9 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                                 <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-4">Transmission</label>
                                 <textarea rows={4} placeholder="Your Message..." className="w-full bg-vpoint-dark/50 border border-white/5 rounded-[2rem] px-6 py-5 text-xs font-bold text-white uppercase tracking-widest focus:outline-none focus:border-neon-cyan/30 resize-none"></textarea>
                             </div>
-                            <motion.button
-                                whileTap={{ scale: 0.95 }}
-                                className="w-full py-5 bg-white text-vpoint-dark rounded-full text-xs font-bold uppercase tracking-widest hover:bg-neon-cyan hover:text-black transition-all flex items-center justify-center gap-3 shadow-2xl"
-                            >
+                            <button className="w-full py-5 bg-white text-vpoint-dark rounded-full text-xs font-bold uppercase tracking-widest hover:bg-neon-cyan transition-all flex items-center justify-center gap-3">
                                 <Send size={16} /> Send Signal
-                            </motion.button>
+                            </button>
                         </div>
                     </div>
                 </div>

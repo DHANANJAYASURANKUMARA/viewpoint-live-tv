@@ -266,21 +266,19 @@ export default function NexusProfilePage() {
                         <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Personal Data Management Sector</p>
                     </div>
                     <div className="flex items-center gap-4">
-                        <motion.button
-                            whileTap={{ scale: 0.95 }}
+                        <button
                             onClick={() => router.push("/")}
                             className="px-8 py-5 bg-white/5 text-white border border-white/10 rounded-[2rem] text-[11px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all flex items-center gap-3"
                         >
                             <X size={16} /> Close
-                        </motion.button>
-                        <motion.button
-                            whileTap={{ scale: 0.95 }}
+                        </button>
+                        <button
                             onClick={handleSave}
                             disabled={saving}
                             className="px-10 py-5 bg-neon-cyan text-black rounded-[2rem] text-[11px] font-black uppercase tracking-[0.2em] hover:bg-white transition-all shadow-[0_0_30px_rgba(34,211,238,0.2)] flex items-center gap-3 disabled:opacity-50"
                         >
                             <Save size={16} /> {saving ? "Syncing..." : "Commit Changes"}
-                        </motion.button>
+                        </button>
                     </div>
                 </div>
 
@@ -330,13 +328,12 @@ export default function NexusProfilePage() {
                                         accept="image/*"
                                         onChange={handleImageUpload}
                                     />
-                                    <motion.button
-                                        whileTap={{ scale: 0.9 }}
+                                    <button
                                         onClick={() => document.getElementById('profile-upload')?.click()}
                                         className="absolute -bottom-2 -right-2 p-3 bg-white text-black rounded-2xl shadow-xl hover:scale-110 transition-transform z-10"
                                     >
                                         <Camera size={16} />
-                                    </motion.button>
+                                    </button>
                                 </div>
                                 <div className="space-y-1 text-center w-full">
                                     <h3 className="text-xl font-black text-white uppercase truncate px-4">{user?.displayName || user?.name}</h3>
@@ -448,13 +445,12 @@ export default function NexusProfilePage() {
                                             <p className="text-[9px] text-slate-500 font-medium">Currently {user?.hideProfile ? "INCÖGNITO" : "PUBLIC"}</p>
                                         </div>
                                     </div>
-                                    <motion.button
-                                        whileTap={{ scale: 0.95 }}
+                                    <button
                                         onClick={() => setUser({ ...user, hideProfile: !user.hideProfile })}
                                         className={`px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${user?.hideProfile ? 'bg-amber-500 text-vpoint-dark border-amber-500' : 'bg-white/5 border-white/10 text-slate-500 hover:text-white'}`}
                                     >
                                         {user?.hideProfile ? "GO PUBLIC" : "GO STEALTH"}
-                                    </motion.button>
+                                    </button>
                                 </div>
 
                                 {/* Broadcast History (The new integrated section) */}
@@ -535,14 +531,13 @@ export default function NexusProfilePage() {
                             </div>
                             <div className="flex justify-between items-center pt-4 border-t border-white/5">
                                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Signal Strength: 100%</p>
-                                <motion.button
-                                    whileTap={{ scale: 0.95 }}
+                                <button
                                     onClick={handleCreatePost}
                                     disabled={isPosting || !newPost.trim()}
                                     className="px-8 py-3 bg-neon-magenta text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:scale-[1.02] transition-all disabled:opacity-50 shadow-[0_0_20px_rgba(255,45,85,0.2)]"
                                 >
                                     <Send size={14} /> {isPosting ? "Processing..." : "Broadcast Pulse"}
-                                </motion.button>
+                                </button>
                             </div>
                         </div>
 

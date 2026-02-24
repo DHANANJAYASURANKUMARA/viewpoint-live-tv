@@ -1,18 +1,6 @@
 User-agent: *
 Allow: /
-Allow: /watch
-Allow: /nexus
-Allow: /about
-Allow: /contact
-Allow: /privacy
-Allow: /terms
-Allow: /dmca
-Allow: /disclaimer
+Disallow: /admin/
+Disallow: /api/
 
-Disallow: /admin
-Disallow: /login
-Disallow: /signup
-Disallow: /_next
-Disallow: /api
-
-Sitemap: https://viewpointlivetv.com/sitemap.xml
+Sitemap: https://viewpoint-live.vercel.app/sitemap.xml

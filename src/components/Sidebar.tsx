@@ -60,6 +60,22 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
     const [activeCategory, setActiveCategory] = useState("All");
     const [favorites, setFavorites] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currentUser, setCurrentUser] = useState<string | null>(null);
+
+    useEffect(() => {
+        const session = localStorage.getItem("vpoint-user");
+        if (session) {
+            try {
+                const user = JSON.parse(session);
+                setCurrentUser(user.name || "User");
+            } catch { }
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem("vpoint-user");
+        router.push("/login");
+    };
 
     useEffect(() => {
         const loadChannels = async () => {
@@ -154,9 +170,9 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
                 </Link>
                 <button
                     onClick={onClose}
-                    className="lg:hidden p-3 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-90"
+                    className="lg:hidden p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
                 >
-                    <X size={24} />
+                    <X size={20} />
                 </button>
             </div>
 
@@ -189,7 +205,7 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
                             <button
                                 key={cat}
                                 onClick={() => setActiveCategory(cat)}
-                                className={`flex items-center gap-2.5 p-4 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border active:scale-95 ${activeCategory === cat
+                                className={`flex items-center gap-2.5 p-3 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${activeCategory === cat
                                     ? "bg-neon-cyan/10 border-neon-cyan/30 text-neon-cyan shadow-[0_0_20px_rgba(34,211,238,0.1)]"
                                     : "bg-white/[0.02] border-white/5 text-slate-500 hover:text-white hover:border-white/10"
                                     }`}
@@ -331,6 +347,37 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
                             Sync Signal
                         </button>
                     </motion.form>
+                )}
+
+                <button
+                    onClick={() => window.dispatchEvent(new CustomEvent("vpoint-open-settings"))}
+                    className="w-full py-4 glass-dark border border-white/5 rounded-2xl flex items-center justify-center gap-3 text-slate-500 hover:text-neon-cyan hover:border-neon-cyan/30 transition-all text-[9px] font-black uppercase tracking-[0.2em]"
+                >
+                    <Settings size={14} />
+                    Advanced Settings
+                </button>
+
+                {currentUser && (
+                    <div className="space-y-3">
+                        <Link
+                            href="/nexus"
+                            onClick={onClose}
+                            className="w-full py-4 glass-dark border border-white/5 rounded-2xl flex items-center justify-center gap-3 text-slate-500 hover:text-neon-cyan hover:border-neon-cyan/30 transition-all text-[9px] font-black uppercase tracking-[0.2em]"
+                        >
+                            <User size={14} />
+                            Manage Nexus Profile
+                        </Link>
+                        <div className="px-4 py-3 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">{currentUser}</span>
+                            <button
+                                onClick={handleLogout}
+                                className="text-slate-600 hover:text-red-400 transition-colors"
+                                title="Logout"
+                            >
+                                <LogOut size={14} />
+                            </button>
+                        </div>
+                    </div>
                 )}
 
                 <div className="px-2 flex items-center justify-between text-slate-800">
