@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     "watch live match without subscription",
     "VIEWPOINT live TV"
   ],
-  authors: [{ name: "VIEWPOINT Systems", url: "https://viewpoint-live.vercel.app" }],
+  authors: [{ name: "VIEWPOINT Systems", url: "https://viewpoint.lk" }],
   creator: "VIEWPOINT Systems",
   publisher: "VIEWPOINT",
   category: "Entertainment",
@@ -47,12 +47,12 @@ export const metadata: Metadata = {
     title: "VIEWPOINT - Watch Live TV Free | Cricket, T20, Football Live",
     description: "Free live TV streaming — T20 World Cup, cricket, football, news & entertainment. HD quality, no subscription required.",
     type: "website",
-    url: "https://viewpoint-live.vercel.app",
+    url: "https://viewpoint.lk",
     siteName: "VIEWPOINT Live TV",
     locale: "en_US",
     images: [
       {
-        url: "https://viewpoint-live.vercel.app/og-image.jpg",
+        url: "https://viewpoint.lk/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "VIEWPOINT - Free Live TV Streaming"
@@ -63,11 +63,11 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "VIEWPOINT - Watch Live TV Free | Cricket & T20 World Cup",
     description: "Free HD live streaming — Cricket, T20 World Cup, Football, News & Entertainment. Watch free live TV now.",
-    images: ["https://viewpoint-live.vercel.app/og-image.jpg"],
+    images: ["https://viewpoint.lk/og-image.jpg"],
     creator: "@viewpointlive",
   },
   alternates: {
-    canonical: "https://viewpoint-live.vercel.app",
+    canonical: "https://viewpoint.lk",
   },
   robots: {
     index: true,
@@ -119,20 +119,20 @@ export default function RootLayout({
             "@context": "https://schema.org",
             "@type": "WebSite",
             "name": "VIEWPOINT Live TV",
-            "url": "https://viewpoint-live.vercel.app",
+            "url": "https://viewpoint.lk",
             "description": "Watch live TV free online. Stream T20 World Cup, cricket live match, football, news and entertainment 24/7 for free.",
             "potentialAction": {
               "@type": "SearchAction",
-              "target": "https://viewpoint-live.vercel.app/watch?q={search_term_string}",
+              "target": "https://viewpoint.lk/watch?q={search_term_string}",
               "query-input": "required name=search_term_string"
             },
             "publisher": {
               "@type": "Organization",
               "name": "VIEWPOINT",
-              "url": "https://viewpoint-live.vercel.app",
+              "url": "https://viewpoint.lk",
               "logo": {
                 "@type": "ImageObject",
-                "url": "https://viewpoint-live.vercel.app/icon.png"
+                "url": "https://viewpoint.lk/icon.png"
               }
             }
           })
@@ -143,10 +143,10 @@ export default function RootLayout({
             "@type": "VideoObject",
             "name": "Live TV Streaming — Cricket, T20, Football, News",
             "description": "Watch live cricket, T20 World Cup, IPL, football, and 200+ free live TV channels online in HD quality. No subscription required.",
-            "thumbnailUrl": "https://viewpoint-live.vercel.app/og-image.jpg",
+            "thumbnailUrl": "https://viewpoint.lk/og-image.jpg",
             "uploadDate": "2026-01-01",
-            "contentUrl": "https://viewpoint-live.vercel.app/watch",
-            "embedUrl": "https://viewpoint-live.vercel.app/watch"
+            "contentUrl": "https://viewpoint.lk/watch",
+            "embedUrl": "https://viewpoint.lk/watch"
           })
         }} />
       </head>

@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://viewpoint-live.vercel.app/</loc>
+    <loc>https://viewpoint.lk/</loc>
     <lastmod>2026-02-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://viewpoint-live.vercel.app/watch</loc>
+    <loc>https://viewpoint.lk/watch</loc>
     <lastmod>2026-02-20</lastmod>
     <changefreq>always</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://viewpoint-live.vercel.app/privacy</loc>
+    <loc>https://viewpoint.lk/privacy</loc>
     <lastmod>2026-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://viewpoint-live.vercel.app/terms</loc>
+    <loc>https://viewpoint.lk/terms</loc>
     <lastmod>2026-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://viewpoint-live.vercel.app/dmca</loc>
+    <loc>https://viewpoint.lk/dmca</loc>
     <lastmod>2026-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://viewpoint-live.vercel.app/disclaimer</loc>
+    <loc>https://viewpoint.lk/disclaimer</loc>
     <lastmod>2026-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://viewpoint-live.vercel.app/about</loc>
+    <loc>https://viewpoint.lk/about</loc>
     <lastmod>2026-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://viewpoint-live.vercel.app/contact</loc>
+    <loc>https://viewpoint.lk/contact</loc>
     <lastmod>2026-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://viewpoint-live.vercel.app/login</loc>
+    <loc>https://viewpoint.lk/login</loc>
     <lastmod>2026-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
