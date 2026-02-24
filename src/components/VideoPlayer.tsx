@@ -173,12 +173,8 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                         {/* Core Interface */}
                         <div className="relative z-10 flex flex-col items-center gap-6">
                             <div className="relative w-20 h-20 flex items-center justify-center">
-                                <motion.div
-                                    animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 180, 270, 360] }}
-                                    transition={{ duration: 4, repeat: Infinity }}
-                                    className="absolute inset-0 border border-neon-cyan/5 rounded-2xl"
-                                />
-                                <div className="w-16 h-16 rounded-2xl bg-neon-cyan/5 flex items-center justify-center border border-neon-cyan/20 backdrop-blur-md">
+
+                                <div className="w-16 h-16 rounded-2xl bg-neon-cyan/5 flex items-center justify-center backdrop-blur-md">
                                     <Activity className="text-neon-cyan animate-pulse" size={32} />
                                 </div>
                             </div>

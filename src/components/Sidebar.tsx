@@ -155,7 +155,7 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
     };
 
     return (
-        <div className="w-screen lg:w-96 h-full glass border-r border-white/5 flex flex-col p-6 overflow-hidden relative shadow-[20px_0_50px_rgba(0,0,0,0.3)]">
+        <div className="w-screen lg:w-96 h-full glass flex flex-col p-6 overflow-hidden relative shadow-[20px_0_50px_rgba(0,0,0,0.3)]">
             {/* Sidebar Branding */}
             <div className="flex items-center justify-between mb-8 lg:mb-10">
                 <Link href="/#hero" className="flex items-center gap-3 group">
