@@ -60,22 +60,6 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
     const [activeCategory, setActiveCategory] = useState("All");
     const [favorites, setFavorites] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
-    const [currentUser, setCurrentUser] = useState<string | null>(null);
-
-    useEffect(() => {
-        const session = localStorage.getItem("vpoint-user");
-        if (session) {
-            try {
-                const user = JSON.parse(session);
-                setCurrentUser(user.name || "User");
-            } catch { }
-        }
-    }, []);
-
-    const handleLogout = () => {
-        localStorage.removeItem("vpoint-user");
-        router.push("/login");
-    };
 
     useEffect(() => {
         const loadChannels = async () => {
@@ -357,28 +341,6 @@ export default function Sidebar({ onClose, activeChannelUrl }: SidebarProps) {
                     Advanced Settings
                 </button>
 
-                {currentUser && (
-                    <div className="space-y-3">
-                        <Link
-                            href="/nexus"
-                            onClick={onClose}
-                            className="w-full py-4 glass-dark border border-white/5 rounded-2xl flex items-center justify-center gap-3 text-slate-500 hover:text-neon-cyan hover:border-neon-cyan/30 transition-all text-[9px] font-black uppercase tracking-[0.2em]"
-                        >
-                            <User size={14} />
-                            Manage Nexus Profile
-                        </Link>
-                        <div className="px-4 py-3 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">{currentUser}</span>
-                            <button
-                                onClick={handleLogout}
-                                className="text-slate-600 hover:text-red-400 transition-colors"
-                                title="Logout"
-                            >
-                                <LogOut size={14} />
-                            </button>
-                        </div>
-                    </div>
-                )}
 
                 <div className="px-2 flex items-center justify-between text-slate-800">
                     <span className="text-[7px] font-black uppercase tracking-widest">{config.brandingText} MODULE v{config.version}</span>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
 import { useConfig } from "./ConfigContext";
 import NotificationCenter from "./NotificationCenter";
+import ProfileDropdown from "./ProfileDropdown";
 
 export default function TopBar() {
     const { config } = useConfig();
@@ -133,8 +134,10 @@ export default function TopBar() {
                     <div className="hidden sm:block h-3 w-[1px] bg-white/10 mx-2" />
                 </div>
 
-                <div className="mx-2 lg:mx-4">
+                <div className="flex items-center gap-2 lg:gap-4">
                     <NotificationCenter />
+                    <div className="h-6 w-[1px] bg-white/10 hidden sm:block" />
+                    <ProfileDropdown />
                 </div>
 
                 <div className="flex flex-col items-end">
