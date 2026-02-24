@@ -158,7 +158,7 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
     };
 
     return (
-        <div className="flex flex-col h-[450px] lg:h-[75%] w-full lg:w-[400px] shrink-0 relative lg:absolute lg:right-6 lg:bottom-6 z-40 pointer-events-none">
+        <div className="flex flex-col h-[450px] lg:h-[70%] w-full lg:w-[340px] shrink-0 relative lg:absolute lg:right-6 lg:bottom-6 z-40 pointer-events-none">
             {/* Heart Burst Container */}
             <div className="absolute right-4 bottom-32 w-24 h-80 pointer-events-none overflow-hidden z-20">
                 <AnimatePresence mode="popLayout">
@@ -179,7 +179,7 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
 
             <div
                 ref={scrollRef}
-                className="flex-1 overflow-y-auto px-6 py-4 space-y-4 flex flex-col custom-scrollbar pointer-events-auto"
+                className="flex-1 overflow-y-auto px-4 py-3 space-y-2.5 flex flex-col custom-scrollbar pointer-events-auto"
                 style={{
                     maskImage: 'linear-gradient(to top, black 85%, transparent 100%)',
                     WebkitMaskImage: 'linear-gradient(to top, black 85%, transparent 100%)'
@@ -207,30 +207,30 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                                 scale: 1,
                                 transition: { duration: 0.4, ease: "easeOut" }
                             }}
-                            className={`flex items-end gap-3 group/message ${msg.userId === currentUser?.id ? 'flex-row-reverse' : 'flex-row'}`}
+                            className={`flex items-end gap-2 group/message ${msg.userId === currentUser?.id ? 'flex-row-reverse' : 'flex-row'}`}
                         >
                             {/* Avatar with Status Ring */}
-                            <div className="relative shrink-0">
+                            <div className="relative shrink-0 mb-1">
                                 <button
                                     onClick={() => handleShowProfile(msg.userId)}
-                                    className={`w-9 h-9 rounded-full border-2 p-0.5 overflow-hidden transition-all duration-500 shadow-lg ${msg.userId === currentUser?.id ? 'border-neon-magenta/40 hover:border-white' : 'border-white/10 hover:border-neon-cyan'}`}
+                                    className={`w-7 h-7 rounded-full border border-white/10 p-0.5 overflow-hidden transition-all duration-500 shadow-lg ${msg.userId === currentUser?.id ? 'hover:border-neon-magenta/60' : 'hover:border-neon-cyan/60'}`}
                                 >
                                     {msg.user?.profilePicture ? (
                                         <img src={msg.user.profilePicture} className="w-full h-full rounded-full object-cover" />
                                     ) : (
                                         <div className="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-slate-500">
-                                            <User size={14} />
+                                            <User size={10} />
                                         </div>
                                     )}
                                 </button>
-                                <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-black/80 ${msg.userId === currentUser?.id ? 'bg-neon-magenta' : 'bg-neon-cyan'} shadow-[0_0_10px_rgba(255,255,255,0.2)]`} />
+                                <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-black/80 ${msg.userId === currentUser?.id ? 'bg-neon-magenta' : 'bg-neon-cyan'} shadow-[0_0_8px_rgba(255,255,255,0.1)]`} />
                             </div>
 
-                            <div className={`flex flex-col gap-1.5 max-w-[80%] ${msg.userId === currentUser?.id ? 'items-end' : 'items-start'}`}>
+                            <div className={`flex flex-col gap-1 max-w-[85%] ${msg.userId === currentUser?.id ? 'items-end' : 'items-start'}`}>
                                 <div className={`group/bubble relative ${msg.userId === currentUser?.id
-                                    ? 'bg-gradient-to-br from-neon-magenta/20 to-transparent border border-neon-magenta/30 shadow-[0_10px_30px_rgba(255,0,85,0.15)] rounded-t-3xl rounded-bl-3xl rounded-br-lg'
-                                    : 'bg-white/5 border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)] rounded-t-3xl rounded-br-3xl rounded-bl-lg backdrop-blur-md'
-                                    } p-4 transition-all hover:scale-[1.02] active:scale-[0.98]`}>
+                                    ? 'bg-gradient-to-br from-neon-magenta/20 to-transparent border border-neon-magenta/30 shadow-[0_5px_20px_rgba(255,0,85,0.1)] rounded-t-2xl rounded-bl-2xl rounded-br-md'
+                                    : 'bg-white/5 border border-white/10 shadow-[0_5px_20px_rgba(0,0,0,0.2)] rounded-t-2xl rounded-br-2xl rounded-bl-md backdrop-blur-md'
+                                    } p-2.5 transition-all hover:scale-[1.01] active:scale-[0.99]`}>
 
                                     {/* Advanced Action Matrix */}
                                     <div className={`absolute -top-6 ${msg.userId === currentUser?.id ? 'right-0' : 'left-0'} flex items-center gap-2 opacity-0 group-hover/bubble:opacity-100 transition-all z-20`}>
@@ -325,54 +325,51 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
             </div>
 
             {/* Neural Input Beam */}
-            <div className="p-6 pt-2 flex flex-col gap-3 pointer-events-auto">
+            <div className="p-4 pt-0 flex flex-col gap-2 pointer-events-auto">
                 <AnimatePresence>
                     {replyTo && (
                         <motion.div
-                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                            initial={{ opacity: 0, y: 10, scale: 0.98 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                            className="bg-vpoint-dark/95 backdrop-blur-2xl border border-neon-cyan/30 rounded-2xl p-4 flex items-center justify-between mb-2 shadow-[0_0_40px_rgba(0,242,255,0.15)] ring-1 ring-white/10"
+                            exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                            className="bg-vpoint-dark/95 backdrop-blur-2xl border border-neon-cyan/20 rounded-xl p-2.5 flex items-center justify-between mb-1 shadow-lg"
                         >
-                            <div className="flex items-center gap-3 overflow-hidden">
-                                <div className="p-2 bg-neon-cyan/10 rounded-xl">
-                                    <Reply size={16} className="text-neon-cyan" />
-                                </div>
+                            <div className="flex items-center gap-2 overflow-hidden">
+                                <Reply size={12} className="text-neon-cyan" />
                                 <div className="flex flex-col overflow-hidden">
-                                    <span className="text-[10px] font-black uppercase text-neon-cyan tracking-[0.3em]">Neural Reply Target</span>
-                                    <span className="text-xs text-white/70 truncate italic font-medium">"{replyTo.content}"</span>
+                                    <span className="text-[8px] font-black uppercase text-neon-cyan tracking-widest">Replying to</span>
+                                    <span className="text-[10px] text-white/60 truncate italic font-medium">"{replyTo.content}"</span>
                                 </div>
                             </div>
                             <button
                                 onClick={() => setReplyTo(null)}
-                                className="p-2 hover:bg-white/5 rounded-xl text-slate-500 hover:text-white transition-all active:scale-90"
+                                className="p-1 hover:bg-white/5 rounded-lg text-slate-500 hover:text-white transition-all"
                             >
-                                <X size={18} />
+                                <X size={14} />
                             </button>
                         </motion.div>
                     )}
                 </AnimatePresence>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 relative">
                     <motion.button
                         whileTap={{ scale: 0.85 }}
                         whileHover={{ scale: 1.1 }}
                         onClick={() => triggerHearts()}
-                        className="group relative w-12 h-12 flex items-center justify-center shrink-0"
+                        className="group relative w-10 h-10 flex items-center justify-center shrink-0"
                     >
-                        <div className="absolute inset-0 bg-neon-magenta/10 rounded-full blur-xl group-hover:bg-neon-magenta/30 transition-all" />
-                        <div className="absolute inset-0 border border-neon-magenta/20 rounded-full group-hover:border-neon-magenta/50 transition-all" />
-                        <Heart size={22} className={`relative z-10 text-white transition-colors duration-500 ${hearts.length > 0 ? "fill-neon-magenta text-neon-magenta scale-110" : "group-hover:text-neon-magenta"}`} />
+                        <div className="absolute inset-0 bg-neon-magenta/5 rounded-full blur-lg group-hover:bg-neon-magenta/20 transition-all" />
+                        <div className="absolute inset-0 border border-neon-magenta/10 rounded-full group-hover:border-neon-magenta/40 transition-all" />
+                        <Heart size={18} className={`relative z-10 text-white transition-colors duration-500 ${hearts.length > 0 ? "fill-neon-magenta text-neon-magenta scale-110" : "group-hover:text-neon-magenta"}`} />
                     </motion.button>
 
                     <div className="flex-1 relative group/input">
-                        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent group-focus-within/input:via-neon-magenta/80 transition-all" />
                         <input
                             type="text"
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
                             placeholder={replyTo ? "Transmit response..." : "Neural Comment..."}
-                            className="w-full bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-2xl py-3.5 px-6 text-[13px] text-white placeholder:text-slate-600 focus:outline-none focus:bg-white/[0.07] focus:border-white/20 transition-all shadow-inner"
+                            className="w-full bg-white/[0.04] backdrop-blur-3xl border border-white/10 rounded-xl py-2.5 px-4 text-[12px] text-white placeholder:text-slate-600 focus:outline-none focus:bg-white/[0.08] focus:border-neon-magenta/40 transition-all"
                             onKeyDown={(e) => {
                                 if (e.key === "Enter") handleSend();
                             }}
@@ -380,9 +377,9 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                         <button
                             onClick={handleSend}
                             disabled={!inputText.trim() || isSending}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-neon-magenta hover:scale-110 transition-transform disabled:opacity-0 active:scale-95 group-hover/input:translate-x-1"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-neon-magenta hover:scale-110 transition-transform disabled:opacity-0 active:scale-95"
                         >
-                            <Send size={20} />
+                            <Send size={16} />
                         </button>
                     </div>
                 </div>
