@@ -11,7 +11,8 @@ import {
     MessageCircle,
     User,
     ChevronRight,
-    ChevronLeft
+    ChevronLeft,
+    ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -146,6 +147,16 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
         );
     }
 
+    const [isDMAnimate, setIsDMAnimate] = useState(false);
+
+    const handleDMTouch = () => {
+        setIsDMAnimate(true);
+        setTimeout(() => {
+            setIsDMAnimate(false);
+            window.location.href = `/nexus?user=${selectedProfile.id}&action=dm`;
+        }, 1500);
+    };
+
     return (
         <div className="flex flex-col h-[400px] lg:h-[70%] w-full lg:w-[350px] shrink-0 relative lg:absolute lg:right-10 lg:bottom-10 z-40">
             {/* Heart Burst Container */}
@@ -246,82 +257,147 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
                 </div>
             </div>
 
-            {/* Profile Overlay (Full-Screen) */}
+            {/* Profile Overlay v3 (Immersive Social) */}
             <AnimatePresence>
                 {selectedProfile && (
                     <motion.div
-                        initial={{ opacity: 0, y: "100%" }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: "100%" }}
-                        className="fixed inset-0 z-[100] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-center p-8 overflow-y-auto"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-3xl flex flex-col items-center justify-center p-6 sm:p-12 overflow-y-auto no-scrollbar"
                     >
+                        {/* DM Transmit FX Overlay */}
+                        <AnimatePresence>
+                            {isDMAnimate && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="fixed inset-0 z-[110] bg-neon-cyan/10 flex items-center justify-center backdrop-blur-sm"
+                                >
+                                    <motion.div
+                                        initial={{ scale: 0.5, opacity: 0 }}
+                                        animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+                                        transition={{ duration: 1, repeat: Infinity }}
+                                        className="w-40 h-40 border-4 border-neon-cyan rounded-full flex items-center justify-center"
+                                    >
+                                        <Send size={40} className="text-neon-cyan" />
+                                    </motion.div>
+                                    <p className="absolute bottom-1/4 text-neon-cyan font-black uppercase tracking-[0.5em] text-xs animate-pulse">Establishing Neural Link...</p>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
                         <button
                             onClick={() => setSelectedProfile(null)}
-                            className="absolute top-10 left-10 p-4 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                            className="absolute top-8 left-8 p-3 rounded-full bg-white/5 hover:bg-white/10 transition-all border border-white/10 group active:scale-90"
                         >
-                            <ChevronLeft size={30} className="text-white" />
+                            <ChevronLeft size={24} className="text-white group-hover:-translate-x-1 transition-transform" />
                         </button>
 
-                        <div className="w-full max-w-sm flex flex-col items-center space-y-8 animate-in fade-in zoom-in duration-500">
-                            <div className="w-40 h-40 rounded-full border-4 border-neon-cyan p-1 shadow-[0_0_50px_rgba(0,242,255,0.3)]">
-                                <div className="w-full h-full rounded-full bg-black overflow-hidden bg-white/5 flex items-center justify-center">
-                                    {selectedProfile.profilePicture ? (
-                                        <img src={selectedProfile.profilePicture} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <User size={60} className="text-slate-700" />
-                                    )}
+                        <div className="w-full max-w-md flex flex-col items-center space-y-10 py-10">
+                            {/* Header Section */}
+                            <div className="flex flex-col items-center space-y-6">
+                                <motion.div
+                                    initial={{ scale: 0.8, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    className="w-44 h-44 rounded-full border-[6px] border-neon-cyan/20 p-2 relative shadow-[0_0_80px_rgba(0,242,255,0.2)]"
+                                >
+                                    <div className="w-full h-full rounded-full bg-black overflow-hidden bg-white/5 flex items-center justify-center relative z-10">
+                                        {selectedProfile.profilePicture ? (
+                                            <img src={selectedProfile.profilePicture} className="w-full h-full object-cover" alt="Profile" />
+                                        ) : (
+                                            <User size={60} className="text-slate-700" />
+                                        )}
+                                    </div>
+                                    <div className="absolute inset-0 bg-neon-cyan/20 rounded-full blur-2xl animate-pulse" />
+                                </motion.div>
+
+                                <div className="text-center space-y-3">
+                                    <h2 className="text-4xl font-black uppercase text-white tracking-widest italic leading-none drop-shadow-2xl">
+                                        {selectedProfile.displayName || selectedProfile.name}
+                                    </h2>
+                                    <div className="flex items-center justify-center gap-3">
+                                        <p className="text-neon-magenta font-black uppercase tracking-[0.4em] text-[10px] bg-neon-magenta/10 px-3 py-1 rounded-full border border-neon-magenta/20">Verified Identity</p>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="text-center space-y-2">
-                                <h2 className="text-3xl font-black uppercase text-white tracking-[0.1em]">
-                                    {selectedProfile.displayName || selectedProfile.name}
-                                </h2>
-                                <p className="text-neon-magenta font-black uppercase tracking-[0.4em] text-[10px]">Neural Identity Verified</p>
-                            </div>
+                            {/* Bio Card */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                                className="w-full glass-dark border border-white/10 rounded-[2.5rem] p-8 relative overflow-hidden group hover:border-neon-cyan/30 transition-all"
+                            >
+                                <div className="absolute top-0 left-0 w-1 h-full bg-neon-cyan group-hover:shadow-[0_0_20px_rgba(0,242,255,0.5)] transition-all" />
+                                <p className="text-slate-300 text-lg sm:text-xl font-medium leading-relaxed italic pr-4">
+                                    "{selectedProfile.bio || "In the matrix, code is reality. Identity is a fragment."}"
+                                </p>
+                            </motion.div>
 
-                            <div className="w-full h-px bg-white/10" />
-
-                            <p className="text-center text-slate-300 text-lg leading-relaxed max-w-xs italic px-4">
-                                "{selectedProfile.bio || "In the matrix, code is reality. Identity is a fragment."}"
-                            </p>
-
-                            <div className="flex flex-col gap-4 w-full pt-4 px-4">
+                            {/* Interaction Matrix */}
+                            <div className="grid grid-cols-2 gap-4 w-full px-2">
                                 {currentUser && selectedProfile.id !== currentUser.id && (
-                                    <button
-                                        onClick={handleFriendRequest}
-                                        className={`py-4 rounded-2xl font-black uppercase tracking-widest text-[12px] transition-all shadow-xl hover:scale-[1.02] active:scale-[0.98] ${friendshipStatus?.status === 'accepted'
-                                                ? 'bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/30'
+                                    <>
+                                        <button
+                                            onClick={handleFriendRequest}
+                                            className={`py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all flex flex-col items-center gap-1 group ${friendshipStatus?.status === 'accepted'
+                                                ? 'bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/30'
                                                 : friendshipStatus?.status === 'pending'
-                                                    ? 'bg-white/10 text-slate-400 border border-white/20'
-                                                    : 'bg-neon-cyan text-black shadow-[0_0_30px_rgba(0,242,255,0.4)] hover:shadow-[0_0_45px_rgba(0,242,255,0.6)]'
-                                            }`}
-                                    >
-                                        {friendshipStatus?.status === 'accepted' ? 'Following' :
-                                            friendshipStatus?.status === 'pending' ? 'Request Sent' : 'Connect'}
-                                    </button>
+                                                    ? 'bg-white/5 text-slate-500 border border-white/10 opacity-50'
+                                                    : 'bg-neon-cyan text-black shadow-[0_20px_40px_rgba(0,242,255,0.3)] hover:shadow-[0_30px_60px_rgba(0,242,255,0.4)] hover:scale-[1.05]'
+                                                }`}
+                                        >
+                                            <User size={20} className={friendshipStatus?.status === 'accepted' ? "" : "group-hover:animate-bounce"} />
+                                            {friendshipStatus?.status === 'accepted' ? 'Following' :
+                                                friendshipStatus?.status === 'pending' ? 'Pending' : 'Connect'}
+                                        </button>
+
+                                        <button
+                                            onClick={handleDMTouch}
+                                            className="py-5 rounded-2xl bg-white/5 border border-white/10 text-white font-black uppercase tracking-widest text-[11px] hover:bg-neon-magenta hover:text-black hover:border-neon-magenta transition-all flex flex-col items-center gap-1 hover:shadow-[0_20px_40px_rgba(255,45,85,0.3)] group"
+                                        >
+                                            <Send size={20} className="group-hover:rotate-12 transition-transform" />
+                                            DM Transmit
+                                        </button>
+                                    </>
                                 )}
                                 <button
                                     onClick={() => window.location.href = `/nexus?user=${selectedProfile.id}`}
-                                    className="py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-black uppercase tracking-widest text-[12px] hover:bg-white/10 transition-all"
+                                    className={`py-5 rounded-2xl bg-white/[0.02] border border-white/10 text-white font-black uppercase tracking-widest text-[11px] hover:bg-white/10 transition-all flex flex-col items-center gap-1 group ${currentUser && selectedProfile.id !== currentUser.id ? 'col-span-2' : 'col-span-2'}`}
                                 >
-                                    Nexus Identity Tab
+                                    <ExternalLink size={20} className="group-hover:scale-110 transition-transform" />
+                                    View Full Nexus Identity
                                 </button>
                             </div>
 
+                            {/* Signal Fragments (Social Links) */}
                             {selectedProfile.socialLinks && (
-                                <div className="flex flex-wrap justify-center gap-6 pt-8 pb-10">
-                                    {(() => {
-                                        try {
-                                            const links = JSON.parse(selectedProfile.socialLinks);
-                                            return Object.entries(links).map(([platform, url]: [any, any]) => (
-                                                <div key={platform} className="flex flex-col items-center gap-2">
-                                                    <span className="text-[10px] font-black text-neon-cyan uppercase tracking-widest">{platform}</span>
-                                                    <div className="h-1 w-4 bg-neon-cyan/20 rounded-full" />
-                                                </div>
-                                            ));
-                                        } catch { return null; }
-                                    })()}
+                                <div className="w-full space-y-4 pt-4 pb-8">
+                                    <div className="flex items-center gap-4 px-4">
+                                        <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/10" />
+                                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.5em]">Signal Fragments</span>
+                                        <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/10" />
+                                    </div>
+                                    <div className="flex flex-wrap justify-center gap-8">
+                                        {(() => {
+                                            try {
+                                                const links = JSON.parse(selectedProfile.socialLinks);
+                                                return Object.entries(links).map(([platform, url]: [any, any]) => (
+                                                    <motion.div
+                                                        key={platform}
+                                                        whileHover={{ scale: 1.1 }}
+                                                        className="flex flex-col items-center gap-2 group cursor-pointer"
+                                                        onClick={() => window.open(url, '_blank')}
+                                                    >
+                                                        <span className="text-[10px] font-black text-neon-cyan uppercase tracking-widest opacity-50 group-hover:opacity-100 transition-opacity">{platform}</span>
+                                                        <div className="h-1 w-6 bg-neon-cyan/20 rounded-full group-hover:bg-neon-cyan group-hover:shadow-[0_0_10px_rgba(0,242,255,0.8)] transition-all" />
+                                                    </motion.div>
+                                                ));
+                                            } catch { return null; }
+                                        })()}
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -331,3 +407,4 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
         </div>
     );
 }
+
