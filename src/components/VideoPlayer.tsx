@@ -329,8 +329,8 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                     scrolling="no"
                     allowFullScreen
                     allow="autoplay; encrypted-media; picture-in-picture"
-                    sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-pointer-lock"
-                    referrerPolicy="no-referrer"
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-pointer-lock allow-modals allow-popups-to-escape-sandbox"
+                    referrerPolicy="strict-origin-when-cross-origin"
                     onLoad={() => {
                         setIsReady(true);
                         dispatchStatus("Playing");

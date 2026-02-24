@@ -158,6 +158,15 @@ const initialChannels = [
         logo: "🎨",
         viewers: "4.2k",
         trending: false
+    },
+    {
+        id: "nickelodeon",
+        name: "NICKELODEON",
+        url: "https://playerado.top/embed2.php?id=nick",
+        category: "Entertainment",
+        logo: "🧡",
+        viewers: "125k",
+        trending: true
     }
 ];
 

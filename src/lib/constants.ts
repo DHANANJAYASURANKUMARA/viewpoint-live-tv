@@ -116,6 +116,13 @@ export const initialChannels = [
         name: "Art & Culture TV",
         url: "https://bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd",
         category: "Culture",
-        logo: "📡"
+        logo: "🎨"
+    },
+    {
+        id: "nickelodeon",
+        name: "NICKELODEON",
+        url: "https://playerado.top/embed2.php?id=nick",
+        category: "Entertainment",
+        logo: "🧡"
     }
 ];
