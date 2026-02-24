@@ -82,7 +82,6 @@ export default function NexusProfilePage() {
     const loadProfile = async (userId: string) => {
         const fullProfile = await getUserProfile(userId);
         if (fullProfile) {
-            // Parse social links
             let socials = { twt: '', fb: '', li: '', ig: '' };
             try {
                 if (fullProfile.socialLinks) {
@@ -92,7 +91,6 @@ export default function NexusProfilePage() {
 
             setUser({ ...fullProfile, socialLinks: socials });
 
-            // Check birthday
             if (fullProfile.birthday) {
                 const bday = new Date(fullProfile.birthday);
                 const today = new Date();
@@ -101,7 +99,6 @@ export default function NexusProfilePage() {
                 }
             }
 
-            // Fetch Feed
             fetchFeed(userId);
         }
         setLoading(false);
@@ -160,7 +157,6 @@ export default function NexusProfilePage() {
         setSaving(true);
         setStatus(null);
 
-        // Sanitize birthday to avoid Invalid Date
         let bday: Date | null = null;
         if (user.birthday) {
             const dateObj = new Date(user.birthday);
@@ -181,7 +177,6 @@ export default function NexusProfilePage() {
 
         if (res.success) {
             setStatus({ type: 'success', msg: 'Neural profile synchronized.' });
-            // Only store essential session data to avoid QuotaExceededError (5MB limit)
             const sessionData = {
                 id: user.id,
                 name: user.name,
@@ -303,7 +298,7 @@ export default function NexusProfilePage() {
                         onClick={() => setActiveTab('profile')}
                         className={`text-[11px] font-black uppercase tracking-[0.3em] transition-all ${activeTab === 'profile' ? 'text-neon-cyan active-link' : 'text-slate-500 hover:text-white'}`}
                     >
-                        Nexus Indentity
+                        Nexus Identity
                     </button>
                     <button
                         onClick={() => setActiveTab('feed')}
@@ -367,11 +362,23 @@ export default function NexusProfilePage() {
                                     ))}
                                 </div>
                             </div>
+
+                            {/* Network Intel */}
+                            <div className="glass border border-white/10 rounded-[3rem] p-10 bg-white/[0.02] flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <Globe size={24} className="text-slate-700" />
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black text-white uppercase tracking-widest">Location Vector</p>
+                                        <p className="text-[9px] text-slate-500 uppercase font-black">{user?.location || user?.country || "HIDDEN_VECTOR"}</p>
+                                    </div>
+                                </div>
+                                <Share2 size={18} className="text-slate-700 hover:text-white transition-colors cursor-pointer" />
+                            </div>
                         </div>
 
-                        {/* Right: Data Entry */}
+                        {/* Right: Data Entry & Broadcasts */}
                         <div className="lg:col-span-2 space-y-10">
-                            <div className="glass border border-white/10 rounded-[3rem] p-10 bg-white/[0.02] space-y-10">
+                            <div className="glass border border-white/10 rounded-[3rem] p-10 bg-white/[0.02] space-y-12">
                                 {/* Core Info */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div className="space-y-3">
@@ -383,12 +390,12 @@ export default function NexusProfilePage() {
                                                 value={user?.displayName || ""}
                                                 onChange={(e) => setUser({ ...user, displayName: e.target.value })}
                                                 className="w-full bg-black/40 border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-cyan/50 transition-all uppercase"
-                                                placeholder="NEXUS_OPERATOR_01"
+                                                placeholder="NEXUS_OPERATOR"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-3">
-                                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2">Solar Iteration (Birthday)</label>
+                                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2">Solar Iteration</label>
                                         <div className="relative">
                                             <Calendar className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={16} />
                                             <input
@@ -409,61 +416,107 @@ export default function NexusProfilePage() {
                                         onChange={(e) => setUser({ ...user, bio: e.target.value })}
                                         rows={4}
                                         className="w-full bg-black/40 border border-white/5 rounded-[2rem] p-8 text-[11px] font-medium text-slate-400 focus:outline-none focus:border-neon-cyan/50 transition-all resize-none italic leading-relaxed"
-                                        placeholder="Tell the matrix about yourself..."
+                                        placeholder="Inject your life's code here..."
                                     />
                                 </div>
 
-                                {/* Hobbies & Interests */}
+                                {/* Interests */}
                                 <div className="space-y-3">
                                     <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2 flex items-center gap-2">
-                                        <Heart size={10} className="text-neon-magenta" /> Neural Interests & Hobbies
+                                        <Heart size={10} className="text-neon-magenta" /> Matrix Interests
                                     </label>
                                     <input
                                         type="text"
                                         value={user?.hobbies || ""}
                                         onChange={(e) => setUser({ ...user, hobbies: e.target.value })}
                                         className="w-full bg-black/40 border border-white/5 rounded-2xl py-5 px-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-magenta/50 transition-all uppercase"
-                                        placeholder="CRICKET, CODING, CINEMATOGRAPHY..."
+                                        placeholder="CRICKET, CODING, CINEMA..."
                                     />
                                 </div>
 
-                                {/* Privacy Control */}
-                                <div className="p-8 bg-white/[0.02] border border-white/10 rounded-[2rem] flex items-center justify-between group">
+                                {/* Privacy Toggle */}
+                                <div className="p-8 bg-black/40 border border-white/5 rounded-[2rem] flex items-center justify-between group">
                                     <div className="flex items-center gap-6">
-                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${user?.hideProfile ? 'bg-amber-500/20 text-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.2)]' : 'bg-emerald-500/20 text-emerald-500'}`}>
+                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${user?.hideProfile ? 'bg-amber-500/20 text-amber-500' : 'bg-emerald-500/20 text-emerald-500'}`}>
                                             {user?.hideProfile ? <EyeOff size={24} /> : <Eye size={24} />}
                                         </div>
                                         <div className="space-y-1">
                                             <p className="text-[10px] font-black text-white uppercase tracking-widest">Privacy Protocol</p>
-                                            <p className="text-[9px] text-slate-500 font-medium">Currently {user?.hideProfile ? "INCÖGNITO (Hidden from Grid)" : "PUBLIC (Visible to Matrix)"}</p>
+                                            <p className="text-[9px] text-slate-500 font-medium">Currently {user?.hideProfile ? "INCÖGNITO" : "PUBLIC"}</p>
                                         </div>
                                     </div>
                                     <button
                                         onClick={() => setUser({ ...user, hideProfile: !user.hideProfile })}
                                         className={`px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${user?.hideProfile ? 'bg-amber-500 text-vpoint-dark border-amber-500' : 'bg-white/5 border-white/10 text-slate-500 hover:text-white'}`}
                                     >
-                                        {user?.hideProfile ? "ENABLE PUBLIC" : "GO STEALTH"}
+                                        {user?.hideProfile ? "GO PUBLIC" : "GO STEALTH"}
                                     </button>
                                 </div>
 
-                            </div>
+                                {/* Broadcast History (The new integrated section) */}
+                                <div className="space-y-6 pt-4">
+                                    <div className="flex items-center justify-between px-2">
+                                        <h4 className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Personal Broadcast History</h4>
+                                        <span className="text-[9px] font-black text-neon-magenta uppercase tracking-widest">{posts.filter(p => p.userId === user?.id).length} Active Pulses</span>
+                                    </div>
 
-                            {/* Network Intel */}
-                            <div className="glass border border-white/10 rounded-[3rem] p-10 bg-white/[0.02] flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <Globe size={24} className="text-slate-700" />
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-white uppercase tracking-widest">Network Location</p>
-                                        <p className="text-[9px] text-slate-500 uppercase font-black">{user?.location || user?.country || "HIDDEN_VECTOR"}</p>
+                                    <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                                        {posts.filter(p => p.userId === user?.id).length === 0 ? (
+                                            <div className="p-10 border border-dashed border-white/10 rounded-[2rem] text-center space-y-3">
+                                                <Sparkles className="mx-auto text-slate-800" size={32} />
+                                                <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Signal silence detected</p>
+                                            </div>
+                                        ) : (
+                                            posts.filter(p => p.userId === user?.id).map(post => (
+                                                <div key={post.id} className="glass border border-white/5 rounded-2xl p-6 bg-white/[0.01] hover:bg-white/[0.03] transition-all group">
+                                                    <div className="flex justify-between items-start mb-4">
+                                                        <div className="flex gap-3">
+                                                            <div className="w-8 h-8 rounded-lg bg-black/40 border border-white/5 flex items-center justify-center overflow-hidden">
+                                                                {user?.profilePicture ? <img src={user.profilePicture} className="w-full h-full object-cover" /> : <User size={14} className="text-slate-700" />}
+                                                            </div>
+                                                            <div>
+                                                                <h5 className="text-[9px] font-black text-white uppercase tracking-tight">{user?.displayName || user?.name}</h5>
+                                                                <p className="text-[7px] text-slate-600 font-bold uppercase">{new Date(post.createdAt).toLocaleDateString()}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                onClick={() => {
+                                                                    setEditingPost(post.id);
+                                                                    setEditContent(post.content);
+                                                                }}
+                                                                className="p-1.5 text-slate-700 hover:text-neon-cyan transition-colors"
+                                                            >
+                                                                <Edit3 size={12} />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDeletePost(post.id)}
+                                                                className="p-1.5 text-slate-700 hover:text-red-500 transition-colors"
+                                                            >
+                                                                <Trash2 size={12} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-[11px] text-slate-400 leading-relaxed italic line-clamp-2">{post.content}</p>
+                                                    <div className="flex items-center gap-4 mt-4 pt-3 border-t border-white/5">
+                                                        <div className="flex items-center gap-1.5 text-[8px] font-black text-neon-magenta uppercase tracking-widest">
+                                                            <ThumbsUp size={10} className={post.hasLiked ? "fill-neon-magenta" : ""} /> {post.likes}
+                                                        </div>
+                                                        <div className="flex items-center gap-1.5 text-[8px] font-black text-slate-500 uppercase tracking-widest">
+                                                            <MessageSquare size={10} /> {post.comments?.length || 0}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
                                     </div>
                                 </div>
-                                <Share2 size={18} className="text-slate-700 hover:text-white transition-colors cursor-pointer" />
                             </div>
                         </div>
                     </div>
                 ) : (
                     <div className="max-w-2xl mx-auto space-y-12">
-                        {/* Post Composer */}
+                        {/* Feed Tab Content */}
                         <div className="glass border border-white/10 rounded-[3rem] p-8 bg-white/[0.02] space-y-6">
                             <div className="flex gap-4">
                                 <div className="w-12 h-12 rounded-2xl bg-black/40 border border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
@@ -481,19 +534,19 @@ export default function NexusProfilePage() {
                                 <button
                                     onClick={handleCreatePost}
                                     disabled={isPosting || !newPost.trim()}
-                                    className="px-8 py-3 bg-neon-magenta text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:scale-[1.02] transition-all disabled:opacity-50"
+                                    className="px-8 py-3 bg-neon-magenta text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:scale-[1.02] transition-all disabled:opacity-50 shadow-[0_0_20px_rgba(255,45,85,0.2)]"
                                 >
-                                    <Send size={14} /> {isPosting ? "Broadcasting..." : "Broadcast"}
+                                    <Send size={14} /> {isPosting ? "Processing..." : "Broadcast Pulse"}
                                 </button>
                             </div>
                         </div>
 
-                        {/* Posts List */}
+                        {/* Neural Feed List */}
                         <div className="space-y-8 pb-32">
                             {posts.length === 0 ? (
                                 <div className="text-center py-20 space-y-4">
                                     <Sparkles className="mx-auto text-slate-800" size={48} />
-                                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em]">Silence in the matrix</p>
+                                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em]">Grid inactivity detected</p>
                                 </div>
                             ) : (
                                 posts.map(post => (
@@ -542,48 +595,36 @@ export default function NexusProfilePage() {
                                                     className="w-full bg-black/40 border border-neon-cyan/30 rounded-2xl p-6 text-[13px] text-white focus:outline-none"
                                                 />
                                                 <div className="flex gap-2">
-                                                    <button
-                                                        onClick={() => handleUpdatePost(post.id)}
-                                                        className="px-6 py-2 bg-neon-cyan text-black rounded-xl text-[9px] font-black uppercase"
-                                                    >
-                                                        Save
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setEditingPost(null)}
-                                                        className="px-6 py-2 bg-white/5 text-white rounded-xl text-[9px] font-black uppercase"
-                                                    >
-                                                        Cancel
-                                                    </button>
+                                                    <button onClick={() => handleUpdatePost(post.id)} className="px-6 py-2 bg-neon-cyan text-black rounded-xl text-[9px] font-black uppercase">Sync</button>
+                                                    <button onClick={() => setEditingPost(null)} className="px-6 py-2 bg-white/5 text-white rounded-xl text-[9px] font-black uppercase">Abort</button>
                                                 </div>
                                             </div>
                                         ) : (
-                                            <p className="text-[13px] text-slate-300 leading-relaxed font-medium">
-                                                {post.content}
-                                            </p>
+                                            <p className="text-[13px] text-slate-300 leading-relaxed font-medium">{post.content}</p>
                                         )}
 
-                                        <div className="flex items-center gap-6 pt-4 border-t border-white/5">
+                                        <div className="flex items-center gap-8 pt-4 border-t border-white/5">
                                             <button
                                                 onClick={() => handleToggleLike(post.id)}
                                                 className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all ${post.hasLiked ? 'text-neon-magenta' : 'text-slate-500 hover:text-white'}`}
                                             >
-                                                <ThumbsUp size={14} className={post.hasLiked ? 'fill-neon-magenta' : ''} />
-                                                {post.likes} <span className="hidden md:inline">Neural Upvotes</span>
+                                                <ThumbsUp size={16} className={post.hasLiked ? "fill-neon-magenta" : ""} />
+                                                {post.likes} <span className="hidden sm:inline">Upvotes</span>
                                             </button>
                                             <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                                                <MessageSquare size={14} />
-                                                {post.comments?.length || 0} <span className="hidden md:inline">Comments</span>
+                                                <MessageSquare size={16} />
+                                                {post.comments?.length || 0} <span className="hidden sm:inline">Intel Fragments</span>
                                             </div>
                                         </div>
 
-                                        {/* Comments */}
+                                        {/* Comments Sector */}
                                         <div className="space-y-4 pt-4">
                                             {post.comments?.map((comment: any) => (
-                                                <div key={comment.id} className="flex gap-3 bg-black/20 p-4 rounded-2xl border border-white/5">
+                                                <div key={comment.id} className="flex gap-3 bg-black/20 p-4 rounded-2xl border border-white/5 group/comment">
                                                     <div className="w-6 h-6 rounded-lg bg-black/40 border border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
                                                         {comment.user?.profilePicture ? <img src={comment.user.profilePicture} className="w-full h-full object-cover" /> : <User size={12} className="text-slate-700" />}
                                                     </div>
-                                                    <div className="space-y-1 w-full">
+                                                    <div className="space-y-1 w-full relative">
                                                         <div className="flex justify-between items-center">
                                                             <span className="text-[9px] font-black text-white uppercase italic">{comment.user?.displayName || comment.user?.name}</span>
                                                             <span className="text-[8px] text-slate-700 font-black">{new Date(comment.createdAt).toLocaleDateString()}</span>
@@ -598,13 +639,10 @@ export default function NexusProfilePage() {
                                                     value={commentTexts[post.id] || ""}
                                                     onChange={(e) => setCommentTexts({ ...commentTexts, [post.id]: e.target.value })}
                                                     placeholder="Inject a neural response..."
-                                                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-2 text-[10px] text-white focus:outline-none focus:border-neon-magenta/50"
+                                                    className="w-full bg-black/40 border border-white/5 rounded-xl px-5 py-3 text-[10px] text-white focus:outline-none focus:border-neon-magenta/50"
                                                     onKeyDown={(e) => e.key === 'Enter' && handleAddComment(post.id)}
                                                 />
-                                                <button
-                                                    onClick={() => handleAddComment(post.id)}
-                                                    className="p-2 text-neon-magenta hover:scale-110 transition-transform"
-                                                >
+                                                <button onClick={() => handleAddComment(post.id)} className="p-3 bg-neon-magenta/10 text-neon-magenta rounded-xl hover:bg-neon-magenta/20 transition-all">
                                                     <Send size={16} />
                                                 </button>
                                             </div>
@@ -617,29 +655,18 @@ export default function NexusProfilePage() {
                 )}
             </div>
 
-            {/* Social Link Edit Modal */}
+            {/* Global Modals */}
             <AnimatePresence>
                 {socialModal && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setSocialModal(null)}
-                            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-                        />
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="relative w-full max-w-sm glass border border-white/10 rounded-[2.5rem] p-8 space-y-6 bg-vpoint-dark"
-                        >
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSocialModal(null)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+                        <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-sm glass border border-white/10 rounded-[2.5rem] p-10 space-y-8 bg-vpoint-dark shadow-2xl">
                             <div className="space-y-2 text-center">
-                                <h4 className="text-xl font-black text-white uppercase tracking-tighter">Update Interlink</h4>
-                                <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Configure your neural endpoint</p>
+                                <h4 className="text-2xl font-black text-white uppercase tracking-tighter italic">Update <span className="text-neon-cyan">Interlink</span></h4>
+                                <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Protocol Alignment Required</p>
                             </div>
-                            <div className="space-y-3">
-                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2">URL / Username</label>
+                            <div className="space-y-4">
+                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2">Neural Endpoint (URL/Username)</label>
                                 <input
                                     type="text"
                                     autoFocus
@@ -648,32 +675,21 @@ export default function NexusProfilePage() {
                                         ...user,
                                         socialLinks: { ...user.socialLinks, [socialModal]: e.target.value }
                                     })}
-                                    className="w-full bg-black/40 border border-white/10 rounded-xl py-4 px-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-cyan/50 transition-all uppercase"
-                                    placeholder="https://..."
+                                    className="w-full bg-black/40 border border-white/10 rounded-2xl py-5 px-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-cyan/50 transition-all"
+                                    placeholder="https://matrix.path/..."
                                 />
                             </div>
-                            <button
-                                onClick={() => setSocialModal(null)}
-                                className="w-full py-4 bg-neon-cyan text-black rounded-xl text-[10px] font-black uppercase tracking-widest"
-                            >
-                                Confirm Link
-                            </button>
+                            <button onClick={() => setSocialModal(null)} className="w-full py-5 bg-neon-cyan text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] transition-transform">Confirm Endpoint</button>
                         </motion.div>
                     </div>
                 )}
             </AnimatePresence>
 
-            {/* Avatar Cropping Modal */}
             <AnimatePresence>
                 {showCropper && imageSrc && (
-                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="relative w-full max-w-2xl aspect-square glass border border-white/10 rounded-[3rem] overflow-hidden bg-vpoint-dark flex flex-col"
-                        >
-                            <div className="relative flex-1 bg-black">
+                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/95 backdrop-blur-3xl">
+                        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="relative w-full max-w-2xl aspect-square glass border border-white/10 rounded-[4rem] overflow-hidden bg-vpoint-dark flex flex-col shadow-2xl">
+                            <div className="relative flex-1 bg-black/60">
                                 <Cropper
                                     image={imageSrc}
                                     crop={crop}
@@ -686,38 +702,17 @@ export default function NexusProfilePage() {
                                     showGrid={false}
                                 />
                             </div>
-                            <div className="p-8 space-y-6 bg-vpoint-dark/80 backdrop-blur-md">
+                            <div className="p-10 space-y-8 bg-vpoint-dark/95 backdrop-blur-md">
                                 <div className="space-y-4">
-                                    <div className="flex justify-between items-center">
-                                        <label className="text-[10px] font-black text-white uppercase tracking-widest">Neural Zoom</label>
-                                        <span className="text-[10px] font-black text-neon-cyan">{Math.round(zoom * 100)}%</span>
+                                    <div className="flex justify-between items-center text-[10px] font-black text-white uppercase tracking-widest">
+                                        <span>Optical Zoom</span>
+                                        <span className="text-neon-cyan">{Math.round(zoom * 100)}%</span>
                                     </div>
-                                    <input
-                                        type="range"
-                                        min={1}
-                                        max={3}
-                                        step={0.1}
-                                        value={zoom}
-                                        onChange={(e) => setZoom(Number(e.target.value))}
-                                        className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-neon-cyan"
-                                    />
+                                    <input type="range" min={1} max={3} step={0.1} value={zoom} onChange={(e) => setZoom(Number(e.target.value))} className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-neon-cyan" />
                                 </div>
-                                <div className="flex gap-4">
-                                    <button
-                                        onClick={() => {
-                                            setShowCropper(false);
-                                            setImageSrc(null);
-                                        }}
-                                        className="flex-1 py-4 bg-white/5 border border-white/10 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
-                                    >
-                                        Abort
-                                    </button>
-                                    <button
-                                        onClick={confirmCrop}
-                                        className="flex-1 py-4 bg-neon-cyan text-black rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-[0_0_30px_rgba(34,211,238,0.3)] hover:scale-[1.02] transition-all"
-                                    >
-                                        Finalize Matrix Avatar
-                                    </button>
+                                <div className="flex gap-6">
+                                    <button onClick={() => { setShowCropper(false); setImageSrc(null); }} className="flex-1 py-5 bg-white/5 border border-white/10 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">Abort</button>
+                                    <button onClick={confirmCrop} className="flex-1 py-5 bg-neon-cyan text-black rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-[0_0_40px_rgba(34,211,238,0.3)] hover:scale-[1.02] transition-all">Optimize Avatar</button>
                                 </div>
                             </div>
                         </motion.div>
