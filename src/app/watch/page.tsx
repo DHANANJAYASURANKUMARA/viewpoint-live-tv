@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import LiveChat from "@/components/LiveChat";
 import { getUserProfile } from "@/lib/actions";
+import { MessageSquare, MessageSquareOff } from "lucide-react";
 
 export default function WatchPage() {
     const router = useRouter();
@@ -17,6 +18,7 @@ export default function WatchPage() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userName, setUserName] = useState("");
     const [fullUser, setFullUser] = useState<any>(null);
+    const [isChatVisible, setIsChatVisible] = useState(true);
 
     const loadFullUser = async (id: string) => {
         const profile = await getUserProfile(id);
@@ -64,8 +66,29 @@ export default function WatchPage() {
     }
 
     return (
-        <div className="h-full w-full relative flex flex-col lg:flex-row items-stretch gap-4 p-4 lg:p-6 overflow-hidden">
-            <div className="flex-1 flex flex-col items-center justify-center min-w-0 bg-black/20 rounded-[2rem] lg:rounded-[3rem] border border-white/5 overflow-hidden">
+        <div className="h-full w-full relative flex flex-col lg:flex-row items-stretch gap-0 lg:gap-6 p-4 lg:p-6 overflow-hidden">
+            {/* Show Chat Toggle (Floating when hidden) */}
+            {!isChatVisible && (
+                <motion.button
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    onClick={() => setIsChatVisible(true)}
+                    className="fixed right-6 bottom-10 z-[60] p-4 glass-dark border border-neon-magenta/20 text-neon-magenta rounded-full shadow-[0_0_30px_rgba(255,45,85,0.2)] hover:bg-neon-magenta hover:text-white transition-all group"
+                >
+                    <MessageSquare size={20} className="relative z-10" />
+                    <div className="absolute inset-0 bg-neon-magenta/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                </motion.button>
+            )}
+
+            <div className="flex-1 flex flex-col items-center justify-center min-w-0 bg-black/40 backdrop-blur-3xl rounded-[2rem] lg:rounded-[3rem] border border-white/5 shadow-2xl overflow-hidden relative group">
+                {/* Inline Toggle (Visible only on desktop when chat is visible) */}
+                <button
+                    onClick={() => setIsChatVisible(!isChatVisible)}
+                    className="absolute top-6 right-6 z-50 p-3 glass border border-white/10 rounded-2xl text-white/40 hover:text-white hover:border-white/20 transition-all opacity-0 group-hover:opacity-100 hidden lg:flex items-center gap-2"
+                >
+                    {isChatVisible ? <MessageSquareOff size={16} /> : <MessageSquare size={16} />}
+                    <span className="text-[10px] font-black uppercase tracking-widest">{isChatVisible ? "Hide Chat" : "Show Chat"}</span>
+                </button>
                 <AnimatePresence mode="wait">
                     {currentUrl ? (
                         <motion.div
@@ -118,12 +141,39 @@ export default function WatchPage() {
                 </AnimatePresence>
             </div>
 
-            {currentUrl && (
-                <LiveChat
-                    channelId={currentUrl}
-                    currentUser={fullUser}
-                />
-            )}
+            <AnimatePresence>
+                {currentUrl && isChatVisible && (
+                    <motion.div
+                        initial={{ opacity: 0, x: 40, width: 0 }}
+                        animate={{ opacity: 1, x: 0, width: "350px" }}
+                        exit={{ opacity: 0, x: 40, width: 0 }}
+                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                        className="hidden lg:block h-full shrink-0"
+                    >
+                        <LiveChat
+                            channelId={currentUrl}
+                            currentUser={fullUser}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Mobile Chat (Respected toggle state) */}
+            <AnimatePresence>
+                {currentUrl && isChatVisible && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="lg:hidden mt-4 w-full shrink-0"
+                    >
+                        <LiveChat
+                            channelId={currentUrl}
+                            currentUser={fullUser}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
