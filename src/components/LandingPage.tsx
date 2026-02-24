@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     Zap, Globe, ShieldCheck, Play, ArrowRight,
     Activity, Layers, Users, Radio, Info, FileText,
-    Mail, ExternalLink, Menu, X, ArrowUpRight,
+    Mail, Menu, X, ArrowUpRight,
     Sparkles, Shield, Cpu, Volume2, MessageSquare, Send,
     Download
 } from "lucide-react";
@@ -396,61 +396,66 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                 </div>
             </section>
 
-            {/* Contact / Social Footer */}
-            <footer className="py-20 border-t border-white/5">
+            {/* Minimalist Premium Footer */}
+            <footer className="py-16 border-t border-white/5 bg-vpoint-dark/50">
                 <div className="container mx-auto px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
-                        <div className="space-y-10">
-                            <div className="flex items-center gap-3">
-                                <span className="text-3xl font-bold text-white tracking-tighter uppercase">{config.brandingText}</span>
+                    <div className="flex flex-col md:flex-row items-start justify-between gap-12 mb-16">
+                        {/* Brand & Mission */}
+                        <div className="max-w-sm space-y-6">
+                            <span className="text-2xl font-black text-white tracking-tighter uppercase">{config.brandingText}</span>
+                            <p className="text-[10px] font-medium text-white/30 leading-loose uppercase tracking-[0.2em]">
+                                Engineering the future of atmospheric live television. Ultra-low latency signal delivery across the global neural grid.
+                            </p>
+                        </div>
+
+                        {/* Flattened Quick Links */}
+                        <div className="flex flex-wrap gap-x-12 gap-y-6">
+                            <div className="space-y-4">
+                                <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Signal</h4>
+                                <ul className="space-y-3">
+                                    <li><Link href="/" className="text-[10px] font-bold text-white/40 hover:text-neon-cyan uppercase tracking-widest transition-colors">Broadcast HUD</Link></li>
+                                    <li><Link href="/watch" className="text-[10px] font-bold text-white/40 hover:text-neon-cyan uppercase tracking-widest transition-colors">Live Pulse</Link></li>
+                                </ul>
                             </div>
-                            <p className="text-xs font-semibold text-white/30 leading-loose uppercase tracking-widest">The future of atmospheric live television. Ultra-low latency, global signal coverage.</p>
-                            <div className="flex items-center gap-5">
-                                <a href="#" className="p-3 glass border border-white/10 rounded-xl hover:text-neon-cyan transition-all bg-white/5"><Mail size={18} /></a>
-                                <a href="#" className="p-3 glass border border-white/10 rounded-xl hover:text-neon-cyan transition-all bg-white/5"><ExternalLink size={18} /></a>
+                            <div className="space-y-4">
+                                <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Institutional</h4>
+                                <ul className="space-y-3">
+                                    <li><Link href="/about" className="text-[10px] font-bold text-white/40 hover:text-white uppercase tracking-widest transition-colors">The Mission</Link></li>
+                                    <li><Link href="/contact" className="text-[10px] font-bold text-white/40 hover:text-white uppercase tracking-widest transition-colors">Frequency Support</Link></li>
+                                </ul>
                             </div>
-                        </div>
-
-                        <div className="space-y-8">
-                            <h4 className="text-xs font-bold text-white uppercase tracking-[0.4em]">Network</h4>
-                            <ul className="space-y-5">
-                                <li><a href="#" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Signal HUD</a></li>
-                                <li><a href="#" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Edge Nodes</a></li>
-                                <li><a href="#" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Latency Stats</a></li>
-                                <li><Link href="/admin/login" className="text-[10px] font-black text-neon-cyan/40 hover:text-neon-cyan uppercase tracking-[0.3em] transition-colors pt-4 block">Admin Access</Link></li>
-                            </ul>
-                        </div>
-
-                        <div className="space-y-8">
-                            <h4 className="text-xs font-bold text-white uppercase tracking-[0.4em]">Protocol</h4>
-                            <ul className="space-y-5">
-                                <li><Link href="/terms" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Entry Terms</Link></li>
-                                <li><Link href="/privacy" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Privacy Shield</Link></li>
-                                <li><Link href="/dmca" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">DMCA Request</Link></li>
-                                <li><Link href="/disclaimer" className="text-xs font-semibold text-white/30 hover:text-white uppercase tracking-widest transition-colors">Legal Disclaimer</Link></li>
-                            </ul>
-                        </div>
-
-                        <div className="space-y-8">
-                            <h4 className="text-xs font-bold text-white uppercase tracking-[0.4em]">Handshake</h4>
-                            <div className="p-8 glass border border-white/10 rounded-[2rem] space-y-6 bg-white/5">
-                                <h5 className="text-[10px] font-bold text-neon-cyan uppercase tracking-[0.2em]">Join the Transmission</h5>
-                                <input
-                                    type="email"
-                                    placeholder="Neural ID"
-                                    className="w-full bg-vpoint-dark/50 border border-white/5 rounded-full px-6 py-3 text-xs font-bold text-white uppercase tracking-widest focus:outline-none focus:border-neon-cyan/30"
-                                />
-                                <button className="w-full py-3 bg-white text-vpoint-dark rounded-full text-xs font-bold uppercase tracking-widest hover:bg-neon-cyan transition-all">Subscribe</button>
+                            <div className="space-y-4">
+                                <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Administrative</h4>
+                                <ul className="space-y-3">
+                                    <li><Link href="/admin/login" className="text-[10px] font-bold text-neon-cyan/40 hover:text-neon-cyan uppercase tracking-widest transition-colors">Node Access</Link></li>
+                                </ul>
                             </div>
                         </div>
                     </div>
 
-                    <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 opacity-30">
-                        <span className="text-[8px] font-black uppercase tracking-[0.5em]">© 2026 Viewpoint Neural Systems • All Handshakes Encrypted</span>
-                        <div className="flex items-center gap-6">
-                            <Link href="/terms" className="text-[8px] font-black cursor-help hover:text-neon-cyan transition-colors">TOS</Link>
-                            <Link href="/privacy" className="text-[8px] font-black cursor-help hover:text-neon-cyan transition-colors">PRIVACY</Link>
-                            <Link href="/disclaimer" className="text-[8px] font-black cursor-help hover:text-neon-cyan transition-colors">DISCLAIMER</Link>
+                    {/* Bottom Legal Bar */}
+                    <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div className="flex items-center gap-6 group">
+                            <span className="text-[9px] font-black uppercase tracking-[0.4em] text-white/10 group-hover:text-white/20 transition-colors">
+                                © 2026 Viewpoint Neural Systems • Handshake Encrypted
+                            </span>
+                        </div>
+
+                        <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
+                            {[
+                                { name: "Entry Terms", href: "/terms" },
+                                { name: "Privacy Shield", href: "/privacy" },
+                                { name: "DMCA", href: "/dmca" },
+                                { name: "Disclaimer", href: "/disclaimer" }
+                            ].map((link) => (
+                                <Link
+                                    key={link.name}
+                                    href={link.href}
+                                    className="text-[9px] font-black uppercase tracking-widest text-white/20 hover:text-white transition-all"
+                                >
+                                    {link.name}
+                                </Link>
+                            ))}
                         </div>
                     </div>
                 </div>
