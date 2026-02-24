@@ -575,68 +575,7 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                             <MonitorPlay size={20} />
                                         </button>
 
-                                        <div className="relative">
-                                            <button
-                                                onClick={() => setShowQualityMenu(!showQualityMenu)}
-                                                className={`flex items-center gap-1.5 transition-colors ${showQualityMenu ? "text-neon-cyan" : "text-white/40 hover:text-white"}`}
-                                                title="QUALITY"
-                                            >
-                                                <Layers size={18} className="lg:w-5 lg:h-5" />
-                                                <span className="text-[7px] lg:text-[8px] font-black uppercase whitespace-nowrap">
-                                                    {currentQuality === -1
-                                                        ? 'Auto'
-                                                        : qualityLevels[currentQuality]
-                                                            ? `${qualityLevels[currentQuality].height || qualityLevels[currentQuality].width || 'HD'}p`
-                                                            : 'Auto'}
-                                                </span>
-                                            </button>
 
-                                            <AnimatePresence>
-                                                {showQualityMenu && (
-                                                    <motion.div
-                                                        initial={{ opacity: 0, y: 10 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        exit={{ opacity: 0, y: 10 }}
-                                                        className="absolute bottom-full right-0 mb-4 glass-dark border border-white/10 rounded-2xl overflow-hidden min-w-[120px]"
-                                                    >
-                                                        <button
-                                                            onClick={() => {
-                                                                if (!isDirectStream) {
-                                                                    const internal = playerRef.current?.getInternalPlayer?.();
-                                                                    if (internal?.hls) internal.hls.currentLevel = -1;
-                                                                    if (internal?.dash) internal.dash.setAutoSwitchQualityFor('video', true);
-                                                                }
-                                                                setCurrentQuality(-1);
-                                                                setShowQualityMenu(false);
-                                                            }}
-                                                            className={`w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 ${currentQuality === -1 ? 'text-neon-cyan' : 'text-slate-400'}`}
-                                                        >
-                                                            ✓ Auto (ABR)
-                                                        </button>
-                                                        {qualityLevels.map((lvl, idx) => (
-                                                            <button
-                                                                key={idx}
-                                                                onClick={() => {
-                                                                    if (!isDirectStream) {
-                                                                        const internal = playerRef.current?.getInternalPlayer?.();
-                                                                        if (internal?.hls) internal.hls.currentLevel = idx;
-                                                                        if (internal?.dash) {
-                                                                            internal.dash.setAutoSwitchQualityFor('video', false);
-                                                                            internal.dash.setQualityFor('video', idx);
-                                                                        }
-                                                                    }
-                                                                    setCurrentQuality(idx);
-                                                                    setShowQualityMenu(false);
-                                                                }}
-                                                                className={`w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 ${currentQuality === idx ? 'text-neon-cyan' : 'text-slate-400'}`}
-                                                            >
-                                                                {lvl.height ? `${lvl.height}p` : `${Math.round((lvl.bandwidth || 0) / 1000)}kbps`}
-                                                            </button>
-                                                        ))}
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        </div>
 
                                         <button
                                             onClick={() => setShowSettings(!showSettings)}
@@ -718,6 +657,59 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                     ))}
                                 </div>
                             </div>
+
+                            {/* Signal Resolution */}
+                            {useReactPlayer && qualityLevels.length > 0 && (
+                                <div className="space-y-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <Layers size={14} className="text-neon-cyan" />
+                                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Signal Resolution</span>
+                                        </div>
+                                        <span className="text-[10px] font-black text-neon-cyan">
+                                            {currentQuality === -1
+                                                ? 'AUTO'
+                                                : qualityLevels[currentQuality]?.height
+                                                    ? `${qualityLevels[currentQuality].height}P`
+                                                    : 'HD'}
+                                        </span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button
+                                            onClick={() => {
+                                                if (!isDirectStream) {
+                                                    const internal = playerRef.current?.getInternalPlayer?.();
+                                                    if (internal?.hls) internal.hls.currentLevel = -1;
+                                                    if (internal?.dash) internal.dash.setAutoSwitchQualityFor('video', true);
+                                                }
+                                                setCurrentQuality(-1);
+                                            }}
+                                            className={`py-3 text-[9px] font-black rounded-xl border transition-all ${currentQuality === -1 ? "bg-neon-cyan/20 border-neon-cyan text-white shadow-[0_0_15px_rgba(34,211,238,0.2)]" : "bg-white/5 border-white/5 text-white/30 hover:bg-white/10"}`}
+                                        >
+                                            AUTO SIGNAL
+                                        </button>
+                                        {qualityLevels.map((lvl, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => {
+                                                    if (!isDirectStream) {
+                                                        const internal = playerRef.current?.getInternalPlayer?.();
+                                                        if (internal?.hls) internal.hls.currentLevel = idx;
+                                                        if (internal?.dash) {
+                                                            internal.dash.setAutoSwitchQualityFor('video', false);
+                                                            internal.dash.setQualityFor('video', idx);
+                                                        }
+                                                    }
+                                                    setCurrentQuality(idx);
+                                                }}
+                                                className={`py-3 text-[9px] font-black rounded-xl border transition-all ${currentQuality === idx ? "bg-neon-cyan/20 border-neon-cyan text-white shadow-[0_0_15px_rgba(34,211,238,0.2)]" : "bg-white/5 border-white/5 text-white/30 hover:bg-white/10"}`}
+                                            >
+                                                {lvl.height ? `${lvl.height}P MANUAL` : `${Math.round((lvl.bandwidth || 0) / 1000)}K`}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Volume Boost */}
                             <div className="space-y-6">
