@@ -146,7 +146,7 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
 
     return (
         <div
-            className={`video-container relative w-full overflow-hidden glass shadow-[0_0_100px_rgba(0,0,0,0.6)] group border border-white/5 transition-all duration-700 ${isCinemaMode ? "z-[60] scale-105" : "rounded-none"} aspect-video`}
+            className={`video-container relative w-full overflow-hidden glass shadow-[0_0_100px_rgba(0,0,0,0.6)] group border border-white/[0.03] transition-all duration-700 ${isCinemaMode ? "z-[60] scale-105" : "rounded-none"} aspect-video`}
             onMouseMove={handleMouseMove}
             onMouseLeave={() => {
                 setShowControls(false);

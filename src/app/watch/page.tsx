@@ -94,7 +94,7 @@ export default function WatchPage() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
-                                    className="flex flex-col items-center justify-center text-center space-y-8 p-12 glass rounded-[3rem] border border-white/10"
+                                    className="flex flex-col items-center justify-center text-center space-y-8 p-12 glass rounded-[3rem] border border-white/5 shadow-2xl shadow-black/40"
                                 >
                                     <div className="relative">
                                         <div className="absolute inset-0 bg-neon-cyan/20 blur-[60px] rounded-full animate-pulse" />
