@@ -58,6 +58,8 @@ export const users = pgTable("users", {
     browser: text("browser").default("Unknown"),
     lastLogin: timestamp("last_login"),
     isBanned: boolean("is_banned").default(false),
+    hobbies: text("hobbies"),
+    hideProfile: boolean("hide_profile").default(false),
     createdAt: timestamp("created_at").defaultNow(),
 });
 

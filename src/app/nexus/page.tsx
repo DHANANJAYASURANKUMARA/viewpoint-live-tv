@@ -9,12 +9,15 @@ import {
     Camera,
     Save,
     Share2,
-    Github,
+    Facebook,
     Twitter,
     Linkedin as LinkedIn,
     Instagram,
     Gift,
-    Sparkles
+    Sparkles,
+    Eye,
+    EyeOff,
+    Heart
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { updateUserProfile, getUserProfile } from "@/lib/actions";
@@ -45,7 +48,7 @@ export default function NexusProfilePage() {
         const fullProfile = await getUserProfile(userId);
         if (fullProfile) {
             // Parse social links
-            let socials = { twt: '', gh: '', li: '', ig: '' };
+            let socials = { twt: '', fb: '', li: '', ig: '' };
             try {
                 if (fullProfile.socialLinks) {
                     socials = { ...socials, ...JSON.parse(fullProfile.socialLinks) };
@@ -74,17 +77,32 @@ export default function NexusProfilePage() {
         const res = await updateUserProfile(user.id, {
             displayName: user.displayName,
             bio: user.bio,
+            hobbies: user.hobbies,
+            hideProfile: user.hideProfile,
+            profilePicture: user.profilePicture, // Include this
             birthday: user.birthday ? new Date(user.birthday) : null,
             socialLinks: JSON.stringify(user.socialLinks || {})
         });
 
         if (res.success) {
             setStatus({ type: 'success', msg: 'Neural profile synchronized.' });
-            localStorage.setItem("vpoint-user", JSON.stringify(user));
+            localStorage.setItem("vpoint-user", JSON.stringify({ ...user, profilePicture: user.profilePicture }));
         } else {
             setStatus({ type: 'error', msg: 'Synch failed: ' + res.error });
         }
         setSaving(false);
+    };
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setUser({ ...user, profilePicture: reader.result as string });
+                setStatus({ type: 'success', msg: 'Neural avatar cached. Commit to save.' });
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     if (loading) return <div className="h-screen flex items-center justify-center text-neon-cyan animate-pulse font-black uppercase tracking-[0.5em]">Calibrating Nexus...</div>;
@@ -159,13 +177,23 @@ export default function NexusProfilePage() {
                                         <User size={48} />
                                     )}
                                 </div>
-                                <button className="absolute -bottom-2 -right-2 p-3 bg-white text-black rounded-2xl shadow-xl hover:scale-110 transition-transform">
+                                <input
+                                    type="file"
+                                    id="profile-upload"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                />
+                                <button
+                                    onClick={() => document.getElementById('profile-upload')?.click()}
+                                    className="absolute -bottom-2 -right-2 p-3 bg-white text-black rounded-2xl shadow-xl hover:scale-110 transition-transform z-10"
+                                >
                                     <Camera size={16} />
                                 </button>
                             </div>
-                            <div className="space-y-1">
-                                <h3 className="text-xl font-black text-white uppercase">{user?.displayName || user?.name}</h3>
-                                <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest">{user?.email}</p>
+                            <div className="space-y-1 text-center w-full">
+                                <h3 className="text-xl font-black text-white uppercase truncate px-4">{user?.displayName || user?.name}</h3>
+                                <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest block text-center line-clamp-1 break-all px-2 overflow-hidden">{user?.email}</p>
                             </div>
                         </div>
 
@@ -175,8 +203,8 @@ export default function NexusProfilePage() {
                             <div className="grid grid-cols-2 gap-3">
                                 {[
                                     { id: 'twt', icon: Twitter, color: 'text-blue-400', label: 'Twitter' },
-                                    { id: 'gh', icon: Github, color: 'text-white', label: 'GitHub' },
-                                    { id: 'li', icon: LinkedIn, color: 'text-blue-600', label: 'LinkedIn' },
+                                    { id: 'fb', icon: Facebook, color: 'text-blue-600', label: 'Facebook' },
+                                    { id: 'li', icon: LinkedIn, color: 'text-blue-700', label: 'LinkedIn' },
                                     { id: 'ig', icon: Instagram, color: 'text-pink-500', label: 'Instagram' }
                                 ].map(soc => (
                                     <div
@@ -234,6 +262,39 @@ export default function NexusProfilePage() {
                                     className="w-full bg-black/40 border border-white/5 rounded-[2rem] p-8 text-[11px] font-medium text-slate-400 focus:outline-none focus:border-neon-cyan/50 transition-all resize-none italic leading-relaxed"
                                     placeholder="Tell the matrix about yourself..."
                                 />
+                            </div>
+
+                            {/* Hobbies & Interests */}
+                            <div className="space-y-3">
+                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2 flex items-center gap-2">
+                                    <Heart size={10} className="text-neon-magenta" /> Neural Interests & Hobbies
+                                </label>
+                                <input
+                                    type="text"
+                                    value={user?.hobbies || ""}
+                                    onChange={(e) => setUser({ ...user, hobbies: e.target.value })}
+                                    className="w-full bg-black/40 border border-white/5 rounded-2xl py-5 px-6 text-[10px] font-black text-white focus:outline-none focus:border-neon-magenta/50 transition-all uppercase"
+                                    placeholder="CRICKET, CODING, CINEMATOGRAPHY..."
+                                />
+                            </div>
+
+                            {/* Privacy Control */}
+                            <div className="p-8 bg-white/[0.02] border border-white/10 rounded-[2rem] flex items-center justify-between group">
+                                <div className="flex items-center gap-6">
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${user?.hideProfile ? 'bg-amber-500/20 text-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.2)]' : 'bg-emerald-500/20 text-emerald-500'}`}>
+                                        {user?.hideProfile ? <EyeOff size={24} /> : <Eye size={24} />}
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black text-white uppercase tracking-widest">Privacy Protocol</p>
+                                        <p className="text-[9px] text-slate-500 font-medium">Currently {user?.hideProfile ? "INCÖGNITO (Hidden from Grid)" : "PUBLIC (Visible to Matrix)"}</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setUser({ ...user, hideProfile: !user.hideProfile })}
+                                    className={`px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${user?.hideProfile ? 'bg-amber-500 text-vpoint-dark border-amber-500' : 'bg-white/5 border-white/10 text-slate-500 hover:text-white'}`}
+                                >
+                                    {user?.hideProfile ? "ENABLE PUBLIC" : "GO STEALTH"}
+                                </button>
                             </div>
 
                             {/* Automated Hub Info */}

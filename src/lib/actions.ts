@@ -318,6 +318,8 @@ export async function getUsers() {
             birthday: users.birthday,
             lastLogin: users.lastLogin,
             isBanned: users.isBanned,
+            hobbies: users.hobbies,
+            hideProfile: users.hideProfile,
             createdAt: users.createdAt,
         }).from(users).orderBy(users.createdAt);
     } catch (error: any) {
