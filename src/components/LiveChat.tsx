@@ -118,7 +118,7 @@ export default function LiveChat({ channelId, currentUser }: LiveChatProps) {
         return (
             <button
                 onClick={() => setIsHidden(false)}
-                className="fixed right-6 bottom-32 w-12 h-12 bg-white/5 text-neon-magenta rounded-full flex items-center justify-center border border-neon-magenta/30 hover:bg-neon-magenta hover:text-white transition-all z-50 lg:relative lg:right-0 lg:bottom-0 group"
+                className="fixed right-6 bottom-32 w-12 h-12 bg-white/5 text-neon-magenta rounded-full flex items-center justify-center border border-neon-magenta/30 hover:bg-neon-magenta hover:text-white transition-all z-50 lg:absolute lg:right-10 lg:bottom-10 group"
                 title="Open Matrix Chat"
             >
                 <div className="absolute inset-0 bg-neon-magenta/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />

@@ -64,7 +64,7 @@ export default function WatchPage() {
     }
 
     return (
-        <div className="h-full w-full flex flex-col lg:flex-row items-center justify-center p-4 lg:p-10 gap-8 overflow-hidden">
+        <div className="h-full w-full relative flex flex-col items-center justify-center p-4 overflow-hidden">
             <div className="w-full flex-1 flex items-center justify-center min-w-0">
                 <AnimatePresence mode="wait">
                     {currentUrl ? (
