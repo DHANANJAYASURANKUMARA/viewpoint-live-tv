@@ -17,12 +17,15 @@ import {
     Sparkles,
     Eye,
     EyeOff,
-    Heart
+    Heart,
+    X
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { updateUserProfile, getUserProfile } from "@/lib/actions";
 
 export default function NexusProfilePage() {
+    const router = useRouter();
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -146,13 +149,21 @@ export default function NexusProfilePage() {
                         <h1 className="text-5xl font-black text-white uppercase tracking-tighter">Nexus <span className="text-neon-cyan">Profile</span></h1>
                         <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Personal Data Management Sector</p>
                     </div>
-                    <button
-                        onClick={handleSave}
-                        disabled={saving}
-                        className="px-10 py-5 bg-neon-cyan text-black rounded-[2rem] text-[11px] font-black uppercase tracking-[0.2em] hover:bg-white transition-all shadow-[0_0_30px_rgba(34,211,238,0.2)] flex items-center gap-3 disabled:opacity-50"
-                    >
-                        <Save size={16} /> {saving ? "Syncing..." : "Commit Changes"}
-                    </button>
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={() => router.push("/")}
+                            className="px-8 py-5 bg-white/5 text-white border border-white/10 rounded-[2rem] text-[11px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all flex items-center gap-3"
+                        >
+                            <X size={16} /> Close
+                        </button>
+                        <button
+                            onClick={handleSave}
+                            disabled={saving}
+                            className="px-10 py-5 bg-neon-cyan text-black rounded-[2rem] text-[11px] font-black uppercase tracking-[0.2em] hover:bg-white transition-all shadow-[0_0_30px_rgba(34,211,238,0.2)] flex items-center gap-3 disabled:opacity-50"
+                        >
+                            <Save size={16} /> {saving ? "Syncing..." : "Commit Changes"}
+                        </button>
+                    </div>
                 </div>
 
                 {status && (
@@ -297,16 +308,6 @@ export default function NexusProfilePage() {
                                 </button>
                             </div>
 
-                            {/* Automated Hub Info */}
-                            <div className="p-8 bg-neon-cyan/5 border border-neon-cyan/10 rounded-[2rem] flex items-center gap-6">
-                                <div className="w-12 h-12 bg-neon-cyan/20 rounded-2xl flex items-center justify-center text-neon-cyan shrink-0">
-                                    <Sparkles size={24} />
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-black text-white uppercase tracking-widest">Automation Ready</p>
-                                    <p className="text-[9px] text-slate-500 font-medium">Your birthday is used to trigger automated "Nexus Wishes" across the platform.</p>
-                                </div>
-                            </div>
                         </div>
 
                         {/* Network Intel */}
