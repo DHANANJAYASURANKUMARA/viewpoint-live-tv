@@ -14,7 +14,15 @@ import {
     Gauge,
     Layers,
     AlertCircle,
-    ShieldCheck
+    ShieldCheck,
+    Settings,
+    Camera,
+    SlidersHorizontal,
+    Plus,
+    Minus,
+    Sun,
+    Contrast,
+    RotateCcw
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -54,8 +62,18 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
         bitrate: 0,
         latency: 0,
         buffer: 0,
-        fps: 0
+        fps: 0,
+        codec: "Pending..."
     });
+    const [playbackSpeed, setPlaybackSpeed] = useState(1);
+    const [volumeBoost, setVolumeBoost] = useState(1);
+    const [visualTuning, setVisualTuning] = useState({
+        brightness: 100,
+        contrast: 100,
+        saturation: 100
+    });
+    const [showSettings, setShowSettings] = useState(false);
+    const [isScreenshotting, setIsScreenshotting] = useState(false);
     const [showTechStats, setShowTechStats] = useState(false);
 
     const handleMouseMove = () => {
@@ -120,6 +138,42 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
         };
     }, []);
 
+    // Advanced Audio Engine (Volume Boost)
+    useEffect(() => {
+        const video = document.querySelector(".video-container video") as HTMLVideoElement;
+        if (!video || volumeBoost <= 1) return;
+
+        let audioCtx: AudioContext | null = null;
+        let source: MediaElementAudioSourceNode | null = null;
+        let gainNode: GainNode | null = null;
+
+        try {
+            audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+            source = audioCtx.createMediaElementSource(video);
+            gainNode = audioCtx.createGain();
+
+            gainNode.gain.value = volumeBoost;
+            source.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+        } catch (e) {
+            console.error("Audio Boost Error:", e);
+        }
+
+        return () => {
+            if (audioCtx) {
+                audioCtx.close();
+            }
+        };
+    }, [volumeBoost]);
+
+    // Playback Speed Engine
+    useEffect(() => {
+        const video = document.querySelector(".video-container video") as HTMLVideoElement;
+        if (video) {
+            video.playbackRate = playbackSpeed;
+        }
+    }, [playbackSpeed]);
+
     const dispatchStatus = (status: "Playing" | "Paused" | "Buffering" | "Error") => {
         window.dispatchEvent(new CustomEvent("vpoint-player-status", { detail: { status } }));
     };
@@ -137,16 +191,55 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
         }
     };
 
-    const isDirectStream = url.toLowerCase().match(/\.(m3u8|mp4|webm|ogg|mpd|m4s|ts|mkv|m4v|mov)(\?.*)?$/i) ||
+    const isDirectStream = url.toLowerCase().match(/\.(m3u8|mp4|webm|ogg|mpd|m4s|ts|mkv|m4v|mov|avi|flv|wmv)(\?.*)?$/i) ||
         url.toLowerCase().includes("playlist.m3u8") ||
-        url.toLowerCase().includes("manifest.mpd");
-    const isSpecialPlayer = url.includes("youtube.com") || url.includes("youtu.be") || url.includes("vimeo.com") || url.includes("twitch.tv") || url.includes("streamable.com") || url.includes("facebook.com");
+        url.toLowerCase().includes("manifest.mpd") ||
+        url.toLowerCase().includes("master.m3u8");
+    const isSpecialPlayer = url.includes("youtube.com") || url.includes("youtu.be") || url.includes("vimeo.com") || url.includes("twitch.tv") || url.includes("streamable.com") || url.includes("facebook.com") || url.includes("dailymotion.com");
 
     const useReactPlayer = isDirectStream || isSpecialPlayer;
+
+    const takeScreenshot = () => {
+        const video = document.querySelector(".video-container video") as HTMLVideoElement;
+        if (!video) return;
+
+        setIsScreenshotting(true);
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth || video.clientWidth;
+        canvas.height = video.videoHeight || video.clientHeight;
+        const ctx = canvas.getContext("2d");
+
+        if (ctx) {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL("image/png");
+            const link = document.createElement("a");
+            link.download = `V-PULSE-SHOT-${new Date().getTime()}.png`;
+            link.href = dataUrl;
+            link.click();
+        }
+
+        setTimeout(() => setIsScreenshotting(false), 1000);
+    };
+
+    const handlePip = async () => {
+        const video = document.querySelector(".video-container video") as HTMLVideoElement;
+        if (video && document.pictureInPictureEnabled) {
+            try {
+                if (document.pictureInPictureElement) {
+                    await document.exitPictureInPicture();
+                } else {
+                    await video.requestPictureInPicture();
+                }
+            } catch (e) { console.error("PiP Error:", e); }
+        }
+    };
 
     return (
         <div
             className={`video-container relative w-full overflow-hidden glass shadow-[0_0_100px_rgba(0,0,0,0.6)] group border border-white/5 transition-all duration-700 ${isCinemaMode ? "z-[60] scale-105" : "rounded-none"} aspect-video`}
+            style={{
+                filter: `brightness(${visualTuning.brightness}%) contrast(${visualTuning.contrast}%) saturate(${visualTuning.saturation}%)`
+            }}
             onMouseMove={handleMouseMove}
             onMouseLeave={() => {
                 setShowControls(false);
@@ -395,10 +488,14 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                         <span className="text-[7px] lg:text-[8px] font-black opacity-60 uppercase tracking-widest">Latency</span>
                                         <span className="text-[9px] lg:text-[10px] font-black">{techStats.latency}S</span>
                                     </div>
+                                    <div className="flex items-center justify-between gap-4 text-amber-500">
+                                        <span className="text-[7px] lg:text-[8px] font-black opacity-60 uppercase tracking-widest">Codec</span>
+                                        <span className="text-[9px] lg:text-[10px] font-black uppercase text-right truncate max-w-[80px]">{techStats.codec}</span>
+                                    </div>
                                     <div className="h-[px] bg-white/5 w-full hidden lg:block" />
                                     <div className="hidden lg:flex items-center gap-2 text-[7px] font-black text-slate-600 uppercase tracking-tighter">
                                         <Zap size={8} className="text-neon-cyan" />
-                                        <span>Engine: {isDirectStream ? 'SHAKA' : (url.includes('youtube.com') ? 'YOUTUBE' : 'SYSTEM')} v2.0.4</span>
+                                        <span>Engine: {isDirectStream ? 'SHAKA' : (url.includes('youtube.com') ? 'YOUTUBE' : 'SYSTEM')} v2.5.0</span>
                                     </div>
                                 </div>
                             )}
@@ -448,6 +545,22 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                     <div className="h-6 lg:h-8 w-[1px] bg-white/10 hidden sm:block flex-shrink-0" />
 
                                     <div className="flex items-center gap-3 lg:gap-6">
+                                        <button
+                                            onClick={takeScreenshot}
+                                            className={`transition-all duration-300 ${isScreenshotting ? "text-neon-cyan scale-125" : "text-white/40 hover:text-white"}`}
+                                            title="SNAPSHOT"
+                                        >
+                                            <Camera size={20} />
+                                        </button>
+
+                                        <button
+                                            onClick={handlePip}
+                                            className="text-white/40 hover:text-white transition-colors"
+                                            title="PICTURE IN PICTURE"
+                                        >
+                                            <MonitorPlay size={20} />
+                                        </button>
+
                                         <div className="relative">
                                             <button
                                                 onClick={() => setShowQualityMenu(!showQualityMenu)}
@@ -474,8 +587,6 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                                     >
                                                         <button
                                                             onClick={() => {
-                                                                // ShakaPlayer reacts to currentQuality prop via its own useEffect
-                                                                // ReactPlayer: also apply directly via HLS/DASH API
                                                                 if (!isDirectStream) {
                                                                     const internal = playerRef.current?.getInternalPlayer?.();
                                                                     if (internal?.hls) internal.hls.currentLevel = -1;
@@ -492,8 +603,6 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                                             <button
                                                                 key={idx}
                                                                 onClick={() => {
-                                                                    // ShakaPlayer: just set state — Shaka useEffect handles selectVariantTrack
-                                                                    // ReactPlayer: also set via HLS/DASH directly
                                                                     if (!isDirectStream) {
                                                                         const internal = playerRef.current?.getInternalPlayer?.();
                                                                         if (internal?.hls) internal.hls.currentLevel = idx;
@@ -515,26 +624,14 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                             </AnimatePresence>
                                         </div>
 
-                                        {settings.dataSaver && (
-                                            <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full" title="DATA SAVER ACTIVE">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">ECO</span>
-                                            </div>
-                                        )}
                                         <button
-                                            onClick={toggleCinemaMode}
-                                            className={`transition-colors duration-300 ${isCinemaMode ? "text-neon-cyan" : "text-white/40 hover:text-white"}`}
-                                            title="CINEMA MODE"
+                                            onClick={() => setShowSettings(!showSettings)}
+                                            className={`transition-all duration-500 ${showSettings ? "text-neon-cyan rotate-90" : "text-white/40 hover:text-white"}`}
+                                            title="SURGICAL SETTINGS"
                                         >
-                                            <MonitorPlay size={20} />
+                                            <Settings size={20} />
                                         </button>
-                                        <button
-                                            onClick={() => setShowTechStats(!showTechStats)}
-                                            className={`transition-colors duration-300 ${showTechStats ? "text-neon-magenta" : "text-white/40 hover:text-white"}`}
-                                            title="TECH STATS"
-                                        >
-                                            <Gauge size={20} />
-                                        </button>
+
                                         <button
                                             onClick={handleFullscreen}
                                             className="text-white/40 hover:text-white transition-colors"
@@ -544,6 +641,136 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                                     </div>
                                 </div>
                             )}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Settings Sidebar */}
+            <AnimatePresence>
+                {showSettings && (
+                    <motion.div
+                        initial={{ x: "100%" }}
+                        animate={{ x: 0 }}
+                        exit={{ x: "100%" }}
+                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                        className="absolute top-0 right-0 bottom-0 w-80 glass-dark border-l border-white/10 z-[100] backdrop-blur-3xl overflow-y-auto custom-scrollbar"
+                    >
+                        <div className="p-8 space-y-12 relative z-10">
+                            {/* Scanning Pulse Background */}
+                            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                                <motion.div
+                                    animate={{ opacity: [0.02, 0.05, 0.02], y: ["0%", "100%", "0%"] }}
+                                    transition={{ duration: 10, repeat: Infinity }}
+                                    className="w-full h-px bg-neon-cyan/30 shadow-[0_0_20px_rgba(34,211,238,0.5)]"
+                                />
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Neural Config</h3>
+                                <button onClick={() => setShowSettings(false)} className="text-white/30 hover:text-white transition-colors">
+                                    <RotateCcw size={16} />
+                                </button>
+                            </div>
+
+                            {/* Speed Control */}
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Temporal Rate</span>
+                                    <span className="text-[10px] font-black text-neon-cyan">{playbackSpeed}x</span>
+                                </div>
+                                <div className="grid grid-cols-4 gap-2">
+                                    {[0.5, 1, 1.5, 2].map(speed => (
+                                        <button
+                                            key={speed}
+                                            onClick={() => setPlaybackSpeed(speed)}
+                                            className={`py-2 text-[9px] font-black rounded-lg border transition-all ${playbackSpeed === speed ? "bg-neon-cyan/20 border-neon-cyan text-white" : "bg-white/5 border-white/5 text-white/30 hover:bg-white/10"}`}
+                                        >
+                                            {speed}x
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Volume Boost */}
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Signal Boost</span>
+                                    <span className="text-[10px] font-black text-neon-magenta">{Math.round(volumeBoost * 100)}%</span>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <Minus size={14} className="text-white/20" />
+                                    <input
+                                        type="range" min="1" max="2" step="0.1"
+                                        value={volumeBoost}
+                                        onChange={(e) => setVolumeBoost(parseFloat(e.target.value))}
+                                        className="flex-1 h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-neon-magenta"
+                                    />
+                                    <Plus size={14} className="text-white/20" />
+                                </div>
+                            </div>
+
+                            {/* Visual Tuning */}
+                            <div className="space-y-8">
+                                <h4 className="text-[8px] font-black text-slate-600 uppercase tracking-[0.3em]">Luminance & Chroma</h4>
+
+                                <div className="space-y-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <Sun size={12} className="text-amber-500" />
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Brightness</span>
+                                        </div>
+                                        <span className="text-[9px] font-black text-white">{visualTuning.brightness}%</span>
+                                    </div>
+                                    <input
+                                        type="range" min="50" max="150" value={visualTuning.brightness}
+                                        onChange={(e) => setVisualTuning(prev => ({ ...prev, brightness: parseInt(e.target.value) }))}
+                                        className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                                    />
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <Contrast size={12} className="text-neon-cyan" />
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Contrast</span>
+                                        </div>
+                                        <span className="text-[9px] font-black text-white">{visualTuning.contrast}%</span>
+                                    </div>
+                                    <input
+                                        type="range" min="50" max="150" value={visualTuning.contrast}
+                                        onChange={(e) => setVisualTuning(prev => ({ ...prev, contrast: parseInt(e.target.value) }))}
+                                        className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-neon-cyan"
+                                    />
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <SlidersHorizontal size={12} className="text-neon-magenta" />
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Saturation</span>
+                                        </div>
+                                        <span className="text-[9px] font-black text-white">{visualTuning.saturation}%</span>
+                                    </div>
+                                    <input
+                                        type="range" min="0" max="200" value={visualTuning.saturation}
+                                        onChange={(e) => setVisualTuning(prev => ({ ...prev, saturation: parseInt(e.target.value) }))}
+                                        className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-neon-magenta"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Reset Button */}
+                            <button
+                                onClick={() => {
+                                    setPlaybackSpeed(1);
+                                    setVolumeBoost(1);
+                                    setVisualTuning({ brightness: 100, contrast: 100, saturation: 100 });
+                                }}
+                                className="w-full py-4 bg-white/5 border border-white/5 rounded-2xl text-[9px] font-black text-white/40 uppercase tracking-[0.4em] hover:bg-white/10 hover:text-white transition-all"
+                            >
+                                Reset Neural Link
+                            </button>
                         </div>
                     </motion.div>
                 )}

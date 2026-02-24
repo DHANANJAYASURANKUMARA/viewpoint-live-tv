@@ -217,11 +217,14 @@ export default function ShakaPlayer({
                         }
                     }
 
+                    const activeTrack = playerRef.current.getVariantTracks().find((t: any) => t.active);
+
                     onStats({
                         bitrate: Math.round(stats.streamBandwidth / 1000) || 0,
                         buffer: Math.round(bufferLen * 10) / 10 || 0,
                         latency: Math.round(stats.liveLatency * 100) / 100 || 0,
-                        fps: 60
+                        fps: 60,
+                        codec: activeTrack ? `${activeTrack.videoCodec?.split('.')[0]} / ${activeTrack.audioCodec?.split('.')[0]}` : "Detecting..."
                     });
                 } catch (e) { }
             }
