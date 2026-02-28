@@ -87,6 +87,7 @@ export const metadata: Metadata = {
 
 import MainLayoutWrapper from "@/components/MainLayoutWrapper";
 import { ConfigProvider } from "@/components/ConfigContext";
+import SocialBarAd from "@/components/SocialBarAd";
 
 export default function RootLayout({
   children,
@@ -158,6 +159,7 @@ export default function RootLayout({
           <MainLayoutWrapper>
             {children}
           </MainLayoutWrapper>
+          <SocialBarAd />
           <SpeedInsights />
           <Analytics />
         </ConfigProvider>
