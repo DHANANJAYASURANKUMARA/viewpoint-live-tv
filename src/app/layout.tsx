@@ -88,6 +88,7 @@ export const metadata: Metadata = {
 import MainLayoutWrapper from "@/components/MainLayoutWrapper";
 import { ConfigProvider } from "@/components/ConfigContext";
 import SocialBarAd from "@/components/SocialBarAd";
+import Script from "next/script";
 
 export default function RootLayout({
   children,
@@ -105,17 +106,17 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon.png" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7818560020455484"
-          crossOrigin="anonymous"></script>
-        <script src="https://pl28812993.effectivegatecpm.com/ad/53/f4/ad53f419242cbd0ee6fc5b1093188594.js"></script>
-        <script dangerouslySetInnerHTML={{
+        <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7818560020455484"
+          crossOrigin="anonymous" strategy="afterInteractive" />
+        <Script src="https://pl28812993.effectivegatecpm.com/ad/53/f4/ad53f419242cbd0ee6fc5b1093188594.js" strategy="afterInteractive" />
+        <Script id="register-sw" dangerouslySetInnerHTML={{
           __html: `
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
               navigator.serviceWorker.register('/sw.js');
             });
           }
-        `}} />
+        `}} strategy="afterInteractive" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",

@@ -25,6 +25,7 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
     const [viewerCount, setViewerCount] = useState(12405);
     const [activeSignals, setActiveSignals] = useState(258);
     const [isInstallable, setIsInstallable] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     // Simulate real-time data flow
     useEffect(() => {
@@ -40,6 +41,8 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
 
         const handleInstallable = (e: any) => setIsInstallable(e.detail.available);
         window.addEventListener("vpoint-pwa-installable", handleInstallable as EventListener);
+
+        setMounted(true);
 
         return () => {
             clearInterval(interval);
@@ -160,11 +163,11 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
                                         <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                                     </span>
-                                    <span className="text-[11px] font-semibold text-white/90 uppercase tracking-[0.1em]">Signal Online: {viewerCount.toLocaleString()} Viewing</span>
+                                    <span className="text-[11px] font-semibold text-white/90 uppercase tracking-[0.1em]">Signal Online: {mounted ? viewerCount.toLocaleString() : "---"} Viewing</span>
                                 </div>
                                 <div className="flex items-center gap-3 px-5 py-2.5 glass border border-white/10 rounded-full bg-white/5">
                                     <Activity size={12} className="text-neon-cyan" />
-                                    <span className="text-[11px] font-semibold text-white/90 uppercase tracking-[0.1em]">Data Nodes: {activeSignals}</span>
+                                    <span className="text-[11px] font-semibold text-white/90 uppercase tracking-[0.1em]">Data Nodes: {mounted ? activeSignals : "---"}</span>
                                 </div>
                                 <div className="flex items-center gap-3 px-5 py-2.5 glass border border-white/5 rounded-full bg-white/5">
                                     <ShieldCheck size={12} className="text-emerald-500" />
