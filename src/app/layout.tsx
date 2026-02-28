@@ -108,7 +108,6 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7818560020455484"
           crossOrigin="anonymous" strategy="afterInteractive" />
-        <Script src="https://pl28812993.effectivegatecpm.com/ad/53/f4/ad53f419242cbd0ee6fc5b1093188594.js" strategy="afterInteractive" />
         <Script id="register-sw" dangerouslySetInnerHTML={{
           __html: `
           if ('serviceWorker' in navigator) {
