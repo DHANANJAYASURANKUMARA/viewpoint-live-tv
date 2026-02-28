@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import { useConfig } from "./ConfigContext";
 import NotificationCenter from "./NotificationCenter";
+import AdBanner728 from "./AdBanner728";
 
 interface LandingPageProps {
     onLaunch: () => void;
@@ -202,6 +203,9 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                     </div>
                 </div>
             )}
+
+            {/* Ad Banner Slot */}
+            <AdBanner728 />
 
             {/* Features HUD */}
             {config.showFeatures && (
