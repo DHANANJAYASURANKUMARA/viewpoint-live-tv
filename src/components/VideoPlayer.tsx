@@ -620,7 +620,7 @@ export default function VideoPlayer({ url, title = "Live Stream", sniMask, proxy
                         animate={{ x: 0 }}
                         exit={{ x: "100%" }}
                         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        className="absolute top-0 right-0 bottom-0 w-80 glass-dark border-l border-white/10 z-[100] backdrop-blur-3xl overflow-y-auto custom-scrollbar"
+                        className="absolute top-0 right-0 bottom-0 w-full sm:w-80 glass-dark border-l border-white/10 z-[100] backdrop-blur-3xl overflow-y-auto custom-scrollbar"
                     >
                         <div className="p-8 space-y-12 relative z-10">
                             {/* Scanning Pulse Background */}

@@ -227,7 +227,7 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                             <motion.div
                                 key={i}
                                 whileHover={{ y: -8 }}
-                                className="p-10 glass border border-white/10 rounded-[2.5rem] space-y-8 hover:border-white/20 transition-all bg-gradient-to-br from-white/5 to-transparent"
+                                className="p-6 md:p-10 glass border border-white/10 rounded-[2.5rem] space-y-8 hover:border-white/20 transition-all bg-gradient-to-br from-white/5 to-transparent"
                             >
                                 <div className="p-4 bg-white/5 rounded-2xl w-fit text-neon-cyan ring-1 ring-white/10">
                                     {f.icon}

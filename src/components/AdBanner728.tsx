@@ -45,11 +45,11 @@ const AdBanner728 = () => {
     }, []);
 
     return (
-        <div className="w-full flex justify-center py-8 bg-vpoint-dark/30 border-y border-white/5">
+        <div className="w-full flex justify-center py-8 bg-vpoint-dark/30 border-y border-white/5 overflow-hidden">
             <div
                 ref={bannerRef}
-                style={{ width: '728px', height: '90px' }}
-                className="bg-white/5 flex items-center justify-center overflow-hidden rounded-lg shadow-lg border border-white/10 relative"
+                style={{ width: '728px', height: '90px', maxWidth: '100%' }}
+                className="bg-white/5 flex items-center justify-center overflow-x-auto overflow-y-hidden rounded-lg shadow-lg border border-white/10 relative no-scrollbar"
             >
                 {/* The script will inject the iframe here */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">

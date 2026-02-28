@@ -56,7 +56,7 @@ export default function AdminSidebar() {
     };
 
     return (
-        <aside className="w-80 h-full glass-dark border-r border-white/5 flex flex-col p-8 overflow-hidden relative shadow-[20px_0_50px_rgba(0,0,0,0.5)] z-50">
+        <aside className="w-[280px] sm:w-80 h-full glass-dark border-r border-white/5 flex flex-col p-6 sm:p-8 overflow-hidden relative shadow-[20px_0_50px_rgba(0,0,0,0.5)] z-50">
             {/* Admin Brand Header */}
             <div className="flex items-center gap-4 mb-10">
                 <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shadow-2xl relative group">
